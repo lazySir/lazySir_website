@@ -1,0 +1,43 @@
+{
+  "name": "test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vueuse/core": "^11.2.0",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
+    "axios": "^1.7.7",
+    "crypto-js": "^4.2.0",
+    "element-plus": "^2.8.4",
+    "nprogress": "^0.2.0",
+    "pinia": "^2.2.4",
+    "pinia-plugin-persistedstate": "^4.1.1",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-vue-devtools": "^7.6.2",
+    "vue": "^3.5.10",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.259",
+    "@iconify/vue": "^4.1.2",
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "^22.7.5",
+    "@types/nprogress": "^0.2.3",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.5.3",
+    "unplugin-auto-import": "^0.18.3",
+    "unplugin-icons": "^0.19.3",
+    "unplugin-vue-components": "^0.27.4",
+    "vite": "^5.4.8",
+    "vue-tsc": "^2.1.6"
+  }
+}

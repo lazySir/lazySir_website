@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "module": "esnext",
+    "target": "es2020",
+    "moduleResolution": "node", // 修改为 node 解析模式
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@/store/*": [
+        "./src/store/*.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/**/**/*.vue",
+    "src/**/**/**/*.vue"
+  ]
+}

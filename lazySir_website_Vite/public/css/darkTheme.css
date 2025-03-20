@@ -1,0 +1,166 @@
+:root {
+  /* 深色主题 */
+  --dark-bg-color: #141414;
+  --dark-main-bg-color: #0d0d0d;
+  --dark-text-color: #cfd3dc;
+  --dark-text-color-light: #ffffff;
+  --dark-border-color: #414242;
+
+  /* 浅色（复古）主题 */
+  --sepia-bg-color: #efe3cc;
+  --sepia-main-bg-color: #eae0c9;
+  --sepia-text-color: #433455;
+  --sepia-text-color-light: #6a3422;
+  --sepia-border-color: #0f0e0c;
+}
+
+html.dark {
+  /* 深色主题 */
+  --bg-color: var(--dark-bg-color);
+  --main-bg-color: var(--dark-main-bg-color);
+  --text-color: var(--dark-text-color);
+  --text-color-light: var(--dark-text-color-light);
+  --border-color: var(--dark-border-color);
+}
+html.dark {
+  --w-e-textarea-bg-color: var(--dark-border-color)!important;
+  --w-e-textarea-color:var(--dark-text-color-light) !important;
+  /* ...其他... */
+}
+html.dark .login-container {
+  background-color: #191919 !important;
+}
+
+html.dark .login-container .login-box {
+  background-color: #000c !important;
+}
+
+html.dark .el-container .el-header,
+html.dark .el-container .tagBox-container,
+html.dark .el-container .el-aside,
+html.dark .el-container .el-main,
+html.dark .el-container .el-footer {
+  background-color: var(--bg-color) !important;
+  border-color: var(--border-color);
+}
+/* classic模式 */
+html.dark .el-container .el-header .logo {
+  border-bottom: 0px solid #e4e7ed !important;
+  border-right: 1px solid var(--border-color) !important;
+}
+
+html.dark .el-container .el-header .logo h1 {
+  color: var(--dark-text-color) !important;
+}
+html.dark .Header{
+  border-bottom: 1px solid var(--border-color) !important;
+}
+/*  */
+/* transverse */
+html.dark .el-container  .el-menu,
+html.dark .el-container  .el-sub-menu,
+html.dark .el-container  .el-menu-item,
+html.dark .el-container  .el-sub-menu__title {
+  background-color: var(--bg-color) !important;
+  color:var(  --dark-text-color-light)!important
+}
+html.dark .el-container .r_container {
+  border-bottom: 0px solid #ebeef5;
+}
+/*  */
+/* Header */
+html.dark .el-container .el-header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+html.dark .el-container .header_container {
+  background-color: var(--bg-color) !important;
+}
+
+html.dark .el-container .l-content .el-breadcrumb span {
+  color: var(--text-color) !important;
+}
+
+html.dark .el-container .l-content .el-breadcrumb .active {
+  color: var(--text-color-light) !important;
+}
+
+html.dark .el-container .l-content .hamburger_container {
+  color: var(--text-color) !important;
+}
+
+html.dark .el-container .r-content .username,
+html.dark .el-container .r-content .drawer_item,
+html.dark .el-container .r-content h1 {
+  color: var(--text-color) !important;
+}
+
+html.dark .el-container .r-content .icon-box .el-icon {
+  color: var(--text-color) !important;
+}
+
+html.dark .el-container .r-content .icon-box .el-icon:hover {
+  color: var(--text-color-light) !important;
+}
+
+/* Tag Box */
+html.dark .el-container .tagBox-container {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Aside */
+html.dark .el-container .el-aside {
+  border-right: 1px solid var(--border-color) !important;
+}
+
+html.dark .el-container .el-aside .el-menu,
+html.dark .el-container .el-aside .el-sub-menu,
+html.dark .el-container .el-aside .el-menu-item,
+html.dark .el-container .el-aside .el-sub-menu__title {
+  background-color: var(--bg-color) !important;
+}
+
+html.dark .el-container .el-aside .el-menu:not(.is-active),
+html.dark .el-container .el-aside .el-sub-menu:not(.is-active),
+html.dark .el-container .el-aside .el-menu-item:not(.is-active),
+html.dark .el-container .el-aside .el-sub-menu__title:not(.is-active) {
+  color: var(--text-color) !important;
+}
+
+html.dark .el-container .el-aside .el-menu.is-active,
+html.dark .el-container .el-aside .el-sub-menu.is-active,
+html.dark .el-container .el-aside .el-menu-item.is-active,
+html.dark .el-container .el-aside .el-sub-menu__title.is-active {
+  color: var(--text-color-light) !important;
+  background-color: #000000 !important;
+}
+
+html.dark .el-container .el-aside .el-menu-item:not(.is-active):hover {
+  color: var(--text-color-light) !important;
+  background-color: var(--main-bg-color) !important;
+}
+
+/* Logo */
+html.dark .el-container .el-aside .logo .title {
+  color: var(--text-color) !important;
+}
+
+html.dark .el-container .el-aside .logo {
+  border-bottom-color: var(--border-color) !important;
+}
+
+/* Main */
+html.dark .el-container .el-main .main_container {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+}
+
+/* Footer */
+html.dark .el-container .el-footer {
+  border-top: 1px solid var(--border-color) !important;
+}
+
+html.dark .el-container .el-footer .footer-container a {
+  color: var(--text-color) !important;
+}

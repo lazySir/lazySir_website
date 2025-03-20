@@ -1,0 +1,193 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql" // 使用 mysql
+  url      = env("DATABASE_URL") // 配置你的数据库连接字符串
+}
+
+model adminAccount {
+  accountId String     @id @default(uuid()) // 生成 UUID 作为主键
+  username  String     @unique // 用户名
+  password  String // 密码
+  adminInfo adminInfo? @relation // 一对一关系，adminInfo 是可选的
+
+  @@map("adminAccount") // 映射到数据库中的表名
+}
+
+model adminInfo {
+  accountInfoId    String             @id @default(uuid()) // 主键，类型为字符串
+  phone            String?            @unique // 电话，允许为 null
+  accountId        String             @unique // 关联的 accountId，不能为 null
+  age              Int? // 年龄，允许为 null
+  gender           Boolean? // 性别，使用布尔值表示
+  email            String?            @unique // 邮箱，允许为 null
+  nickname         String? // 昵称，允许为 null
+  address          String? // 地址，允许为 null
+  state            Boolean?           @default(true) // 用户状态
+  isDelete         Boolean?           @default(false) // 删除标志，使用布尔值表示
+  avatar           String?            @default("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80") // 头像
+  createDate       DateTime?          @default(now()) // 创建时间，默认为当前时间
+  updateDate       DateTime?          @default(now()) @updatedAt // 更新时间，默认为当前时间，并在更新时自动更改
+  //1对1 
+  adminAccount     adminAccount       @relation(fields: [accountId], references: [accountId], onDelete: Cascade) // 当用户被删除时，与之相关的 adminAccountInfo 也会被删除
+  //多对多
+  accountsAndRoles accountsAndRoles[]
+
+  @@index([accountId]) // 创建索引以加快根据 accountId 的查询速度
+  @@map("adminInfo") // 映射到数据库中的表名
+}
+
+model adminMenu {
+  menuId      String        @id @default(uuid()) // 菜单ID（主键）
+  menuName    String // 菜单名称
+  accountId   String // 创建人ID
+  updateId    String? //更新人ID
+  menuValue   String        @unique // 菜单值
+  sortOrder   Float?        @default(99) // 菜单排序值
+  parentId    String? // 上级菜单ID
+  level       Int           @default(1) // 菜单级别
+  path        String        @unique // 菜单路径
+  state       Boolean       @default(true) // 状态
+  createdDate DateTime      @default(now()) // 创建时间
+  updatedDate DateTime      @default(now()) @updatedAt // 最后更新时间
+  icon        String        @default("ep:adminMenu") // 图标
+  description String? // 菜单描述
+  parent      adminMenu?    @relation("MenuToMenu", fields: [parentId], references: [menuId])
+  children    adminMenu[]   @relation("MenuToMenu")
+  //多对多
+  roles       RoleAndMenu[] // 与角色的关联
+
+  @@index([parentId]) // 为 parentId 创建索引，加快查询父菜单的速度
+  @@map("adminMenu") // 映射到数据库中的表名
+}
+
+// 角色表
+model adminRole {
+  roleId           String             @id @default(uuid()) // 角色ID（主键）
+  roleName         String             @unique // 角色名称
+  state            Boolean?           @default(true) // 状态
+  createDate       DateTime           @default(now()) // 创建时间
+  updateDate       DateTime           @default(now()) @updatedAt // 更新时间
+  accountId        String // 操作人ID
+  updateId         String?
+  description      String? // 角色描述，可空
+  //多对多
+  RoleAndMenu      RoleAndMenu[] // 角色与菜单的关联
+  //多对多
+  accountsAndRoles accountsAndRoles[] //用户与角色关联
+}
+
+// 用户与角色的连接表
+model accountsAndRoles {
+  accountsAndRolesID String    @id @default(uuid()) // 主键
+  accountId          String
+  roleId             String
+  adminInfo          adminInfo @relation(fields: [accountId], references: [accountId], onDelete: Cascade)
+  roles              adminRole @relation(fields: [roleId], references: [roleId], onDelete: Cascade)
+}
+
+//菜单角色表
+// 角色与菜单的中间表
+model RoleAndMenu {
+  RoleAndMenuID String    @id @default(uuid()) // 主键
+  roleId        String // 角色ID
+  menuId        String // 菜单ID
+  role          adminRole @relation(fields: [roleId], references: [roleId], onDelete: Cascade) // 当角色被删除时，与之相关的RoleMenu也会被删除
+  menu          adminMenu @relation(fields: [menuId], references: [menuId], onDelete: Cascade) // 当菜单被删除时，与之相关的RoleMenu也会被删除
+}
+
+model sysDictionary {
+  dictionaryId String          @id @default(uuid()) // 字典ID（主键）
+  key          String // 键名称
+  value        String // 值
+  level        Int             @default(1) // 等级，表示字典项的层级或优先级
+  description  String? // 描述
+  parentId     String? // 父级字典项ID，允许为空，表示顶级项
+  parent       sysDictionary?  @relation("DictionaryHierarchy", fields: [parentId], references: [dictionaryId])
+  children     sysDictionary[] @relation("DictionaryHierarchy")
+
+  state       Boolean  @default(true) // 状态，表示启用或禁用
+  accountId   String // 创建人ID
+  updatedId   String // 更新人ID，允许为空
+  createdDate DateTime @default(now()) // 创建时间
+  updatedDate DateTime @default(now()) @updatedAt // 更新时间
+
+  @@unique([key, level, parentId]) // 确保每个层级下的键名唯一
+  @@map("sysDictionary") // 映射到数据库中的表名
+}
+
+//招聘管理表
+model recruitment {
+  recruitmentId String   @id @default(uuid()) // 主键，招聘ID
+  title         String // 标题
+  content       String?  @db.LongText // 内容，允许为空
+  isHot         Boolean  @default(false) // 是否热招，默认为否
+  accountId     String // 发布人ID
+  updatedId     String // 更新人ID，允许为空
+  state         Boolean  @default(true) // 状态，表示是否启用
+  createDate    DateTime @default(now()) // 创建时间
+  updateDate    DateTime @default(now()) @updatedAt // 更新时间
+  addressId     String
+  companyId     String
+  categoryId    String
+  degreeId      String
+  experienceId  String
+
+  @@map("recruitment") // 映射到数据库中的表名
+}
+
+model news {
+  newsId           String   @id @default(uuid()) // 主键 
+  title            String // 标题
+  content          String?  @db.LongText // 内容，允许为空
+  accountId        String // 发布人ID
+  updatedId        String // 更新人ID，允许为空
+  state            Boolean  @default(true) // 状态，表示是否启用
+  createDate       DateTime @default(now()) // 创建时间
+  updateDate       DateTime @default(now()) @updatedAt // 更新时间
+  hits             Int      @default(0) // 点击量，默认为0
+  hotSearchWordIds String? // 热搜词Id，允许为空 ，格式为json字符串，需要转换下
+  companyId        String //公司Id
+
+  @@map("news") // 映射到数据库中的表名
+}
+
+model enterpriseHonor {
+  honorId     String   @id @default(uuid()) // 主键
+  name        String // 荣誉名称
+  description String?  @db.LongText // 荣誉描述，允许为空
+  accountId   String // 创建人ID
+  updatedId   String // 更新人ID，允许为空
+  state       Boolean  @default(true) // 状态，表示是否启用
+  createDate  DateTime @default(now()) // 创建时间
+  updateDate  DateTime @default(now()) @updatedAt // 更新时间
+  companyId   String //公司Id
+  newsId      String //新闻ID
+
+  @@map("enterpriseHonor") // 映射到数据库中的表名
+}
+
+//公告管理表
+model announcement {
+  announcementId String   @id @default(uuid()) // 主键
+  title          String   @unique // 标题
+  content        String?  @db.LongText // 内容，允许为空
+  accountId      String // 发布人ID
+  updatedId      String // 更新人ID，允许为空
+  state          Boolean  @default(true) // 状态，表示是否启用
+  createDate     DateTime @default(now()) // 创建时间
+  updateDate     DateTime @default(now()) @updatedAt // 更新时间
+  hits           Int      @default(0) // 点击量，默认为0
+  companyId      String //公司Id
+  file           String?  @db.LongText // 内容，允许为空//附件
+
+  @@map("announcement") // 映射到数据库中的表名
+}
