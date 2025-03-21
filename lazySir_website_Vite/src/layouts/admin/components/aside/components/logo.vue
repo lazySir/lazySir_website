@@ -3,16 +3,16 @@
     <!-- <img src="@/assets/vue.svg" alt="" /> -->
     <img
       style="height: 35px"
-      src="@/assets/images/public/shigaoLogo.png"
+      src="@/assets/images/public/author_avatar2.png"
       alt=""
     />
-    <img
-      v-if="!props.isCollapse"
+    <!-- <img
+    
       style="height: 45px"
       src="@/assets/images/public/shigaoText.png"
       alt=""
-    />
-    <!-- <h1  class="title">世高智能</h1> -->
+    /> -->
+    <h1 v-if="!props.isCollapse" class="title">lazySir - admin</h1>
   </div>
 </template>
 <script lang="ts" setup>
@@ -29,7 +29,7 @@ let props = defineProps(['isCollapse']) //数组|对象写法都可以
 }
 
 .title {
-  font-size: 21.5px;
+  font-size: 15px;
   font-weight: 700;
   color: #303133;
   white-space: nowrap;

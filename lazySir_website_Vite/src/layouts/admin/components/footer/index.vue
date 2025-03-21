@@ -5,7 +5,7 @@
       class="text-[#858585] text-sm no-underline tracking-wide"
       target="_blank"
     >
-      2024 © 世高智能后台管理界面
+      2025 © lazySir - 后台管理界面
     </a>
   </div>
 </template>

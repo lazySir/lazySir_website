@@ -1,5 +1,8 @@
 <template>
-  <el-watermark :font="font" :content="watermark ? ['世高智能', 'Happy Working'] : ''">
+  <el-watermark
+    :font="font"
+    :content="watermark ? ['lazySir - ', 'Happy Working'] : ''"
+  >
     <component :is="LayoutComponents[layout as LayoutType]" />
   </el-watermark>
 </template>
@@ -26,22 +29,30 @@ const LayoutComponents: Record<LayoutType, Component> = {
 //控制当前组件是否销毁
 const adminGlobalStore = useAdminGlobalStore()
 const layout = computed(() => adminGlobalStore.layout)
-watch(() => adminGlobalStore.theme, (newValue, oldValue) => {
-  adminGlobalStore.setTheme(newValue)
-}, { immediate: true })
+watch(
+  () => adminGlobalStore.theme,
+  (newValue, oldValue) => {
+    adminGlobalStore.setTheme(newValue)
+  },
+  { immediate: true },
+)
 
-const isDark = computed(() => adminGlobalStore.theme);
-const watermark = computed(() => adminGlobalStore.watermark);
+const isDark = computed(() => adminGlobalStore.theme)
+const watermark = computed(() => adminGlobalStore.watermark)
 
-const font = reactive({ color: "rgba(0, 0, 0, .15)" });
-watch(isDark, () => {
-  if (isDark.value == 'dark') {
-    font.color = "rgba(255, 255, 255, .15)"
-  } else {
-    font.color = "rgba(0, 0, 0, .15)"
-  }
-}, {
-  immediate: true
-});
+const font = reactive({ color: 'rgba(0, 0, 0, .15)' })
+watch(
+  isDark,
+  () => {
+    if (isDark.value == 'dark') {
+      font.color = 'rgba(255, 255, 255, .15)'
+    } else {
+      font.color = 'rgba(0, 0, 0, .15)'
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 <style scoped></style>
