@@ -7,7 +7,7 @@ const titleMap: TITLEMAP = {
     //博客
     'blog': ' - lazySir_blog',
     //默认
-    '/': ' - lazySir',
+    '/': ' lazySir',
     //后台
     'admin': ' - lazySir_admin'
 
@@ -19,7 +19,7 @@ function setDocumentTitle(path: string, title: string) {
     const pathName = pathArr?.[1];
     //将路径名作为key，获取对应的value
     const titleSuffix = titleMap[pathName];
-    document.title = title + titleSuffix || "默认标题";
+    document.title = title + (titleSuffix ? titleSuffix : "");
 }
 
 // 路由前置守卫

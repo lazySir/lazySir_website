@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-const router = useRouter()
-const toBlog = (name: string) => {
-  router.push(name)
-}
+import NavBar from '@/views/global/navbar/index.vue'
+import home from '@/views/global/home/index.vue'
 </script>
 
 <template>
-  <div>
-    <el-button type="primary" @click="toBlog('Blog')">博客</el-button>
-    <el-button type="primary" @click="toBlog('/')">菜单</el-button>
-    <el-button type="primary" @click="toBlog('adminLogin')">后台</el-button>
-  </div>
+  <Header>
+    <NavBar />
+  </Header>
+
+  <Main class="mx-auto w-[1280px]">
+    <home />
+  </Main>
 </template>
 
 <style scoped></style>

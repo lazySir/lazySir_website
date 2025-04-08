@@ -1,10 +1,10 @@
 export default [
     {
         path: '/',
-        name: 'default',
+        name: 'Home',
         meta: {
             title: 'lazySir',
         },
-        component: () => import('@/views/global/index.vue')
+        component: () => import('@/views/global/index.vue'),
     },
 ]
