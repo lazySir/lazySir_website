@@ -10,7 +10,7 @@ export default [
         component: BlogFront,
         children: [
             {
-                path: '/blog/home', name: 'BlogHome', meta: { title: '首页' }, component: () => import('@/views/blog/home/index.vue')
+                path: '/blog', name: 'Blog', meta: { title: '首页' }, component: () => import('@/views/blog/home/index.vue')
             },
         ]
     },

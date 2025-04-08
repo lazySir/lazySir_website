@@ -7,7 +7,7 @@ const activeIndex = ref(0)
 </script>
 
 <template>
-  <nav class="m-auto flex h-[64px] w-[1500px] justify-between items-center">
+  <nav class="m-auto flex h-[64px] max-w-[1500px] justify-between items-center">
     <div class="flex gap-3 items-center w-[200px] h-full">
       <img
         class="w-10 h-10"
@@ -17,11 +17,7 @@ const activeIndex = ref(0)
       <span class="font-bold text-blog_title_text">lazySir</span>
     </div>
     <div class="flex w-full justify-between items-center gap-3 h-full">
-      <el-input
-        style="width: 240px"
-        placeholder="Please Input"
-        suffix-icon="Search"
-      />
+      <el-input style="width: 150px" placeholder="搜索" suffix-icon="Search" />
       <div class="flex gap-5 justify-center items-center h-full">
         <span>v1.0.0</span>
         <span>关于</span>
