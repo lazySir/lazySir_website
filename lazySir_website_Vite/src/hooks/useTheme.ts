@@ -2,9 +2,10 @@ import { getLightColor, getDarkColor, rgbaToHex } from "@/utils/color";
 import { ElMessage } from 'element-plus';
 import { storeToRefs } from "pinia";
 import { useAdminGlobalStore } from '@/stores/admin/global';
+import { useDark, useToggle } from '@vueuse/core'
 
 //修改主题颜色
-export const useTheme = () => {
+export const useThemeColor = () => {
     const adminGlobalStore = useAdminGlobalStore();
     const { theme, primary } = storeToRefs(adminGlobalStore);
     const changePrimary = (val: string | null) => {
@@ -37,4 +38,14 @@ export const useTheme = () => {
         initTheme,
         changePrimary
     }
+}
+
+
+//修改主题模式
+export function useTheme() {
+    // VueUse 提供的自动检测和存储
+    const isDark = useDark();
+    const toggleTheme = useToggle(isDark);
+
+    return { isDark, toggleTheme };
 }
