@@ -14,7 +14,9 @@ const activeIndex = ref(0)
         src="@/assets/images/public/author_avatar2.png"
         alt=""
       />
-      <span class="font-bold text-blog_title_text">lazySir</span>
+      <span class="font-bold text-blog_title_text dark:text-white"
+        >lazySir</span
+      >
     </div>
     <div class="flex w-full justify-end items-center gap-3 h-full">
       <div class="flex gap-5 justify-center items-center h-full">

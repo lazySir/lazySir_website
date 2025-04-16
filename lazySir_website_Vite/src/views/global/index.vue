@@ -8,7 +8,7 @@ import home from '@/views/global/home/index.vue'
     <NavBar />
   </Header>
 
-  <Main class="mx-auto w-[1280px]">
+  <Main>
     <home />
   </Main>
 </template>
