@@ -95,6 +95,7 @@ declare module 'vue' {
     IMaterialSymbols360: typeof import('~icons/material-symbols/360')['default']
     IUisRightIndent: typeof import('~icons/uis/right-indent')['default']
     Marquee: typeof import('./src/components/public/inspiraUI/Marquee.vue')['default']
+    MorphingTabs: typeof import('./src/components/public/inspiraUI/MorphingTabs.vue')['default']
     RadiantText: typeof import('./src/components/public/inspiraUI/RadiantText.vue')['default']
     ReviewCard: typeof import('./src/components/public/inspiraUI/ReviewCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
