@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import navBar from '@/layouts/blog/components/navbar.vue'
+import navBar from '@/views/global/navbar/index.vue'
 // import NavBarMobile from '@/layouts/front/components/navbar_mobile.vue'
 // import Footer from '@/layouts/front/components/footer.vue'
 </script>
@@ -13,12 +13,11 @@ import navBar from '@/layouts/blog/components/navbar.vue'
       <navBar />
       <!-- <NavBarMobile class="block tablet:hidden" /> -->
     </header>
-    <el-scrollbar :height="'calc(100vh - 60px)'">
-      <main>
-        <router-view></router-view>
-      </main>
-      <!-- <footer class="w-[100vw] h-[150px] tablet:w-full"><Footer /></footer> -->
-    </el-scrollbar>
+
+    <main>
+      <router-view></router-view>
+    </main>
+    <!-- <footer class="w-[100vw] h-[150px] tablet:w-full"><Footer /></footer> -->
   </div>
 </template>
 

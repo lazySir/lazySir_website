@@ -15,6 +15,7 @@ declare module 'vue' {
     BlurReveal: typeof import('./src/components/public/inspiraUI/BlurReveal.vue')['default']
     CalcIcons: typeof import('./src/components/front/calcIcons.vue')['default']
     Category: typeof import('./src/components/admin/category.vue')['default']
+    Dropdown: typeof import('./src/components/public/UiverseUi/dropdown.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']
     ElAnchor: typeof import('element-plus/es')['ElAnchor']
     ElAnchorLink: typeof import('element-plus/es')['ElAnchorLink']
