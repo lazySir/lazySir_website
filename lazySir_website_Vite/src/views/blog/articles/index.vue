@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import markdownContent from '@/views/blog/dir/html/test测试.md?raw'
 //左侧配置
 import ConfigLeft from '@/views/blog/articles/config.vue'
 //博客内容
 import Content from '@/views/blog/articles/content.vue'
 //右侧目录
 import DirectoryRight from '@/views/blog/articles/directory.vue'
-const tontent = ref(markdownContent)
-const editorId = ref('preview-only')
+//引入hooks将filename匹配对应的懒加载路由
+import { useMarkdownLoader } from '@/hooks/useMarkdownLoader'
+import { useRoute } from 'vue-router'
 //检测主题模式
 import { useTheme } from '@/hooks/useTheme'
+const route = useRoute()
+const { content } = useMarkdownLoader(route.params.filename as string)
+const tontent = ref(content)
+const editorId = ref('preview-only')
 interface OptionType {
   value: string
   optionType: 'previewTheme' | 'code'
