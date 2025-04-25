@@ -1,3 +1,12 @@
+---
+title: html内容1
+author: lazySir
+tags: [html, 前端, 教程]
+description: 这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。这是一个简单的 Vue3 教程，适合新手入门。
+cover: https://img.picui.cn/free/2025/04/24/6809afa8357ab.png
+date: 2025-03-18
+---
+
 ## 😲 md-editor-v3
 
 Markdown 编辑器，vue3 版本，使用 jsx 模板 和 typescript 开发，支持切换主题、prettier 美化文本等。
@@ -22,7 +31,7 @@ Markdown 编辑器，vue3 版本，使用 jsx 模板 和 typescript 开发，支
 
 ```vue
 <template>
-  <MdEditor v-model="text" />
+  <MdEditor v-model=text />
 </template>
 
 <script setup>
