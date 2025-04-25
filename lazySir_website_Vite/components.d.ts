@@ -12,6 +12,7 @@ declare module 'vue' {
     AuthBtn: typeof import('./src/components/public/AuthBtn/index.vue')['default']
     Avatar: typeof import('./src/components/public/avatar/index.vue')['default']
     AvatarUpload: typeof import('./src/components/admin/avatarUpload.vue')['default']
+    BasePagination: typeof import('./src/components/public/basePagination.vue')['default']
     BlurReveal: typeof import('./src/components/public/inspiraUI/BlurReveal.vue')['default']
     CalcIcons: typeof import('./src/components/front/calcIcons.vue')['default']
     Category: typeof import('./src/components/admin/category.vue')['default']

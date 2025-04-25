@@ -1,148 +1,97 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { getBlogList } from '@/utils/getBlogStructure'
+import { ref, onMounted, watch } from 'vue'
+import { getBlogList } from '@/utils/blog'
 import { useRouter } from 'vue-router'
 
+import CardLayout from '@/views/blog/home/components/cardLayout.vue'
+import ListLayout from '@/views/blog/home/components/listLayout.vue'
+import WaterfallLayout from '@/views/blog/home/components/waterfallLayout.vue'
+import BasePagination from '@/components/public/basePagination.vue'
+
 const router = useRouter()
+
+// 路由跳转函数，跳转到对应文章详情页
 const goArticle = (filename: string) => {
   router.push(`/blog/article/${filename}`)
 }
-const list = ref<Array<BlogList>>()
-// 显示样式的枚举类型
-type ShowStyle = 'waterfall' | 'card' | 'list'
 
-// 定义 props 接收一个当前的样式类型
-defineProps<{
+// 所有博客数据（平铺的文件列表）
+const allList = ref<blogAPITypes.BlogFile[]>([])
+
+// 当前显示的博客数据（分页）
+const list = ref<blogAPITypes.BlogFile[]>([])
+
+// 展示样式（瀑布流、卡片、列表）
+type ShowStyle = 'waterfall' | 'card' | 'list'
+const props = defineProps<{
   showStyle: ShowStyle
+  folder: string
 }>()
 
-interface BlogList {
-  path: string
-  filename: string
-  title: string
-  date: string
-  tags: string[]
-  description: string
-  cover: string
-  hot: boolean
+// 分页相关的响应式变量
+const currentPage = ref(1) // 当前页码
+const pageSize = ref(10) // 每页数量
+const totalItems = ref(0) // 总数据量
+
+// 计算当前页数据函数
+const computePageList = () => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  list.value = allList.value.slice(start, end)
 }
+//监视folder变化，重新获取数据
+watch(
+  () => props.folder,
+  async (newFolder: string) => {
+    allList.value = (await getBlogList(newFolder)) as blogAPITypes.BlogFile[]
+    totalItems.value = allList.value.length
+    computePageList() // 计算第一页数据
+  },
+)
+// 页面初始化时获取数据
 onMounted(async () => {
-  list.value = await getBlogList()
+  allList.value = (await getBlogList(props.folder)) as blogAPITypes.BlogFile[]
+  totalItems.value = allList.value.length
+  computePageList() // 计算第一页数据
 })
+
+// 页面大小改变时更新
+const onPageSizeChange = (size: number) => {
+  pageSize.value = size
+  currentPage.value = 1 // 重置到第一页
+  computePageList()
+}
+
+// 当前页改变时更新
+const onCurrentPageChange = (page: number) => {
+  currentPage.value = page
+  computePageList()
+}
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col mt-3">
     <!-- 瀑布流布局 -->
-    <div
+    <WaterfallLayout
       v-if="showStyle === 'waterfall'"
-      class="columns-1 sm:columns-2 xl:columns-3 gap-4 space-y-4"
-    >
-      <el-card
-        v-for="item in list"
-        :key="item.title"
-        @click="goArticle(item.filename)"
-        class="mb-4 break-inside-avoid shadow-md transition-transform duration-300 hover:scale-[1.01]"
-        shadow="hover"
-      >
-        <div class="flex flex-col gap-3">
-          <img
-            v-if="item.cover"
-            :src="item.cover"
-            alt="封面"
-            class="w-full object-cover rounded-lg shadow-sm"
-          />
-
-          <div class="text-xl font-semibold text-blog_title_text">
-            {{ item.title }}
-          </div>
-
-          <div class="text-blog_text text-sm whitespace-pre-line">
-            {{ item.description }}
-          </div>
-
-          <div
-            class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 mt-2"
-          >
-            <span>📅 日期：{{ item.date }}</span>
-            <span>👤 作者：lazySir</span>
-            <span class="flex gap-1 items-center">
-              🏷️ 标签：
-              <span
-                v-for="tag in item.tags"
-                :key="tag"
-                class="text-blue-500 bg-blue-50 rounded px-2 py-0.5"
-              >
-                {{ tag }}
-              </span>
-            </span>
-            <span>⏱️ 阅读需要：9分钟</span>
-          </div>
-        </div>
-      </el-card>
-    </div>
-    <!-- 卡片布局 -->
-    <div
+      :list="list"
+      @goArticle="goArticle"
+    />
+    <CardLayout
       v-else-if="showStyle === 'card'"
-      class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
-    >
-      <el-card
-        v-for="item in list"
-        :key="item.title"
-        class="transition-all duration-300 hover:scale-[1.01] shadow-md"
-        shadow="hover"
-      >
-        <div class="flex flex-col gap-3">
-          <img
-            v-if="item.cover"
-            :src="item.cover"
-            alt="封面"
-            class="w-full h-48 object-cover rounded-lg shadow-sm"
-          />
+      :list="list"
+      @goArticle="goArticle"
+    />
+    <ListLayout :list="list" @goArticle="goArticle" v-else />
 
-          <div class="text-xl font-semibold text-blog_title_text">
-            {{ item.title }}
-          </div>
-
-          <div class="text-blog_text text-sm line-clamp-3">
-            {{ item.description }}
-          </div>
-
-          <div
-            class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 mt-2"
-          >
-            <span>📅 日期：{{ item.date }}</span>
-            <span>👤 作者：lazySir</span>
-            <span class="flex gap-1 items-center">
-              🏷️ 标签：
-              <span
-                v-for="tag in item.tags"
-                :key="tag"
-                class="text-blue-500 bg-blue-50 rounded px-2 py-0.5"
-              >
-                {{ tag }}
-              </span>
-            </span>
-            <span>⏱️ 阅读需要：9分钟</span>
-          </div>
-        </div>
-      </el-card>
-    </div>
-    <!-- 列表布局 -->
-    <div v-else>列表布局</div>
-    <!-- <el-pagination
-      class="self-center mt-4"
-      v-model:current-page="currentPage4"
-      v-model:page-size="pageSize4"
-      :page-sizes="[100, 200, 300, 400]"
-      :size="size"
-      :disabled="disabled"
-      :background="background"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="400"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    /> -->
+    <BasePagination
+      class="self-center mt-3"
+      v-model:currentPage="currentPage"
+      v-model:pageSize="pageSize"
+      :total="totalItems"
+      @sizeChange="onPageSizeChange"
+      @currentChange="onCurrentPageChange"
+    />
   </div>
 </template>
 
