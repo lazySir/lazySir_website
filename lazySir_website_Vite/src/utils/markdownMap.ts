@@ -6,11 +6,14 @@
 //   }
 export const markdownMap: Record<string, () => Promise<string>> = Object.fromEntries(
     Object.entries(
-        import.meta.glob('@/views/blog/dir/**/*.md', { as: 'raw' })
+        import.meta.glob('@/views/blog/dir/**/*.md', {
+            query: '?raw',
+            import: 'default',
+        })
     ).map(([path, loader]) => {
         // 提取文件名（包含 .md）作为 key，例如：test测试.md
         const match = path.match(/\/([^/]+\.md)$/)
         const key = match ? match[1] : path
-        return [key, loader]
+        return [key, loader as () => Promise<string>]  // 👈 加类型断言
     })
 )

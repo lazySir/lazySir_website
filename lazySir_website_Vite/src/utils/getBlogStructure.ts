@@ -29,17 +29,22 @@ function parseFrontmatter(content: string): Record<string, any> {
 }
 
 export async function getBlogList() {
-    const modules = import.meta.glob('@/views/blog/dir/**/*.md', { as: 'raw' });
+    const modules = import.meta.glob('@/views/blog/dir/**/*.md', {
+        query: '?raw',
+        import: 'default',
+    });
 
     const blogList: any[] = [];
 
     for (const path in modules) {
-        const rawContent = await modules[path]();
+        const rawContent = await (modules[path] as () => Promise<string>)(); // 类型断言
+
+        // 假设 parseFrontmatter 会提取出 title, date, author, tags 等
         const frontmatter = parseFrontmatter(rawContent);
 
         blogList.push({
-            path: path.replace(/^\/?src/, ''), // 去掉/src前缀
-            filename: path.split('/').pop(),   // 提取文件名
+            path: path.replace(/^\/?src/, ''),       // 去掉 /src 前缀
+            filename: path.split('/').pop(),         // 提取文件名
             ...frontmatter,
         });
     }
