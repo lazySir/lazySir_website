@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 
+//右侧信息栏位
+import Info from '@/views/blog/home/info.vue'
+
 // 引入获取博客结构化数据的工具方法
 import { getStructuredBlogList } from '@/utils/blog'
 
@@ -60,9 +63,9 @@ const changeShowStyle = (key: blogAPITypes.DisplayMode) => {
 </script>
 
 <template>
-  <div class="flex w-full min-h-[70vh]">
+  <div class="flex w-full min-h-[70vh] gap-3">
     <!-- 左侧内容区域 -->
-    <div class="w-[60vw] max-w-[60vw]">
+    <div class="w-[55vw] max-w-[55vw]">
       <el-card class="min-w-full p-1" shadow="hover">
         <div class="flex justify-between">
           <!-- 顶部标签栏组件 -->
@@ -90,9 +93,7 @@ const changeShowStyle = (key: blogAPITypes.DisplayMode) => {
     </div>
 
     <!-- 右侧预留区域 -->
-    <div class="w-[15vw] flex justify-center">
-      <span>右侧内容</span>
-    </div>
+    <Info :total-blogs="18" :monthly-update="5" :weekly-update="2" />
   </div>
 </template>
 
