@@ -10,6 +10,7 @@ import { createHtmlPlugin } from 'vite-plugin-html'
 import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/', //配置根目录
   plugins: [
     vue(),
     vueDevTools(),
