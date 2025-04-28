@@ -1,69 +1,33 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+const props = defineProps<{
+  list: blogAPITypes.BlogFolder[] // 接收的是 BlogFolder 数组
+}>()
+import { ref, onMounted, nextTick, computed, watch } from 'vue'
+import OpcityCard from '@/components/public/opcityCard.vue'
 
 // 控制展开
 const expanded = ref(false)
 // 控制是否需要显示"查看更多"
 const showExpandButton = ref(false)
 
-// 标签数据（可以改成props）
-const tags = [
-  '前端',
-  '后端',
-  '算法',
-  '数据结构',
-  '人工智能',
-  '云计算',
-  '大数据',
-  '数据库',
-  '安全',
-  '架构',
-  'DevOps',
-  '微服务',
-  '测试',
-  '性能优化',
-  '项目管理',
-  '区块链',
-  '物联网',
-  '游戏开发',
-  '爬虫',
-  '机器学习',
-  '深度学习',
-  'NLP',
-  '前端',
-  '后端',
-  '算法',
-  '数据结构',
-  '前端',
-  '后端',
-  '算法',
-  '数据结构',
-  '人工智能',
-  '云计算',
-  '大数据',
-  '数据库',
-  '安全',
-  '架构',
-  'DevOps',
-  '微服务',
-  '测试',
-  '性能优化',
-  '项目管理',
-  '区块链',
-  '物联网',
-  '游戏开发',
-  '爬虫',
-  '机器学习',
-  '深度学习',
-  'NLP',
-  '前端',
-  '后端',
-  '算法',
-  '数据结构',
-]
-
 // 获取标签容器元素
 const tagsRef = ref<HTMLElement>()
+
+// 从 list 中提取所有标签，并去重
+const tags = computed(() => {
+  const allTags: string[] = []
+  // 遍历每个 BlogFolder
+  props.list.forEach((folder: blogAPITypes.BlogFolder) => {
+    // 遍历每个 BlogFolder 中的 BlogFile
+    folder.files.forEach((file: blogAPITypes.BlogFile) => {
+      if (file.tags) {
+        allTags.push(...file.tags)
+      }
+    })
+  })
+  // 去重
+  return [...new Set(allTags)]
+})
 
 // 检查标签是否超出最大高度
 const checkOverflow = () => {
@@ -81,13 +45,18 @@ onMounted(() => {
     checkOverflow()
   })
 })
+
+// 监听tags变化，重新检查是否溢出
+watch(tags, () => {
+  nextTick(() => {
+    checkOverflow()
+  })
+})
 </script>
 
 <template>
   <!-- 标签显示 -->
-  <div
-    class="w-[17vw] p-4 rounded-2xl bg-white/30 shadow-[0_1px_8px_0_rgba(0,0,0,0.1)] hover:shadow-2xl transition-all flex flex-col"
-  >
+  <OpcityCard class="w-[17vw] flex flex-col">
     <span class="text-sm mb-2">🏷️标签</span>
 
     <!-- 标签区 -->
@@ -113,7 +82,7 @@ onMounted(() => {
     >
       {{ expanded ? '收起' : '查看更多' }}
     </div>
-  </div>
+  </OpcityCard>
 </template>
 
 <style scoped></style>

@@ -20,6 +20,7 @@ export default {
       colors: {
         "blog_title_text": '#3c3c44',
         "blog_text": '#86909c',
+        "blog_text_dark": '#b8c2cc',
         "lazySir_green": '#009688',
         // inspira配置
         border: "hsl(var(--border))",

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import opcityCard from '@/components/public/opcityCard.vue'
 defineProps<{
   list: Array<blogAPITypes.BlogFile>
 }>()
@@ -12,12 +13,11 @@ const goArticle = (filename: string) => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <el-card
+    <opcityCard
+      class="flex flex-col justify-between"
       v-for="item in list"
       :key="item.filename"
       @click="goArticle(item.filename)"
-      class="transition-all duration-300 hover:scale-[1.01] shadow-md"
-      shadow="hover"
     >
       <div class="flex flex-col sm:flex-row gap-4 p-4">
         <div class="flex-1 flex flex-col pr-4 min-w-0">
@@ -59,7 +59,7 @@ const goArticle = (filename: string) => {
           class="w-32 h-32 object-cover rounded-lg shadow-sm ml-4"
         />
       </div>
-    </el-card>
+    </opcityCard>
   </div>
 </template>
 

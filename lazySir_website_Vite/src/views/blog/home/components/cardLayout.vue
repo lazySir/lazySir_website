@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import OpcityCard from '@/components/public/opcityCard.vue'
 defineProps<{
   list: Array<blogAPITypes.BlogFile>
 }>()
@@ -12,7 +13,7 @@ const goArticle = (filename: string) => {
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-    <el-card
+    <OpcityCard
       v-for="item in list"
       :key="item.filename"
       @click="goArticle(item.filename)"
@@ -50,7 +51,7 @@ const goArticle = (filename: string) => {
           <span>⏱️ 阅读需要：9分钟</span>
         </div>
       </div>
-    </el-card>
+    </OpcityCard>
   </div>
 </template>
 

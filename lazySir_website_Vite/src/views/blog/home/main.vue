@@ -1,35 +1,29 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-
+import OpcityCard from '@/components/public/opcityCard.vue'
 //右侧信息栏位
 import Info from '@/views/blog/home/info.vue'
 
 // 引入获取博客结构化数据的工具方法
 import { getStructuredBlogList } from '@/utils/blog'
-
 // 博客结构化列表，包含多个文件夹及其内容
 const structuredList = ref([] as blogAPITypes.BlogFolder[])
-
 // 页面加载完成后获取博客结构数据
 onMounted(async () => {
   structuredList.value = await getStructuredBlogList()
-  activeTab.value = navList.value[0] ?? '' // 默认选中第一个标签，防止为空
+  activeTab.value = navList.value[0] ?? '' // 默认选中第一个标签，防止为空s
 })
-
 // 计算属性：提取每个博客文件夹的 folder 名称用于导航标签
 const navList = computed(() => {
   const folderList = structuredList.value.map((item) => item.folder)
   folderList.unshift('all') // 在数组的开头插入 'all'
   return folderList
 })
-
 // 当前选中的标签名，初始为空字符串，避免未定义
 const activeTab = ref('')
-
 // 引入自定义的标签组件和博客列表组件
 import MorphingTabs from '@/components/public/inspiraUI/MorphingTabs.vue'
 import BlogList from '@/views/blog/home/list.vue'
-
 // Iconify 图标样式定义
 const IconifyStyle = { width: '18px', height: '18px' }
 // 可供切换的展示样式
@@ -66,7 +60,7 @@ const changeShowStyle = (key: blogAPITypes.DisplayMode) => {
   <div class="flex w-full min-h-[70vh] gap-3">
     <!-- 左侧内容区域 -->
     <div class="w-[55vw] max-w-[55vw]">
-      <el-card class="min-w-full p-1" shadow="hover">
+      <OpcityCard class="w-full p-4 flex flex-col justify-between text-center">
         <div class="flex justify-between">
           <!-- 顶部标签栏组件 -->
           <MorphingTabs
@@ -87,13 +81,13 @@ const changeShowStyle = (key: blogAPITypes.DisplayMode) => {
             />
           </div>
         </div>
-      </el-card>
+      </OpcityCard>
       <!-- 博客列表内容区域 -->
       <BlogList :show-style="ShowStyle" :folder="activeTab" />
     </div>
 
     <!-- 右侧预留区域 -->
-    <Info :total-blogs="18" :monthly-update="5" :weekly-update="2" />
+    <Info :list="structuredList" />
   </div>
 </template>
 
