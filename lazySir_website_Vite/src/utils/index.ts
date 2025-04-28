@@ -126,3 +126,40 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export type ObjectValues<T> = T[keyof T];
+
+
+/**
+ * 动态加载脚本
+ * @param {string} src - 脚本 URL
+ * * @param {object} option - 配置
+ */
+export const loadScript = (src: string, option = {}) => {
+    if (typeof document === "undefined" || !src) return false;
+    // 获取配置
+    const { async = false, reload = false, callback } = option as any;
+    // 检查是否已经加载过此脚本
+    const existingScript = document.querySelector(`script[src="${src}"]`);
+    if (existingScript) {
+        console.log("已有重复脚本");
+        if (!reload) {
+            callback && callback(null, existingScript);
+            return false;
+        }
+        existingScript.remove();
+    }
+    // 创建一个新的script标签并加载
+    return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        if (async) script.async = true;
+        script.onload = () => {
+            resolve(script);
+            callback && callback(null, script);
+        };
+        script.onerror = (error) => {
+            reject(error);
+            callback && callback(error);
+        };
+        document.head.appendChild(script);
+    });
+};
