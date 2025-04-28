@@ -48,7 +48,7 @@ const secondRow = ref(reviews.slice(reviews.length / 2))
 
 <template>
   <div
-    class="relative flex w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background"
+    class="relative flex flex-col items-center justify-center overflow-hidden rounded-lg bg-background"
   >
     <!-- First Marquee -->
     <Marquee pause-on-hover class="[--duration:20s]">

@@ -19,19 +19,24 @@ function getDark() {
 
 <template>
   <AuroraBackground>
-    <div class="max-w-[1280px] h-[50vh] flex items-center justify-between">
+    <div
+      class="w-[90vw] mx-auto tablet:w-[1280px] h-[50vh] flex items-center justify-between"
+    >
       <!-- 左侧 -->
       <div class="flex-1 gap-5 flex flex-col">
         <!-- 左侧上 -->
-        <div>
-          <span
-            class="text-4xl font-bold text-blog_title_text bg-gradient-to-r from-blue-400 to-green-600 text-transparent bg-clip-text"
-          >
-            你好！我是LazySir
-          </span>
-          <span class="text-4xl">👋</span>
+        <div class="flex flex-col items-start">
+          <!-- 招呼 -->
+          <div class="flex text-4xl">
+            <span
+              class="text-4xl font-bold text-blog_title_text bg-gradient-to-r from-blue-400 to-green-600 text-transparent bg-clip-text"
+            >
+              你好！我是LazySir </span
+            >👋
+          </div>
+          <!-- 明亮文字 -->
           <RadiantText
-            class="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400"
+            class="flex py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400"
             :duration="8"
           >
             <span class="pt-5 font-bold"

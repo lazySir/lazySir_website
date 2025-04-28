@@ -56,7 +56,7 @@ const goArticle = (filename: string) => {
         <img
           :src="item.cover || '/blog/default_blogImg.png'"
           alt="封面"
-          class="w-32 h-32 object-cover rounded-lg shadow-sm ml-4"
+          class="hidden tablet:block w-32 h-32 object-cover rounded-lg shadow-sm ml-4"
         />
       </div>
     </opcityCard>

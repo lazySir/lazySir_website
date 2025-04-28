@@ -59,7 +59,7 @@ const changeShowStyle = (key: blogAPITypes.DisplayMode) => {
 <template>
   <div class="flex w-full min-h-[70vh] gap-3">
     <!-- 左侧内容区域 -->
-    <div class="w-[55vw] max-w-[55vw]">
+    <div class="w-[80vw] table:w-[55vw] table:max-w-[55vw]">
       <OpcityCard class="w-full p-4 flex flex-col justify-between text-center">
         <div class="flex justify-between">
           <!-- 顶部标签栏组件 -->

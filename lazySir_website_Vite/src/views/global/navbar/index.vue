@@ -18,7 +18,9 @@ const activeIndex = ref(0)
         >lazySir</span
       >
     </div>
-    <div class="flex w-full justify-end items-center gap-3 h-full">
+    <div
+      class="hidden tablet:flex w-full justify-end items-center gap-3 h-full"
+    >
       <div class="flex gap-5 justify-center items-center h-full">
         <span>博客</span>
         <span>个人作品展示</span>

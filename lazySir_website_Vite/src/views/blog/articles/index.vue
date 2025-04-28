@@ -38,7 +38,10 @@ const { isDark } = useTheme()
 <template>
   <div class="flex">
     <!-- 左侧固定 -->
-    <ConfigLeft @update:modelValue="handleOptionsChange" />
+    <ConfigLeft
+      class="hidden tablet:block"
+      @update:modelValue="handleOptionsChange"
+    />
     <!-- 中间内容 -->
     <Content
       :id="editorId"
@@ -48,6 +51,10 @@ const { isDark } = useTheme()
       :content="tontent"
     />
     <!-- 右侧目录固定 -->
-    <DirectoryRight :is-dark="isDark" :editor-id="editorId" />
+    <DirectoryRight
+      class="hidden tablet:block"
+      :is-dark="isDark"
+      :editor-id="editorId"
+    />
   </div>
 </template>

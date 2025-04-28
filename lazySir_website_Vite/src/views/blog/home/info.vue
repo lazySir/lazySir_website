@@ -8,7 +8,7 @@ import BlogDate from '@/views/blog/home/components/blogData.vue'
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="hidden tablet:flex flex-col gap-2">
     <BlogDate :list="list" />
     <TagList :list="list" />
     <SiteData />

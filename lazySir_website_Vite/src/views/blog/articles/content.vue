@@ -17,7 +17,7 @@ const cleanContent = computed(() => {
 </script>
 
 <template>
-  <div class="w-[70vw] p-4">
+  <div class="tablet:w-[70vw] w-[100vw] p-4">
     <MdPreview
       :codeTheme="codeColor"
       :preview-theme="previewTheme"
