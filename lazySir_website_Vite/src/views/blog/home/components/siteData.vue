@@ -27,9 +27,6 @@ onMounted(() => {
 
 <template>
   <OpcityCard class="w-[17vw] gap-2 flex flex-col">
-    <span id="busuanzi_container_site_pv"
-      >本站总访问量<span id="busuanzi_value_site_pv"></span>次</span
-    >
     <span class="text-sm mb-2">📈站点数据</span>
 
     <div class="flex flex-col gap-2">
