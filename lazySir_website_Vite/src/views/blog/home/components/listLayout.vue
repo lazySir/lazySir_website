@@ -23,19 +23,19 @@ const goArticle = (filename: string) => {
         <div class="flex-1 flex flex-col pr-4 min-w-0">
           <!-- 标题部分 -->
           <div
-            class="text-xl font-semibold text-blog_title_text mb-2 line-clamp-1"
+            class="text-xl font-semibold text-blog_title_text mb-2 line-clamp-1 dark:text-blog_title_text_dark"
           >
             {{ item.title }}
           </div>
 
           <!-- 描述部分 -->
-          <div class="text-blog_text text-sm mb-3">
+          <div class="text-blog_text text-sm mb-3 dark:text-blog_text_dark">
             {{ item.description }}
           </div>
 
           <!-- 信息部分 -->
           <div
-            class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 mt-auto"
+            class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 mt-auto dark:text-blog_text_dark"
           >
             <span>📅 日期：{{ item.date }}</span>
             <span>👤 作者：lazySir</span>

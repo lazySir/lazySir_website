@@ -28,15 +28,21 @@ const goArticle = (filename: string) => {
           class="w-full object-cover rounded-lg shadow-sm"
         />
 
-        <div class="text-xl font-semibold text-blog_title_text">
+        <div
+          class="text-xl font-semibold text-blog_title_text dark:text-blog_title_text_dark"
+        >
           {{ item.title }}
         </div>
 
-        <div class="text-blog_text text-sm whitespace-pre-line">
+        <div
+          class="text-blog_text text-sm whitespace-pre-line dark:text-blog_text_dark"
+        >
           {{ item.description }}
         </div>
 
-        <div class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 mt-2">
+        <div
+          class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 mt-2 dark:text-blog_text_dark"
+        >
           <span>📅 日期：{{ item.date }}</span>
           <span>👤 作者：lazySir</span>
           <span class="flex gap-1 items-center">

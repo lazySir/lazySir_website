@@ -57,7 +57,7 @@ watch(tags, () => {
 <template>
   <!-- 标签显示 -->
   <OpcityCard class="w-[17vw] flex flex-col">
-    <span class="text-sm mb-2">🏷️标签</span>
+    <span class="text-sm mb-2 dark:text-blog_title_text_dark">🏷️标签</span>
 
     <!-- 标签区 -->
     <div

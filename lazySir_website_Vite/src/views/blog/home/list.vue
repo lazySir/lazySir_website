@@ -85,7 +85,7 @@ const onCurrentPageChange = (page: number) => {
     <ListLayout :list="list" @goArticle="goArticle" v-else />
 
     <BasePagination
-      class="self-center mt-3"
+      class="self-center mt-3 mb-3"
       v-model:currentPage="currentPage"
       v-model:pageSize="pageSize"
       :total="totalItems"

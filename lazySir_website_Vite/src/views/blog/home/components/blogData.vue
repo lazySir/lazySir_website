@@ -70,10 +70,15 @@ const stats = [
             {{ item.prefix || '' }}
             {{ { totalBlogs, monthlyUpdate, weeklyUpdate }[item.valueKey] }}
           </div>
-          <div class="text-blog_text text-sm">{{ item.label }}</div>
+          <div class="text-blog_text text-sm dark:text-blog_text_dark">
+            {{ item.label }}
+          </div>
         </div>
         <!-- 中间的竖线分隔符，最后一个不要加 -->
-        <div class="text-blog_text text-xs" v-if="index < stats.length - 1">
+        <div
+          class="text-blog_text text-xs dark:text-blog_text_dark"
+          v-if="index < stats.length - 1"
+        >
           |
         </div>
       </template>

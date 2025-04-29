@@ -27,9 +27,9 @@ onMounted(() => {
 
 <template>
   <OpcityCard class="w-[17vw] gap-2 flex flex-col">
-    <span class="text-sm mb-2">📈站点数据</span>
+    <span class="text-sm mb-2 dark:text-blog_title_text_dark">📈站点数据</span>
 
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 dark:text-blog_text_dark">
       <span>⏳建站天数： {{ siteDays }} 天</span>
       <span>📊总访问量：<span id="busuanzi_value_site_pv">0</span> 次</span>
       <span>👥总访人数：<span id="busuanzi_value_site_uv">0</span> 人</span>
