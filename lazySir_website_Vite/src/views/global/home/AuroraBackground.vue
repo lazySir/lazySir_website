@@ -12,9 +12,6 @@ const toBlog = (name: string) => {
 
 let { isDark } = useTheme()
 const bgColor = computed(() => (isDark.value ? '#000' : '#fff'))
-function getDark() {
-  console.log(bgColor)
-}
 </script>
 
 <template>

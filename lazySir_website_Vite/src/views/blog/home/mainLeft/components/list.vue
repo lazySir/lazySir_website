@@ -27,7 +27,6 @@ const blogStore = useBlogStore()
 
 // 当前分页数据
 const list = computed(() => blogStore.filteredBlogList)
-console.log('s', list)
 // 分页相关数据
 const currentPage = computed({
   get: () => blogStore.currentPage,
