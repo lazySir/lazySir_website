@@ -1,10 +1,9 @@
 <script setup lang="ts">
-const props = defineProps<{
-  list: blogAPITypes.BlogFolder[] // 接收的是 BlogFolder 数组
-}>()
-import { ref, onMounted, nextTick, computed, watch } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import OpcityCard from '@/components/public/opcityCard.vue'
-
+const props = defineProps({
+  tags: Array as () => string[],
+})
 // 控制展开
 const expanded = ref(false)
 // 控制是否需要显示"查看更多"
@@ -12,22 +11,6 @@ const showExpandButton = ref(false)
 
 // 获取标签容器元素
 const tagsRef = ref<HTMLElement>()
-
-// 从 list 中提取所有标签，并去重
-const tags = computed(() => {
-  const allTags: string[] = []
-  // 遍历每个 BlogFolder
-  props.list.forEach((folder: blogAPITypes.BlogFolder) => {
-    // 遍历每个 BlogFolder 中的 BlogFile
-    folder.files.forEach((file: blogAPITypes.BlogFile) => {
-      if (file.tags) {
-        allTags.push(...file.tags)
-      }
-    })
-  })
-  // 去重
-  return [...new Set(allTags)]
-})
 
 // 检查标签是否超出最大高度
 const checkOverflow = () => {
@@ -39,19 +22,20 @@ const checkOverflow = () => {
   }
 }
 
-// 初始化检测
 onMounted(() => {
   nextTick(() => {
     checkOverflow()
   })
 })
-
-// 监听tags变化，重新检查是否溢出
-watch(tags, () => {
-  nextTick(() => {
+// 监听tags变化，重新检测
+watch(
+  () => props.tags,
+  async () => {
+    await nextTick()
     checkOverflow()
-  })
-})
+  },
+  { deep: true }, // tags数组内部元素变化也能监听到
+)
 </script>
 
 <template>

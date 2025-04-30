@@ -44,12 +44,12 @@ const goArticle = (filename: string) => {
         >
           <span>📅 日期：{{ item.date }}</span>
           <span>👤 作者：lazySir</span>
-          <span class="flex gap-1 items-center">
+          <span class="flex flex-wrap gap-1 items-center">
             🏷️ 标签：
             <span
               v-for="tag in item.tags"
               :key="tag"
-              class="text-blue-500 bg-blue-50 rounded px-2 py-0.5"
+              class="text-lazySir_green bg-blue-50 rounded px-2 py-0.5"
             >
               {{ tag }}
             </span>

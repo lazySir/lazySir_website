@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Title from '@/views/blog/home/title.vue'
-import Main from '@/views/blog/home/main.vue'
+import Title from '@/views/blog/home/components/title.vue'
+import Main from '@/views/blog/home/components/main.vue'
 </script>
 
 <template>
