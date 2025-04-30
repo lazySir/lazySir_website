@@ -38,45 +38,64 @@ const CodeOptions = [
 
 <template>
   <div
-    class="w-[15vw] p-4 border-r sticky top-[80px] h-[calc(100vh-80px)] overflow-auto"
+    class="w-[15vw] p-4 border-r sticky top-[80px] h-[calc(100vh-80px)] overflow-auto flex flex-col gap-6 bg-white"
   >
-    <div class="flex items-center justify-center">
-      <span>编辑器模式：</span>
-      <el-dropdown trigger="click">
-        <span class="el-dropdown-link">
-          {{ ThemeselectedOption
-          }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
-        </span>
+    <!-- 编辑器模式 -->
+    <div class="flex flex-col gap-2">
+      <div
+        class="text-sm font-semibold text-gray-700 flex items-center justify-between"
+      >
+        <span>编辑器模式</span>
+      </div>
+      <el-dropdown trigger="click" class="w-full">
+        <div
+          class="el-dropdown-link flex items-center justify-between p-2 border rounded hover:bg-gray-100 cursor-pointer"
+        >
+          <span>{{ ThemeselectedOption }}</span>
+          <el-icon><arrow-down /></el-icon>
+        </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item
               v-for="item in ThemeOptions"
+              :key="item.value"
               @click="
                 selectedChange({
                   value: item.value,
                   optionType: 'previewTheme',
                 })
               "
-              >{{ item.label }}</el-dropdown-item
             >
+              {{ item.label }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </div>
-    <div>
-      <span>代码块高亮模式：</span>
-      <el-dropdown trigger="click">
-        <span class="el-dropdown-link">
-          {{ CodeSelectedOption
-          }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
-        </span>
+
+    <!-- 代码块高亮模式 -->
+    <div class="flex flex-col gap-2">
+      <div
+        class="text-sm font-semibold text-gray-700 flex items-center justify-between"
+      >
+        <span>代码块高亮</span>
+      </div>
+      <el-dropdown trigger="click" class="w-full">
+        <div
+          class="el-dropdown-link flex items-center justify-between p-2 border rounded hover:bg-gray-100 cursor-pointer"
+        >
+          <span>{{ CodeSelectedOption }}</span>
+          <el-icon><arrow-down /></el-icon>
+        </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item
               v-for="item in CodeOptions"
+              :key="item.value"
               @click="selectedChange({ value: item.value, optionType: 'code' })"
-              >{{ item.label }}</el-dropdown-item
             >
+              {{ item.label }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
