@@ -2,22 +2,30 @@ import { defineStore } from 'pinia'
 // 引入获取博客结构化数据的工具方法
 import { getStructuredBlogList } from '@/utils/blog'
 import dayjs from 'dayjs' // 要安装 dayjs，npm install dayjs
-// --- 新增：将结构化数据拍平成纯数组 ---
-
+import router from "@/router";
 
 //1.定义容器
 //参数1：容器的ID，必须唯一（可以自己取名），将来Pinia会把所有的容器挂在到跟容器
 export const useBlogStore = defineStore('blogStore', {
-
+    // 开启数据持久化
+    persist: {
+        // enabled:true,
+        storage: window.sessionStorage,
+    },
     state: () => {
         return {
             blogList: [] as blogAPITypes.BlogFolder[],//所有的文章数据
             showList: [] as blogAPITypes.BlogFile[],//展示的文章数据
+            currentBlog: {} as blogAPITypes.BlogFile,         //当前选中的文章
             total: 0, //总计条数
             activeTab: 'all' as string, // 默认选中第一个标签，防止为空
             showStyle: 'list' as blogAPITypes.DisplayMode, // 默认展示样式
             currentPage: 1, // 当前页码
             pageSize: 10, // 每页条数
+            //md主题的preview-theme
+            previewTheme: 'default',
+            //md主题的代码块高亮显示code
+            codeColor: 'atom'
         }
     },
     //相当于computed
@@ -88,6 +96,13 @@ export const useBlogStore = defineStore('blogStore', {
             const start = (state.currentPage - 1) * state.pageSize
             const end = start + state.pageSize
             return filtered.slice(start, end)
+        },
+        //根据当前选中的文章的tags，获取所有相关的文章
+        relatedBlogs(state) {
+            const tags = state.currentBlog.tags || []
+            return state.blogList.flatMap(folder => folder.files).filter(file => {
+                return tags.some(tag => file.tags?.includes(tag))
+            })
         }
     },
 
@@ -106,6 +121,11 @@ export const useBlogStore = defineStore('blogStore', {
         //修改当前展示的样式
         changeShowStyle(style: blogAPITypes.DisplayMode) {
             this.showStyle = style
+        },
+        //修改当前选中的文章
+        changeCurrentBlog(blog: blogAPITypes.BlogFile) {
+            this.currentBlog = blog
+            router.push(`/blog/article/${blog.filename}`)
         }
     }
 })

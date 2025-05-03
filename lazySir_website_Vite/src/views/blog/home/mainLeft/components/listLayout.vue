@@ -6,8 +6,8 @@ defineProps<{
 
 const emit = defineEmits(['goArticle'])
 
-const goArticle = (filename: string) => {
-  emit('goArticle', filename)
+const goArticle = (blog: blogAPITypes.BlogFile) => {
+  emit('goArticle', blog)
 }
 </script>
 
@@ -17,7 +17,7 @@ const goArticle = (filename: string) => {
       class="flex flex-col justify-between"
       v-for="item in list"
       :key="item.filename"
-      @click="goArticle(item.filename)"
+      @click="goArticle(item)"
     >
       <div class="flex flex-col sm:flex-row gap-4 p-4">
         <div class="flex-1 flex flex-col pr-4 min-w-0">

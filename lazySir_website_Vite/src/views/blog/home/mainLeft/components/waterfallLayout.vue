@@ -6,8 +6,8 @@ defineProps<{
 
 const emit = defineEmits(['goArticle'])
 
-const goArticle = (filename: string) => {
-  emit('goArticle', filename)
+const goArticle = (blog: blogAPITypes.BlogFile) => {
+  emit('goArticle', blog)
 }
 </script>
 
@@ -16,7 +16,7 @@ const goArticle = (filename: string) => {
     <OpcityCard
       v-for="item in list"
       :key="item.filename"
-      @click="goArticle(item.filename)"
+      @click="goArticle(item)"
       class="mb-4 break-inside-avoid shadow-md transition-transform duration-300 hover:scale-[1.01]"
       shadow="hover"
     >

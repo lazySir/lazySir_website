@@ -15,7 +15,6 @@ declare module 'vue' {
     Category: typeof import('./src/components/admin/category.vue')['default']
     Dropdown: typeof import('./src/components/public/UiverseUi/dropdown.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCard: typeof import('element-plus/es')['ElCard']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']

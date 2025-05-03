@@ -8,6 +8,7 @@ declare namespace blogAPITypes {
         description?: string
         cover?: string
         date?: string
+        content?: string
     }
 
     interface BlogFolder {

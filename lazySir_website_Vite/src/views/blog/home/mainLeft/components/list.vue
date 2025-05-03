@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useBlogStore } from '@/stores/blog' // 假设你的 pinia 叫这个
 
 import CardLayout from '@/views/blog/home/mainLeft/components/cardLayout.vue'
@@ -16,14 +15,13 @@ const layoutMap = {
 const layoutComponent = computed(() => {
   return layoutMap[blogStore.showStyle] || CardLayout
 })
-// 路由跳转
-const router = useRouter()
-const goArticle = (filename: string) => {
-  router.push(`/blog/article/${filename}`)
-}
 
 // 取 pinia 里的 store
 const blogStore = useBlogStore()
+//点击文字后调用pinia跳转页面
+const goArticle = (blog: blogAPITypes.BlogFile) => {
+  blogStore.changeCurrentBlog(blog)
+}
 
 // 当前分页数据
 const list = computed(() => blogStore.filteredBlogList)
