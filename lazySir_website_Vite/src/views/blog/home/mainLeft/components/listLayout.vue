@@ -14,10 +14,11 @@ const goArticle = (blog: blogAPITypes.BlogFile) => {
 <template>
   <div class="flex flex-col gap-4">
     <opcityCard
-      class="flex flex-col justify-between"
-      v-for="item in list"
+      v-for="(item, index) in list"
       :key="item.filename"
       @click="goArticle(item)"
+      class="fade-in-up cursor-pointer"
+      :style="{ animationDelay: `${index * 200}ms` }"
     >
       <div class="flex flex-col sm:flex-row gap-4 p-4">
         <div class="flex-1 flex flex-col pr-4 min-w-0">
@@ -49,7 +50,6 @@ const goArticle = (blog: blogAPITypes.BlogFile) => {
                 {{ tag }}
               </span>
             </span>
-            <span>⏱️ 阅读需要：9分钟</span>
           </div>
         </div>
         <!-- 图片部分 -->
@@ -63,4 +63,17 @@ const goArticle = (blog: blogAPITypes.BlogFile) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

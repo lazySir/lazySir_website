@@ -21,7 +21,7 @@ export const useBlogStore = defineStore('blogStore', {
             activeTab: 'all' as string, // 默认选中第一个标签，防止为空
             showStyle: 'list' as blogAPITypes.DisplayMode, // 默认展示样式
             currentPage: 1, // 当前页码
-            pageSize: 10, // 每页条数
+            pageSize: 5, // 每页条数
             //md主题的preview-theme
             previewTheme: 'default',
             //md主题的代码块高亮显示code
@@ -76,7 +76,7 @@ export const useBlogStore = defineStore('blogStore', {
         },
         //获取指定分类的文章列表
         filteredBlogList(state) {
-            // 把所有 blogList 扁平化
+            // 扁平化 blogList
             const flatList = state.blogList.flatMap(({ folder, files }) =>
                 files.map(file => ({
                     ...file,
@@ -84,18 +84,22 @@ export const useBlogStore = defineStore('blogStore', {
                 }))
             )
 
-            // 先按 activeTab 筛选
+            // 根据 tab 过滤
             const filtered = state.activeTab === 'all'
                 ? flatList
                 : flatList.filter(file => file.folder === state.activeTab)
 
-            // 更新总条数
-            state.total = filtered.length
+            // 按时间字段降序排序
+            const sorted = filtered.sort((a, b) => {
+                const dateA = new Date(a.date ?? '1970-01-01').getTime() // 如果 date 为 undefined，使用默认日期
+                const dateB = new Date(b.date ?? '1970-01-01').getTime() // 同上
+                return dateB - dateA
+            })
 
             // 分页处理
             const start = (state.currentPage - 1) * state.pageSize
             const end = start + state.pageSize
-            return filtered.slice(start, end)
+            return sorted.slice(start, end)
         },
         //根据当前选中的文章的tags，获取所有相关的文章
         relatedBlogs(state) {
@@ -103,7 +107,26 @@ export const useBlogStore = defineStore('blogStore', {
             return state.blogList.flatMap(folder => folder.files).filter(file => {
                 return tags.some(tag => file.tags?.includes(tag))
             })
-        }
+        },
+        // 获取最新的五篇文章
+        latestBlogs(): blogAPITypes.BlogFile[] {
+            const flatList = this.blogList.flatMap(({ folder, files }) =>
+                files.map(file => ({
+                    ...file,
+                    folder,
+                }))
+            )
+
+            // 按时间字段降序排序
+            const sorted = flatList.sort((a, b) => {
+                const dateA = new Date(a.date ?? '1970-01-01').getTime()
+                const dateB = new Date(b.date ?? '1970-01-01').getTime()
+                return dateB - dateA
+            })
+
+            // 返回前五篇最新的文章
+            return sorted.slice(0, 7)
+        },
     },
 
     //相当于methods

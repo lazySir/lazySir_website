@@ -47,7 +47,7 @@ const bgColor = computed(() => (isDark.value ? '#000' : '#fff'))
           <GradientButton
             :colors="['#80ed99', '#38a3a5']"
             :bg-color="bgColor"
-            @click="toBlog('Blog')"
+            @click="toBlog('blog')"
           >
             <h1
               class="text-lg text-blog_title_text bg-gradient-to-r from-blue-400 to-green-600 text-transparent bg-clip-text"

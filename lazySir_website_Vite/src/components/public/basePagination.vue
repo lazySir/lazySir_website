@@ -14,7 +14,7 @@ defineProps({
   },
   pageSizes: {
     type: Array as () => number[],
-    default: () => [10, 20, 30, 50, 60, 70, 100, 999],
+    default: () => [5, 10, 20, 30, 50, 60, 70, 100, 999],
   },
   size: {
     type: String,
