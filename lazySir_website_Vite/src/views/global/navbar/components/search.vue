@@ -1,6 +1,11 @@
 <template>
   <div class="article-search-dialog">
-    <IconifyIcon @click="handleOpen" name="ic:sharp-search" />
+    <el-input
+      @click="handleOpen"
+      style="width: 240px"
+      placeholder="搜索文章:支持标题或标签"
+      :suffix-icon="Search"
+    />
     <el-dialog
       v-model="isShowSearch"
       destroy-on-close
@@ -14,7 +19,7 @@
         ref="inputRef"
         :trigger-on-focus="false"
         value-key="title"
-        placeholder="搜索文章：支持标题或标签"
+        placeholder="搜索文章:支持标题或标签"
         :fetch-suggestions="searchArticles"
         @select="handleSelectArticle"
         @click.stop
@@ -25,7 +30,10 @@
 
         <!-- 每条搜索结果样式 -->
         <template #default="{ item }">
-          <div class="flex flex-col text-sm text-gray-800 dark:text-gray-200">
+          <div
+            class="flex flex-col text-sm text-gray-800 dark:text-gray-200 mb-4"
+          >
+            <!-- 增加间隔 -->
             <span v-html="highlightMatch(item.title)"></span>
             <div class="text-xs mt-1 text-gray-500">
               🏷️ 标签：
@@ -108,7 +116,7 @@ const handleSelectArticle = (article: blogAPITypes.BlogFile) => {
 
 <style scoped>
 .el-icon {
-  margin-left: 15px;
+  margin-left: 2vw; /* 使用vw单位 */
   cursor: pointer;
 }
 
@@ -124,21 +132,27 @@ const handleSelectArticle = (article: blogAPITypes.BlogFile) => {
 
 .article-search-dialog :deep(.el-autocomplete) {
   position: absolute;
-  top: 100px;
+  top: 10vh; /* 使用vh单位 */
   left: 50%;
-  width: 550px;
+  width: 60vw; /* 使用vw单位 */
+  max-width: 700px; /* 设置最大宽度 */
   transform: translateX(-50%);
+  height: 7vh; /* 使用vh单位 */
+  max-height: 50vh; /* 设置最大高度 */
 }
 
 .article-search-dialog :deep(.el-autocomplete) .el-input__wrapper {
   background-color: var(--el-bg-color);
+  font-size: 0.9vw; /* 使用更小的vw单位调整字体大小 */
+  height: 100%; /* 使输入框占满整个容器 */
+  padding: 1vh 1vw; /* 增加内边距，使用vh和vw单位 */
+  overflow: hidden; /* 确保内容不会超出边界 */
 }
 
 /* 高亮关键词 */
-/* 修改后 */
 :deep(.highlight) {
   background-color: #009688;
-  padding: 0 2px;
+  padding: 0 0.2vw;
   color: #fff;
   border-radius: 2px;
   font-weight: bold;

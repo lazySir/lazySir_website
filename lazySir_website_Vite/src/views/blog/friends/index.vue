@@ -45,8 +45,10 @@ function copySiteInfo() {
 <template>
   <div class="min-h-screen py-10">
     <!-- 页面标题 -->
-    <div class="text-center mb-6">
-      <h1 class="text-3xl font-bold">🌐 友链</h1>
+    <div
+      class="text-center mb-6 flex flex-col gap-3 items-center justify-center"
+    >
+      <h1 class="text-2xl font-bold">🌐友链</h1>
       <p class="text-gray-600 dark:text-gray-400">网络如桥，友情无碍。</p>
     </div>
 

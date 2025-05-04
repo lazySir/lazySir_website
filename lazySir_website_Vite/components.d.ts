@@ -24,6 +24,7 @@ declare module 'vue' {
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElImage: typeof import('element-plus/es')['ElImage']
+    ElInput: typeof import('element-plus/es')['ElInput']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     FileUpload: typeof import('./src/components/admin/fileUpload.vue')['default']
     GradientButton: typeof import('./src/components/public/inspiraUI/GradientButton.vue')['default']
