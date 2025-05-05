@@ -1,49 +1,41 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+// 外部跳转
+const goTo = (url: string) => {
+  window.open(url, '_blank')
+}
 import Marquee from '@/components/public/inspiraUI/Marquee.vue'
 // Reviews data
 const reviews = [
   {
-    name: 'Jack',
-    username: '@jack',
-    body: "I've never seen anything like this before. It's amazing. I love it.",
-    img: '@/assets/images/public/marquee/1.png',
+    name: 'mock+vite+vue3 后台管理系统',
+    username: 'lazySir',
+    url: 'https://github.com/lazySir/vue3_ts_vite_pinia',
+    img: '/home/mockVite.png',
   },
   {
-    name: 'Jill',
-    username: '@jill',
-    body: "I don't know what to say. I'm speechless. This is amazing.",
-    img: 'https://avatar.vercel.sh/jill',
+    name: 'Nuxt3+node.js+prisma 商城权限管理系统',
+    username: 'lazySir',
+    url: 'https://github.com/lazySir/nuxtAdmin',
+    img: '/home/nuxt.png',
   },
   {
-    name: 'John',
-    username: '@john',
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: 'https://avatar.vercel.sh/john',
+    name: 'vue2+h5 移动端蘑菇街项目',
+    username: 'lazySir',
+    url: 'https://github.com/lazySir/mobile-supermall',
+    img: '/home/mogu.png',
   },
   {
-    name: 'Jane',
-    username: '@jane',
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: 'https://avatar.vercel.sh/jane',
+    name: 'vite+v3+node.js+prisma 公司官网首页',
+    username: 'lazySir',
+    img: '/home/sgznWeb.png',
   },
   {
-    name: 'Jenny',
-    username: '@jenny',
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: 'https://avatar.vercel.sh/jenny',
-  },
-  {
-    name: 'James',
-    username: '@james',
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: 'https://avatar.vercel.sh/james',
+    name: 'vueCli+vue2 权限系统',
+    username: 'lazySir',
+    url: 'https://github.com/lazySir/practice',
+    img: '/home/vue2Mall.png',
   },
 ]
-
-// Split reviews into two rows
-const firstRow = ref(reviews.slice(0, reviews.length / 2))
-const secondRow = ref(reviews.slice(reviews.length / 2))
 </script>
 
 <template>
@@ -53,7 +45,8 @@ const secondRow = ref(reviews.slice(reviews.length / 2))
     <!-- First Marquee -->
     <Marquee pause-on-hover class="[--duration:20s]">
       <ReviewCard
-        v-for="review in firstRow"
+        v-for="review in reviews"
+        @click="goTo(review.url ? review.url : '')"
         :key="review.username"
         :img="review.img"
         :text="review.name"
