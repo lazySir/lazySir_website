@@ -30,6 +30,10 @@ export const useBlogStore = defineStore('blogStore', {
     },
     //相当于computed
     getters: {
+        //获取所有博客的总条数
+        getTotal(): number {
+            return this.blogList.flatMap(item => item.files).length
+        },
         //// 计算属性：提取每个博客文件夹的 folder 名称用于导航标签
         folderNames(): string[] {
             const folderList = this.blogList.map(item => item.folder)
@@ -95,6 +99,8 @@ export const useBlogStore = defineStore('blogStore', {
                 const dateB = new Date(b.date ?? '1970-01-01').getTime() // 同上
                 return dateB - dateA
             })
+            //更新total
+            state.total = sorted.length
 
             // 分页处理
             const start = (state.currentPage - 1) * state.pageSize

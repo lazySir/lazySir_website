@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import OpcityCard from '@/components/public/opcityCard.vue'
 import { storeToRefs } from 'pinia'
 import { useBlogStore } from '@/stores/blog'
@@ -10,7 +11,8 @@ const stats = [
   { valueKey: 'weeklyUpdate', label: '本周更新', prefix: '+' },
 ]
 // 解构需要用的数据（响应式）
-const { total, monthlyUpdate, weeklyUpdate } = storeToRefs(blogStore)
+const { monthlyUpdate, weeklyUpdate } = storeToRefs(blogStore)
+const total = computed(() => blogStore.getTotal)
 </script>
 
 <template>
