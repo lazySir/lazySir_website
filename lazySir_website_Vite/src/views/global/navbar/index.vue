@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import SwitchTheme from '@/components/public/Switch/theme.vue'
 import Search from '@/views/global/navbar/components/search.vue'
-
+import Drawer from '@/views/global/navbar/components/drawer.vue'
 const router = useRouter()
 const route = useRoute()
 
@@ -47,6 +47,7 @@ const goTo = (url: string) => {
     </div>
 
     <!-- 菜单栏 -->
+    <Drawer />
     <div
       class="hidden tablet:flex w-full justify-end items-center gap-3 h-full"
     >
