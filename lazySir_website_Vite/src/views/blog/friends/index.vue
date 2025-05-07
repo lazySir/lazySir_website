@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
+import CopySite from '@/views/blog/friends/copySite.vue'
 // 友链数据
 const friends = [
   {
@@ -22,24 +21,6 @@ const friends = [
     avatar: 'https://tailwindcss.com/favicons/favicon-32x32.png',
   },
 ]
-
-// 本站信息
-const siteInfo = `title: 'lazySir'
-description: '平安喜乐,万事胜意'
-website: 'lazySir.me'
-avatar: 'https://matuimg.com/i/2025/05/04/128smlk.png'
-`.trim()
-
-const copied = ref(false)
-
-function copySiteInfo() {
-  navigator.clipboard.writeText(siteInfo).then(() => {
-    copied.value = true
-    setTimeout(() => {
-      copied.value = false
-    }, 1500)
-  })
-}
 </script>
 
 <template>
@@ -85,26 +66,7 @@ function copySiteInfo() {
         </li>
       </ul>
     </div>
-
-    <!-- 复制本站信息按钮 -->
-    <div class="fixed bottom-4 left-4">
-      <el-button
-        size="small"
-        type="primary"
-        @click="copySiteInfo"
-        class="transition-all hover:bg-blue-500 hover:text-white dark:hover:bg-blue-400"
-      >
-        复制本站信息
-      </el-button>
-      <transition name="fade">
-        <span
-          v-if="copied"
-          class="text-green-600 dark:text-green-400 text-xs font-medium mt-2"
-        >
-          ✅ 已复制
-        </span>
-      </transition>
-    </div>
+    <CopySite />
   </div>
 </template>
 
