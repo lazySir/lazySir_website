@@ -3,7 +3,7 @@ title: css包含块
 author: lazySir
 tags: [css,css3,前端]
 description: 一说到 CSS 盒模型，这是很多小伙伴耳熟能详的知识，甚至有的小伙伴还能说出 border-box 和 content-box 这两种盒模型的区别。但是一说到 CSS 包含块，有的小伙伴就懵圈了，什么是包含块？好像从来没有听说过这玩意儿。
-cover: 
+cover:  https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/css/css图片.png
 date: 2023-06-13
 ---
 # 你不知道的 CSS 之包含块

@@ -3,7 +3,7 @@ title: 生成图片验证码
 author: lazySir
 tags: [node.js,npm]
 description: node-svg-captcha生成图片验证码
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-09-16
 ---
 

@@ -3,7 +3,7 @@ title: 发送邮箱验证码
 author: lazySir
 tags: [node.js,npm]
 description: node-nodemailer发送邮箱验证码
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-10-01
 ---
 # 作用

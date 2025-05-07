@@ -3,7 +3,7 @@ title: uuid
 author: lazySir
 tags: [node.js,npm]
 description: uuid生成唯一身份识别码
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-09-15
 ---
 # 下载

@@ -3,7 +3,7 @@ title: css3 Flex布局
 author: lazySir
 tags: [css,css3]
 description: Flex布局目前在移动端应用比较广泛，因为传统布局不能很好地呈现在移动设备上。
-cover: 
+cover:  https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/css/css图片.png
 date: 2023-04-07
 ---
 

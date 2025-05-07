@@ -3,7 +3,7 @@ title: vue2的全局事件总栈
 author: lazySir
 tags: [vue2]
 description: vue2的全局事件总栈
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/vue/vue.png
 date: 2022-09-28
 ---
 # 添加

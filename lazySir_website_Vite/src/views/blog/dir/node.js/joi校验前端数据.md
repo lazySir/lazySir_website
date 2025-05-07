@@ -3,7 +3,7 @@ title: 校验前端数据
 author: lazySir
 tags: [node.js,npm]
 description: hapi/joi校验前端数据
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-10-01
 ---
 # 一、作用

@@ -3,7 +3,7 @@ title: node-token
 author: lazySir
 tags: [node.js,npm]
 description: node-token使用
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-09-15
 ---
 

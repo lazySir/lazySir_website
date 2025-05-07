@@ -3,7 +3,7 @@ title: pinia
 author: lazySir
 tags: [vue3,pinia]
 description: 文章介绍了Pinia作为Vuex的替代品，其简化了状态管理，移除了Mutations，支持同步和异步Actions。文章详细讲解了Pinia的安装、基本使用（包括state、actions、getters）、数据持久化配置以及模块化的实现，提供了清晰的代码示例来帮助理解和应用。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/vue/vue3.png
 date: 2023-03-03
 ---
 

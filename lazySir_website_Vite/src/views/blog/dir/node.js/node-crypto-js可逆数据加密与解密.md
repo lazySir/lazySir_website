@@ -3,7 +3,7 @@ title: 可逆加密与解密
 author: lazySir
 tags: [node.js,npm]
 description: node-crypto-js可逆加密与解密
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-10-01
 ---
 # 下载

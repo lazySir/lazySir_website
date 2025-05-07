@@ -3,7 +3,7 @@ title: css2.0笔记总结
 author: lazySir
 tags: [css]
 description: css2.0是CSS的第二个版本，它引入了一些新的特性和功能，使得网页设计更加灵活和美观。本文将总结css2.0的一些重要概念和用法。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/css/css图片.png
 date: 2022-10-23
 ---
 

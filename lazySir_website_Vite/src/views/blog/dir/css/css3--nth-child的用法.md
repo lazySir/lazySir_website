@@ -3,7 +3,7 @@ title: css3--nth-child的用法
 author: lazySir
 tags: [css,css3]
 description: CSS的 :nth-child 选择器是一个强大的工具，允许我们根据它们在父元素中的位置选择元素。这为我们提供了更大的灵活性来控制页面上的元素。
-cover: 
+cover:  https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/css/css图片.png
 date: 2023-06-08
 ---
 

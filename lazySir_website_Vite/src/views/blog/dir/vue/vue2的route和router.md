@@ -3,7 +3,7 @@ title: vue2的router和route
 author: lazySir
 tags: [vue2,vue-router]
 description: vue2的一些config配置
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/vue/vue.png
 date: 2022-10-01
 ---
 # 认识vue-router

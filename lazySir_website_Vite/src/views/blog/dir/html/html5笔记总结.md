@@ -3,7 +3,7 @@ title: html5笔记总结
 author: lazySir
 tags: [html5,html]
 description: HTML5是新一代的HTML标准，引入了新的语义化标签如<header>、<article>，增强了JavaScript交互接口，提供了多媒体标签如<video>和<audio>，并改进了表单控件。同时，文章讨论了HTML5在不同浏览器的兼容性，包括对旧版IE的支持策略。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/html/cover.png
 date: 2023-06-12
 ---
 

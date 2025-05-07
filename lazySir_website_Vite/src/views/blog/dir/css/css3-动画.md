@@ -3,7 +3,7 @@ title: css3 动画
 author: lazySir
 tags: [css,css3]
 description: CSS3 动画（Animation）是一种让网页元素产生动态效果的特性。与 CSS3 过渡不同的是，CSS3 动画可以实现更加复杂的动态效果，比如旋转、缩放、透明度变化等等。在本篇博客中，我们将介绍 CSS3 动画的基本语法和一些实际应用场景。
-cover: 
+cover:  https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/css/css图片.png
 date: 2023-04-06
 ---
 

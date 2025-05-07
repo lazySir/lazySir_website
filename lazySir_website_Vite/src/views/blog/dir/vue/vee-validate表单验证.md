@@ -3,7 +3,7 @@ title: vee-validate表单验证
 author: lazySir
 tags: [vue,npm]
 description: vee-validate 是一个用于 Vue.js 的表单验证库，提供了简单易用的 API 和灵活的验证规则。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/vue/vue.png
 date: 2022-10-01
 ---
 # 下载

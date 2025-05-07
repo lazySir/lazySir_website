@@ -3,7 +3,7 @@ title: icons
 author: lazySir
 tags: [vue3,icons]
 description: vue3中使用icons
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/vue/vue3.png
 date: 2023-03-14
 ---
 # 前言

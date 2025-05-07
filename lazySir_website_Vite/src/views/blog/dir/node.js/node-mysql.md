@@ -3,7 +3,7 @@ title: node连接mysql
 author: lazySir
 tags: [node.js,npm]
 description: node连接mysql
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-10-01
 ---
 # 一、下载

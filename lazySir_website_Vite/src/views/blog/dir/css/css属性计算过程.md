@@ -3,7 +3,7 @@ title: css属性计算过程
 author: lazySir
 tags: [css,css3,前端]
 description: 你是否了解 CSS 的属性计算过程呢？
-cover: 
+cover:  https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/css/css图片.png
 date: 2023-06-13
 ---
 # CSS 属性计算过程

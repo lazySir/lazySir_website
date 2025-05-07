@@ -3,7 +3,7 @@ title: express模板
 author: lazySir
 tags: [node.js,npm]
 description: node-express模板
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/node.js/cover.png
 date: 2022-09-15
 ---
 ​

@@ -4,7 +4,7 @@ author: lazySir
 tags: [css,css3]
 description: 过渡可以在不使用 Flash 动画，不使用 JavaScript 的情况下，让元素从一种样式，平滑过渡为另一
 种样式。
-cover: 
+cover:  https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/css/css图片.png
 date: 2023-04-06
 ---
 

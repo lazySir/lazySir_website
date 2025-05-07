@@ -3,7 +3,7 @@ title: html笔记总结
 author: lazySir
 tags: [html]
 description: HTML标签的一些总结
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/html/cover.png
 date: 2022-11-16
 ---
 

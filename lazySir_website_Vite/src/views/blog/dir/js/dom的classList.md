@@ -3,7 +3,7 @@ title: dom的classList
 author: lazySir
 tags: [js]
 description:  文章介绍了如何使用JavaScript中的classList属性来便捷地添加、删除和切换DOM元素的class，包括add、remove、toggle和contains等方法。通过案例展示了如何在实际代码中应用这些方法改变元素样式。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/js/js.png
 date: 2023-04-07
 ---
 

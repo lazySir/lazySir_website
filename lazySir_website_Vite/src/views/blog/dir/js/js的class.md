@@ -3,7 +3,7 @@ title: js的class
 author: lazySir
 tags: [js]
 description:  当你想要定义一个包含一些方法和属性的对象时，你可以使用 JavaScript 类。在 JavaScript 中，类是一种基于原型的对象，它可以帮助您组织和维护代码。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/js/js.png
 date: 2023-04-05
 ---
 

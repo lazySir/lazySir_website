@@ -3,7 +3,7 @@ title: js的set和map
 author: lazySir
 tags: [js]
 description:  当你在开发 JavaScript 应用程序时，您通常需要处理数据。Set 和 Map 是两种非常有用的 JavaScript 数据结构，可以帮助您轻松地存储和访问数据。在本篇文章中，我们将深入探讨 Set 和 Map，让您了解这两种数据结构的基本概念、用法以及各自的优势。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/js/js.png
 date: 2023-04-05
 ---
 @[TOC](目录)

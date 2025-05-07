@@ -3,7 +3,7 @@ title: pinia使用router
 author: lazySir
 tags: [vue3,pinia]
 description: 尝试使用过useRouter方法 结果无效
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/vue/vue3.png
 date: 2023-04-04
 ---
 # 一、问题

@@ -3,7 +3,7 @@ title: vue2的响应式原理
 author: lazySir
 tags: [vue2]
 description: vue2的响应式原理
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/vue/vue.png
 date: 2022-09-28
 ---
 通过get 和 set

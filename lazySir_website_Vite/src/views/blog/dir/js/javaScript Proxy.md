@@ -3,7 +3,7 @@ title: js的proxy
 author: lazySir
 tags: [js]
 description:  当你在开发 JavaScript 应用程序时，您通常需要处理数据。Proxy 是 ES6 引入的一个特殊对象，它允许您拦截并自定义 JavaScript 对象上的底层操作。使用 Proxy，您可以捕获和处理对象上的许多操作，包括属性读取、属性赋值、方法调用和构造函数调用。您可以使用 Proxy 来创建一个“代理”对象，该对象会在底层对象上拦截这些操作并执行特定的操作，例如验证、过滤、转换和缓存。
-cover: 
+cover: https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/blog/js/js.png
 date: 2023-04-05
 ---
 
