@@ -1,7 +1,7 @@
 // src/composables/useMarkdownLoader.ts
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { markdownMap } from '@/utils/markdownMap'
+import { markdownMap } from '@/utils/blog'
 
 export function useMarkdownLoader(path?: string) {
     const route = useRoute()

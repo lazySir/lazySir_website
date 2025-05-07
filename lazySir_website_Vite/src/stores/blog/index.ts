@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 // 引入获取博客结构化数据的工具方法
-import { getStructuredBlogList } from '@/utils/blog'
+// import { getStructuredBlogList } from '@/utils/blog'
 import dayjs from 'dayjs' // 要安装 dayjs，npm install dayjs
 import router from "@/router";
-
+import { ElMessage } from 'element-plus'
 //1.定义容器
 //参数1：容器的ID，必须唯一（可以自己取名），将来Pinia会把所有的容器挂在到跟容器
 export const useBlogStore = defineStore('blogStore', {
@@ -139,9 +139,22 @@ export const useBlogStore = defineStore('blogStore', {
     actions: {
         //获取博客结构化数据
         async getBlogList() {
-            this.blogList = await getStructuredBlogList()
-            // 计算总条数
-            this.total = this.blogList.flatMap(item => item.files).length
+            try {
+                // 使用 fetch 获取 blogData.json 文件
+                const response = await fetch('/blog/blogData.json');
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error('Failed to load blog data');
+                }
+                // 解析 JSON 数据
+                const blogData = await response.json();
+                // 将结构化数据赋值给 blogList
+                this.blogList = blogData;
+                // 计算总条数，计算所有文件夹中的文件总数
+                this.total = this.blogList.flatMap(item => item.files).length;
+            } catch (error) {
+                ElMessage.error('获取博客数据失败，请检查网络连接或文件路径。')
+            }
         },
         //修改当前选中的标签
         changeActiveTab(tab: string) {

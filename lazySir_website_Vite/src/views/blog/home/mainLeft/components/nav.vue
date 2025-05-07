@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import OpcityCard from '@/components/public/opcityCard.vue'
 // 引入自定义的标签组件和博客列表组件
 import MorphingTabs from '@/components/public/inspiraUI/MorphingTabs.vue'
 import { useBlogStore } from '@/stores/blog'
 const blogStore = useBlogStore()
+onMounted(() => {
+  if (blogStore.blogList.length === 0) {
+    blogStore.getBlogList()
+  }
+})
 // Iconify 图标样式定义
 const IconifyStyle = { width: '18px', height: '18px' }
 // 可供切换的展示样式
