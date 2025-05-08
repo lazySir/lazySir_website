@@ -32,7 +32,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   duration: 1,
-  delay: 2,
+  delay: 1,
   blur: '20px',
   yOffset: 20,
 })

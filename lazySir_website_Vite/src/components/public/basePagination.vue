@@ -1,37 +1,20 @@
 <script setup lang="ts">
-defineProps({
-  currentPage: {
-    type: Number,
-    required: true,
-  },
-  pageSize: {
-    type: Number,
-    required: true,
-  },
-  total: {
-    type: Number,
-    required: true,
-  },
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+
+const props = defineProps({
+  currentPage: Number,
+  pageSize: Number,
+  total: Number,
   pageSizes: {
     type: Array as () => number[],
     default: () => [5, 10, 20, 30, 50, 60, 70, 100, 999],
   },
   size: {
     type: String,
-    default: 'default', // small, large, etc.
+    default: 'default',
   },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  background: {
-    type: Boolean,
-    default: false,
-  },
-  layout: {
-    type: String,
-    default: 'total, sizes, prev, pager, next, jumper',
-  },
+  disabled: Boolean,
+  background: Boolean,
 })
 
 const emit = defineEmits<{
@@ -50,17 +33,39 @@ const handleCurrentChange = (page: number) => {
   emit('update:currentPage', page)
   emit('currentChange', page)
 }
+
+// 🧠 动态 layout
+const isTablet = ref(false)
+
+const layout = computed(() =>
+  isTablet.value
+    ? 'total, sizes, prev, pager, next, jumper'
+    : 'prev, pager, next',
+)
+
+const handleResize = () => {
+  isTablet.value = window.innerWidth >= 768 // Tailwind 的 md: 768px
+}
+
+onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <template>
   <el-pagination
-    :current-page="currentPage"
-    :page-size="pageSize"
-    :total="total"
-    :page-sizes="pageSizes"
-    :size="size"
-    :disabled="disabled"
-    :background="background"
+    :current-page="props.currentPage"
+    :page-size="props.pageSize"
+    :total="props.total"
+    :page-sizes="props.pageSizes"
+    :size="props.size"
+    :disabled="props.disabled"
+    :background="props.background"
     :layout="layout"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"

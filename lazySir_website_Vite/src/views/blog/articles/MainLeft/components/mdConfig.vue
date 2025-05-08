@@ -43,7 +43,7 @@ const selectedChange = (value: OptionType) => {
 
 <template>
   <div class="p-2">
-    <h2 class="text-xl font-bold text-center mb-4">⚙️md配置</h2>
+    <h2 class="text-base font-bold text-center mb-4">⚙️md配置</h2>
     <DropSelector
       label="编辑器模式:"
       :options="ThemeOptions"

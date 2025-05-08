@@ -77,7 +77,7 @@ const goBack = () => {
       :modelValue="cleanContent"
     />
     <!-- 返回按钮 -->
-    <div class="mb-6 flex justify-center">
+    <div class="m-3 flex justify-center">
       <button
         @click="goBack"
         class="flex items-center gap-2 text-lazySir_green border border-lazySir_green px-4 py-2 rounded-full hover:bg-lazySir_green hover:text-white transition"

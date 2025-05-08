@@ -24,7 +24,7 @@ const handleSelect = (value: string) => {
 </script>
 
 <template>
-  <div class="flex gap-3">
+  <div class="flex text-sm gap-3">
     <span>{{ label }}</span>
     <el-dropdown trigger="click">
       <el-button>{{ selected }}</el-button>

@@ -36,25 +36,30 @@ const goArticle = (blog: blogAPITypes.BlogFile) => {
 
 <template>
   <div class="p-4">
-    <h2 class="text-xl font-bold mb-4 text-center">📚相关文章</h2>
-
-    <div v-for="[year, blogs] in blogsByYear" :key="year" class="mb-6">
-      <h3 class="text-lg font-semibold mb-2">📅 {{ year }}</h3>
-      <ul class="gap-1 flex flex-col items-center">
-        <li
-          v-for="blog in blogs"
-          :key="blog.path"
-          :class="[
-            'cursor-pointer',
-            blog.filename === blogStore.currentBlog.filename
-              ? ' text-lazySir_green' // 当前文章，灰色
-              : 'text-blog_text hover:text-lazySir_green', // 其他文章，蓝色和hover效果
-          ]"
-          @click="goArticle(blog)"
-        >
-          {{ blog.title }}
-        </li>
-      </ul>
-    </div>
+    <h2 class="text-base font-bold mb-4 text-center">📚相关文章</h2>
+    <el-scrollbar class="h-[50vh]">
+      <div
+        v-for="[year, blogs] in blogsByYear"
+        :key="year"
+        class="text-sm mb-6"
+      >
+        <h3 class="font-semibold mb-2">📅 {{ year }}</h3>
+        <ul class="gap-1 flex flex-col items-center">
+          <li
+            v-for="blog in blogs"
+            :key="blog.path"
+            :class="[
+              'cursor-pointer',
+              blog.filename === blogStore.currentBlog.filename
+                ? ' text-lazySir_green' // 当前文章，灰色
+                : 'text-blog_text hover:text-lazySir_green', // 其他文章，蓝色和hover效果
+            ]"
+            @click="goArticle(blog)"
+          >
+            {{ blog.title }}
+          </li>
+        </ul>
+      </div>
+    </el-scrollbar>
   </div>
 </template>
