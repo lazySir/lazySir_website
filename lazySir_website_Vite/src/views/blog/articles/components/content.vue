@@ -7,7 +7,7 @@ import { MdPreview } from 'md-editor-v3'
 // 解析前置 frontmatter 内容
 import { parseFrontmatter } from '@/utils/blog'
 import { useRouter } from 'vue-router'
-
+import Back from '@/views/blog/articles/components/back.vue'
 import 'md-editor-v3/lib/preview.css'
 
 interface Props {
@@ -76,6 +76,7 @@ const goBack = () => {
       :id="id"
       :modelValue="cleanContent"
     />
+    <Back />
     <!-- 返回按钮 -->
     <div class="m-3 flex justify-center">
       <button
