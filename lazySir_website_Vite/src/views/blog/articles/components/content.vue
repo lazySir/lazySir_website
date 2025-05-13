@@ -9,7 +9,7 @@ import { parseFrontmatter } from '@/utils/blog'
 import { useRouter } from 'vue-router'
 import Back from '@/views/blog/articles/components/back.vue'
 import 'md-editor-v3/lib/preview.css'
-
+import Giscus from '@/views/blog/articles/components/giscus.vue'
 interface Props {
   id: string
   codeColor: string
@@ -86,6 +86,7 @@ const goBack = () => {
         ← 返回博客列表
       </button>
     </div>
+    <Giscus />
   </div>
 </template>
 
