@@ -86,7 +86,7 @@ const goBack = () => {
         ← 返回博客列表
       </button>
     </div>
-    <Giscus />
+    <Giscus :theme="isDark ? 'dark' : 'light'" />
   </div>
 </template>
 
