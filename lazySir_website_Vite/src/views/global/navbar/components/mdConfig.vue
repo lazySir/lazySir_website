@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import DropSelector from '@/views/blog/articles/MainLeft/components/dropSelector.vue'
+import DropSelector from '@/views/global/navbar/components/dropSelector.vue'
 import { useBlogStore } from '@/stores/blog'
 const blogStore = useBlogStore()
 interface OptionType {
@@ -9,7 +8,6 @@ interface OptionType {
 }
 
 // 编辑器主题
-const ThemeselectedOption = ref('default')
 const ThemeOptions = [
   { label: 'default', value: 'default' },
   { label: 'github', value: 'github' },
@@ -20,7 +18,6 @@ const ThemeOptions = [
 ]
 
 // 代码高亮
-const CodeSelectedOption = ref('atom')
 const CodeOptions = [
   { label: 'atom', value: 'atom' },
   { label: 'a11y', value: 'a11y' },
@@ -47,7 +44,7 @@ const selectedChange = (value: OptionType) => {
     <DropSelector
       label="编辑器模式:"
       :options="ThemeOptions"
-      :selected="ThemeselectedOption"
+      :selected="blogStore.previewTheme"
       option-type="previewTheme"
       @change="selectedChange"
     />
@@ -56,7 +53,7 @@ const selectedChange = (value: OptionType) => {
       class="mt-5"
       label="代码块高亮模式:"
       :options="CodeOptions"
-      :selected="CodeSelectedOption"
+      :selected="blogStore.codeColor"
       option-type="code"
       @change="selectedChange"
     />

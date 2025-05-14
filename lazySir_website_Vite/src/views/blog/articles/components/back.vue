@@ -38,7 +38,7 @@ onUnmounted(() => {
   <!-- 悬浮按钮 -->
   <div
     v-if="showScrollButtons"
-    class="fixed bottom-6 right-2 tablet:right-[85vw] laptop:right-[15%] flex flex-col gap-3 z-50"
+    class="fixed bottom-6 right-2 laptop:right-[15%] flex flex-col gap-3 z-50"
   >
     <button
       @click="scrollToTop"

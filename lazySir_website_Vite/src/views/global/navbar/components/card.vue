@@ -1,12 +1,30 @@
 <script setup lang="ts">
-import { useBlogStore } from '@/stores/blog'
-const blogStore = useBlogStore()
+import Theme from '@/components/public/Switch/theme.vue'
+import mdConfig from '@/views/global/navbar/components/mdConfig.vue'
 // 你的菜单项列表
 const menuList = [
-  { name: '首页', path: '/' },
-  { name: '博客', path: '/blog' },
-  { name: '关于', path: '/about' },
+  { name: '首页', path: '/', icon: 'material-symbols:home-outline' },
+  { name: '博客', path: '/blog', icon: 'ic:outline-article' },
+  { name: '友链', path: '/friends', icon: 'weui:add-friends-outlined' },
   // 其他菜单项...
+]
+//外联列表
+const outLinkList = [
+  {
+    name: 'github',
+    path: 'https://github.com/lazySir',
+    icon: 'grommet-icons:github',
+  },
+  {
+    name: 'space-x',
+    path: '',
+    icon: 'grommet-icons:x',
+  },
+  {
+    name: 'CSDN',
+    path: '',
+    icon: 'cbi:costco',
+  },
 ]
 
 // 判断当前路径是否激活
@@ -36,34 +54,51 @@ const goTo = (url: string) => {
       />
     </div>
 
-    <!-- 导航项 -->
-    <div
-      v-for="(item, index) in menuList"
-      :key="index"
-      class="cursor-pointer text-lg font-medium transition-all hover:text-lazySir_green"
-      :class="isActive(item.path) ? 'text-lazySir_green font-bold' : ''"
-      @click="handleClick(item.path)"
-    >
-      {{ item.name }}
+    <!-- 右侧图标区域 -->
+    <div class="flex gap-6 mt-6 flex-wrap">
+      <el-tooltip
+        v-for="item in menuList"
+        class="box-item"
+        effect="dark"
+        :content="item.name"
+        placement="bottom"
+      >
+        <!-- INFO：菜单项 -->
+        <IconifyIcon
+          @click="handleClick(item.path)"
+          :name="item.icon"
+          class="hover:text-lazySir_green transition-colors"
+          :class="isActive(item.path) ? 'text-lazySir_green font-bold' : ''"
+        />
+      </el-tooltip>
+
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="主题切换"
+        placement="bottom"
+      >
+        <Theme
+      /></el-tooltip>
+
+      <!-- 外联 -->
+      <el-tooltip
+        v-for="item in outLinkList"
+        class="box-item"
+        effect="dark"
+        :content="item.name"
+        placement="bottom"
+      >
+        <!-- INFO：外联 -->
+        <IconifyIcon
+          @click="goTo('https://github.com/lazySir')"
+          class="cursor-pointer text-lg hover:text-lazySir_green transition-colors"
+          :name="item.icon"
+        />
+      </el-tooltip>
     </div>
 
-    <!-- 右侧图标区域 -->
-    <div class="flex gap-6 mt-6">
-      <SwitchTheme class="cursor-pointer text-lg" />
-      <IconifyIcon
-        @click="goTo('https://github.com/lazySir')"
-        class="cursor-pointer text-lg hover:text-lazySir_green transition-colors"
-        name="grommet-icons:github"
-      />
-      <IconifyIcon
-        class="cursor-pointer text-lg hover:text-lazySir_green transition-colors"
-        name="grommet-icons:x"
-      />
-      <IconifyIcon
-        class="cursor-pointer text-lg hover:text-lazySir_green transition-colors"
-        name="cbi:costco"
-      />
-    </div>
+    <mdConfig />
   </div>
 </template>
 

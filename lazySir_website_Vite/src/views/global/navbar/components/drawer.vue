@@ -2,16 +2,17 @@
 import { ref } from 'vue'
 import InfoCard from '@/views/global/navbar/components/card.vue'
 const drawer = ref(false)
+//控制抽屉的打开和关闭
+const open = () => {
+  drawer.value = !drawer.value
+}
+//暴露出一个方法来控制抽屉的显示
+defineExpose({
+  open,
+})
 </script>
 
 <template>
-  <!-- 移动端显示的菜单按钮 -->
-  <IconifyIcon
-    class="block tablet:hidden"
-    @click="drawer = true"
-    name="uim:bars"
-  />
-
   <!-- 抽屉 -->
   <el-drawer
     v-model="drawer"

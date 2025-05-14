@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MdConfig from '@/views/blog/articles/MainLeft/components/mdConfig.vue'
 import RelatedArticles from '@/views/blog/articles/MainLeft/components/relatedArticles.vue'
 </script>
 
@@ -9,7 +8,5 @@ import RelatedArticles from '@/views/blog/articles/MainLeft/components/relatedAr
   >
     <!-- 标签相关的文章 -->
     <RelatedArticles />
-    <!-- MD css的配置 -->
-    <MdConfig />
   </div>
 </template>

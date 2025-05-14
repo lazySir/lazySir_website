@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
+import { useTemplateRef } from 'vue'
 import SwitchTheme from '@/components/public/Switch/theme.vue'
 import Search from '@/views/global/navbar/components/search.vue'
 import Drawer from '@/views/global/navbar/components/drawer.vue'
 const router = useRouter()
 const route = useRoute()
-
+const drawerRef = useTemplateRef('drawer')
+const openDrawer = () => {
+  drawerRef.value?.open()
+}
 // 导航菜单列表
 const menuList = [
   { name: '首页', path: '/' },
@@ -33,7 +37,10 @@ const goTo = (url: string) => {
 <template>
   <nav class="m-auto flex h-[64px] max-w-[1500px] justify-between items-center">
     <!-- Logo 和名称 -->
-    <div class="flex gap-3 items-center w-[200px] h-full">
+    <div
+      @click="openDrawer"
+      class="flex gap-3 cursor-pointer items-center w-[200px] h-full"
+    >
       <img
         class="w-10 h-10"
         src="@/assets/images/public/author_avatar2.png"
@@ -47,7 +54,14 @@ const goTo = (url: string) => {
     </div>
 
     <!-- 菜单栏 -->
-    <Drawer />
+    <!-- 移动端显示的菜单按钮 -->
+    <IconifyIcon
+      class="block tablet:hidden"
+      @click="openDrawer"
+      name="uim:bars"
+    />
+    <!-- 抽屉 -->
+    <Drawer ref="drawer" />
     <div
       class="hidden tablet:flex w-full justify-end items-center gap-3 h-full"
     >
@@ -63,15 +77,12 @@ const goTo = (url: string) => {
           {{ item.name }}
         </span>
 
-        <span> | </span>
+        <Search class="hidden tablet:flex cursor-pointer" />
 
-        <!-- 搜索 -->
-        <Search class="cursor-pointer" />
-
-        <span> | </span>
+        <span class="hidden laptop:flex"> | </span>
 
         <!-- 右侧图标 -->
-        <div class="flex items-center gap-5">
+        <div class="hidden laptop:flex items-center gap-5">
           <SwitchTheme class="cursor-pointer" />
           <span> | </span>
           <IconifyIcon

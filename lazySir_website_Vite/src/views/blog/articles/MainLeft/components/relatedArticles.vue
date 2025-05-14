@@ -37,14 +37,14 @@ const goArticle = (blog: blogAPITypes.BlogFile) => {
 <template>
   <div class="p-4">
     <h2 class="text-base font-bold mb-4 text-center">📚相关文章</h2>
-    <el-scrollbar class="h-[50vh]">
+    <el-scrollbar class="h-[75vh]">
       <div
         v-for="[year, blogs] in blogsByYear"
         :key="year"
         class="text-sm mb-6"
       >
         <h3 class="font-semibold mb-2">📅 {{ year }}</h3>
-        <ul class="gap-1 flex flex-col items-center">
+        <ul class="gap-1 flex flex-col">
           <li
             v-for="blog in blogs"
             :key="blog.path"
