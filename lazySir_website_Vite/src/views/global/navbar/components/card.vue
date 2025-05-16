@@ -5,7 +5,12 @@ import mdConfig from '@/views/global/navbar/components/mdConfig.vue'
 const menuList = [
   { name: '首页', path: '/', icon: 'material-symbols:home-outline' },
   { name: '博客', path: '/blog', icon: 'ic:outline-article' },
-  { name: '友链', path: '/friends', icon: 'weui:add-friends-outlined' },
+  { name: '友链', path: '/blog/friends', icon: 'weui:add-friends-outlined' },
+  {
+    name: '归档',
+    path: '/blog/archive',
+    icon: 'material-symbols:archive-outline',
+  },
   // 其他菜单项...
 ]
 //外联列表

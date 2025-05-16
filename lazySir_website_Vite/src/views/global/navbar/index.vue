@@ -14,9 +14,9 @@ const openDrawer = () => {
 const menuList = [
   { name: '首页', path: '/' },
   { name: '博客', path: '/blog' },
-  { name: '个人作品展示', path: '' }, // 暂无路径
-  { name: '线上作品', path: '' }, // 暂无路径
-  { name: '友链', path: '/friends' },
+  // { name: '线上作品', path: '' }, // 暂无路径
+  { name: '友链', path: '/blog/friends' },
+  { name: '归档', path: '/blog/archive' },
 ]
 
 // 路由跳转函数

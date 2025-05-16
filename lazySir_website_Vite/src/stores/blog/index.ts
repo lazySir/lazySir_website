@@ -133,6 +133,41 @@ export const useBlogStore = defineStore('blogStore', {
             // 返回前五篇最新的文章
             return sorted.slice(0, 7)
         },
+        //获取按照时间降序排序好的博客列表：格式为 { year: string, blogs: blogAPITypes.BlogFile[] }[]
+        sortedBlogList(): { year: string, blogs: blogAPITypes.BlogFile[] }[] {
+            const flatList = this.blogList.flatMap(({ folder, files }) =>
+                files.map(file => ({
+                    ...file,
+                    folder,
+                }))
+            )
+
+            // ✅ 全部文章按时间字段降序排序（大的日期在前）
+            const sorted = flatList.sort((a, b) => {
+                const dateA = new Date(a.date ?? '1970-01-01').getTime()
+                const dateB = new Date(b.date ?? '1970-01-01').getTime()
+                return dateB - dateA
+            })
+
+            // ✅ 分组：按照年份进行分组
+            const grouped = sorted.reduce((acc: Record<string, blogAPITypes.BlogFile[]>, file) => {
+                const year = new Date(file.date ?? '1970-01-01').getFullYear().toString()
+                if (!acc[year]) {
+                    acc[year] = []
+                }
+                acc[year].push(file)
+                return acc
+            }, {})
+
+            // ✅ 将分组对象转为数组，并按年份降序排序
+            return Object.entries(grouped)
+                .sort((a, b) => parseInt(b[0]) - parseInt(a[0])) // 年份降序
+                .map(([year, blogs]) => ({
+                    year,
+                    blogs,
+                }))
+        }
+
     },
 
     //相当于methods
