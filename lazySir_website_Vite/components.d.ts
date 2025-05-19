@@ -45,6 +45,9 @@ declare module 'vue' {
     Test: typeof import('./src/components/public/Switch/test.vue')['default']
     Theme: typeof import('./src/components/public/Switch/theme.vue')['default']
     Transfer: typeof import('./src/components/admin/transfer.vue')['default']
+    VanNavBar: typeof import('vant/es')['NavBar']
+    VanTabbar: typeof import('vant/es')['Tabbar']
+    VanTabbarItem: typeof import('vant/es')['TabbarItem']
     WangEdit: typeof import('./src/components/public/wangEdit.vue')['default']
   }
 }

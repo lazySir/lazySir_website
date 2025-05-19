@@ -9,7 +9,9 @@ const titleMap: TITLEMAP = {
     //默认
     '/': ' lazySir',
     //后台
-    'admin': ' - lazySir_admin'
+    'admin': ' - lazySir_admin',
+    //点单
+    'order': ' - lazySir_order'
 
 }
 // 设置页面标题
