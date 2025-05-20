@@ -35,6 +35,12 @@ const reviews = [
     url: 'https://github.com/lazySir/practice',
     img: '/home/vue2Mall.png',
   },
+  {
+    name: 'webCrypto 加密解密',
+    username: 'lazySir',
+    url: 'https://lazysir.me/tools/webCrypto',
+    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/webCrypto.png',
+  },
 ]
 </script>
 

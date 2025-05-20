@@ -21,7 +21,7 @@ function setDocumentTitle(path: string, title: string) {
     const pathName = pathArr?.[1];
     //将路径名作为key，获取对应的value
     const titleSuffix = titleMap[pathName];
-    document.title = title + (titleSuffix ? titleSuffix : "");
+    document.title = title + (titleSuffix ? titleSuffix : " - lazySir");
 }
 
 // 路由前置守卫

@@ -17,6 +17,11 @@ const menuList = [
   // { name: '线上作品', path: '' }, // 暂无路径
   { name: '友链', path: '/blog/friends' },
   { name: '归档', path: '/blog/archive' },
+  {
+    name: '工具',
+    path: '/tools/webCrypto',
+    children: [{ name: 'webCrypto加密', path: '/tools/webCrypto' }],
+  },
 ]
 
 // 路由跳转函数
@@ -63,19 +68,45 @@ const goTo = (url: string) => {
     <!-- 抽屉 -->
     <Drawer ref="drawer" />
     <div
-      class="hidden tablet:flex w-full justify-end items-center gap-3 h-full"
+      class="text-sm text-blog_title_text hidden tablet:flex w-full justify-end items-center gap-3 h-full"
     >
-      <div class="flex gap-5 justify-center items-center h-full">
-        <!-- 导航项 -->
-        <span
-          v-for="(item, index) in menuList"
-          :key="index"
-          class="cursor-pointer"
-          :class="isActive(item.path) ? 'text-lazySir_green font-bold' : ''"
-          @click="handleClick(item.path)"
-        >
-          {{ item.name }}
-        </span>
+      <div class="flex gap-5 justify-center items-center">
+        <template v-for="(item, index) in menuList" :key="index">
+          <!-- 有 children 就显示下拉菜单 -->
+          <el-dropdown
+            v-if="item.children && item.children.length"
+            trigger="hover"
+          >
+            <span
+              class="cursor-pointer text-sm"
+              :class="isActive(item.path) ? 'text-lazySir_green font-bold' : ''"
+            >
+              {{ item.name }}
+              <el-icon class="el-icon--right"><arrow-down /></el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                  v-for="(child, cIndex) in item.children"
+                  :key="cIndex"
+                  @click.native.prevent="handleClick(child.path)"
+                >
+                  {{ child.name }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+
+          <!-- 没有 children 就普通菜单项 -->
+          <span
+            v-else
+            class="cursor-pointer"
+            :class="isActive(item.path) ? 'text-lazySir_green font-bold' : ''"
+            @click="handleClick(item.path)"
+          >
+            {{ item.name }}
+          </span>
+        </template>
 
         <Search class="hidden tablet:flex cursor-pointer" />
 
