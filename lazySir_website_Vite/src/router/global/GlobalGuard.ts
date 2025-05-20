@@ -10,9 +10,6 @@ const titleMap: TITLEMAP = {
     '/': ' lazySir',
     //后台
     'admin': ' - lazySir_admin',
-    //点单
-    'order': ' - lazySir_order'
-
 }
 // 设置页面标题
 function setDocumentTitle(path: string, title: string) {
