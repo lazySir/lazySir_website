@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- 设置视口宽度为设备屏幕宽度 width=device-width
+    表示视口宽度等于设备的物理屏幕宽度，确保页面在各种手机和平板设备上宽度自适应，而不是默认的
+    980px（桌面浏览器默认宽度）。 初始缩放比例为1 initial-scale=1
+    设置页面初始缩放为100%（不缩放），用户打开页面时看到的就是正常大小。
+    最大缩放比例为1 maximum-scale=1 限制用户最多只能以 1 倍大小查看，禁止放大。
+    禁止用户缩放页面 user-scalable=no
+    禁止用户用手势放大或缩小页面，避免页面布局被缩放破坏。 -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
     <meta charset="UTF-8" />
     <link
       rel="icon"
