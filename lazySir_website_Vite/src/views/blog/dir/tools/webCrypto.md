@@ -14,8 +14,19 @@ date: 2025-05-20
 
 ## 🌟 项目简介
 
-这是一个基于现代浏览器 **Web Crypto API** 的前端加密存储系统，采用 **AES-GCM** 对称加密算法，结合 **PBKDF2** 密码派生函数，实现内容的安全加密和本地持久化存储（使用 IndexedDB）。用户可以输入统一口令，保存加密后的内容，并带标签管理，实现安全、便捷的隐私信息管理。
-<img src='https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/webCrypto.png'>
+ 这是一个基于现代浏览器 **Web Crypto API** 的前端加密存储系统，采用 **AES-GCM** 对称加密算法，结合 **PBKDF2** 密码派生函数，实现内容的安全加密和本地持久化存储（使用 IndexedDB）。用户可以输入统一口令，保存加密后的内容，并带标签管理，实现安全、便捷的隐私信息管理。
+
+<img style='height:400px' src='https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/webCrypto.png'>
+
+---
+
+## 🔗 在线地址
+
+- 🌐 **在线体验地址**：  
+  👉 [webCrypto加密在线地址](https://www.lazysir.me/tools/webCrypto)
+
+欢迎访问页面使用加密存储工具，保护你的隐私数据 ✨！
+
 ---
 
 ## 🚀 功能特点
