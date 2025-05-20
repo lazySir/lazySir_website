@@ -48,9 +48,8 @@
           type="success"
           @click="exportRecords"
           style="margin-left: 10px"
+          >导出记录</el-button
         >
-          导出记录
-        </el-button>
         <el-upload
           :show-file-list="false"
           :before-upload="beforeUpload"
@@ -77,14 +76,14 @@
       placeholder="排序方式"
       style="width: 140px; margin-bottom: 20px"
     >
-      <el-option label="最新优先" value="desc"></el-option>
-      <el-option label="最旧优先" value="asc"></el-option>
+      <el-option label="最新优先" value="desc" />
+      <el-option label="最旧优先" value="asc" />
     </el-select>
 
     <el-table
       :data="filteredList"
       style="width: 100%"
-      :row-key="(row) => row.id"
+      :row-key="(row:any) => row.id"
       stripe
       border
     >
@@ -108,7 +107,6 @@
           </el-tag>
         </template>
       </el-table-column>
-
       <el-table-column label="操作" width="180">
         <template #default="{ row }">
           <el-button type="success" size="small" @click="decryptItem(row)"
@@ -119,9 +117,8 @@
             size="small"
             style="margin-left: 8px"
             @click="deleteItem(row.id)"
+            >删除</el-button
           >
-            删除
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -137,28 +134,45 @@
   </el-card>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { openDB } from 'idb'
+import { openDB, IDBPDatabase } from 'idb'
+import type { ZxcvbnResult } from '@zxcvbn-ts/core'
 import { Search } from '@element-plus/icons-vue'
 import { zxcvbn } from '@zxcvbn-ts/core'
 
-const form = ref({
+interface FormState {
+  plainText: string
+  password: string
+  tagInput: string
+}
+
+interface RecordItem {
+  id: string
+  title: string
+  cipher: string
+  salt: string
+  iv: string
+  tags: string[]
+  timestamp: number
+}
+
+const form = ref<FormState>({
   plainText: '',
   password: '',
   tagInput: '',
 })
 
-const decryptedText = ref('')
-const passwordStrength = ref(null)
-const recordList = ref([])
-const searchKeyword = ref('')
-const sortType = ref('desc')
+const passwordStrength = ref<ZxcvbnResult | null>(null)
+const decryptedText = ref<string>('')
+const recordList = ref<RecordItem[]>([])
+const searchKeyword = ref<string>('')
+const sortType = ref<'asc' | 'desc'>('desc')
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
-let db = null
+let db: IDBPDatabase | null = null
 
 onMounted(async () => {
   db = await openDB('cryptoStorageDB', 1, {
@@ -184,7 +198,10 @@ function onPasswordInput() {
   // 触发watch即可
 }
 
-async function deriveKey(password, salt) {
+async function deriveKey(
+  password: string,
+  salt: Uint8Array,
+): Promise<CryptoKey> {
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
     encoder.encode(password),
@@ -195,7 +212,7 @@ async function deriveKey(password, salt) {
   return await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt.buffer as ArrayBuffer, // 断言为 ArrayBuffer
       iterations: 100000,
       hash: 'SHA-256',
     },
@@ -225,13 +242,14 @@ async function handleEncrypt() {
     const cipherBase64 = btoa(String.fromCharCode(...new Uint8Array(encrypted)))
     const saltBase64 = btoa(String.fromCharCode(...salt))
     const ivBase64 = btoa(String.fromCharCode(...iv))
+
     const tags = form.value.tagInput
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean)
 
-    const newItem = {
-      id: crypto.randomUUID(),
+    const newItem: RecordItem = {
+      id: crypto.randomUUID?.() ?? Math.random().toString(36).slice(2),
       title: `记录 ${recordList.value.length + 1}`,
       cipher: cipherBase64,
       salt: saltBase64,
@@ -240,18 +258,18 @@ async function handleEncrypt() {
       timestamp: Date.now(),
     }
 
-    await db.put('records', newItem)
+    await db!.put('records', newItem)
     recordList.value.unshift(newItem)
     form.value.plainText = ''
     decryptedText.value = ''
     form.value.tagInput = ''
     ElMessage.success('加密成功')
-  } catch (error) {
+  } catch {
     ElMessage.error('加密失败，请重试')
   }
 }
 
-async function decryptItem(item) {
+async function decryptItem(item: RecordItem) {
   if (!form.value.password) return ElMessage.warning('请输入密码')
 
   try {
@@ -267,20 +285,21 @@ async function decryptItem(item) {
       key,
       cipherBytes,
     )
+
     decryptedText.value = decoder.decode(decrypted)
-  } catch (e) {
+  } catch {
     decryptedText.value = '❌ 解密失败，密码错误或数据损坏'
   }
 }
 
-async function deleteItem(id) {
-  await db.delete('records', id)
+async function deleteItem(id: string): Promise<void> {
+  await db!.delete('records', id)
   recordList.value = recordList.value.filter((item) => item.id !== id)
   ElMessage.success('删除成功')
 }
 
-const filteredList = computed(() =>
-  recordList.value
+const filteredList = computed(() => {
+  return recordList.value
     .filter(
       (item) =>
         item.title.toLowerCase().includes(searchKeyword.value.toLowerCase()) ||
@@ -292,14 +311,18 @@ const filteredList = computed(() =>
       sortType.value === 'asc'
         ? a.timestamp - b.timestamp
         : b.timestamp - a.timestamp,
-    ),
-)
+    )
+})
 
-function formatTimestamp(row, column, cellValue) {
+function formatTimestamp(
+  row: RecordItem,
+  _col: any,
+  cellValue: number,
+): string {
   return new Date(cellValue).toLocaleString()
 }
 
-function exportRecords() {
+function exportRecords(): void {
   const dataStr = JSON.stringify(recordList.value, null, 2)
   const blob = new Blob([dataStr], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -312,14 +335,17 @@ function exportRecords() {
   ElMessage.success('导出成功')
 }
 
-function beforeUpload(file) {
+function beforeUpload(file: File): boolean {
   const reader = new FileReader()
-  reader.onload = async (e) => {
+  reader.onload = async (e: ProgressEvent<FileReader>) => {
     try {
-      const importedRecords = JSON.parse(e.target.result)
+      const result = e.target?.result
+      if (!result || typeof result !== 'string') throw new Error('无法读取文件')
+
+      const importedRecords = JSON.parse(result)
       if (!Array.isArray(importedRecords)) throw new Error('数据格式错误')
 
-      const tx = db.transaction('records', 'readwrite')
+      const tx = db!.transaction('records', 'readwrite')
       await tx.store.clear()
 
       for (const record of importedRecords) {
@@ -339,16 +365,15 @@ function beforeUpload(file) {
         (a, b) => b.timestamp - a.timestamp,
       )
       ElMessage.success('导入成功')
-    } catch (err) {
+    } catch (err: any) {
       ElMessage.error('导入失败：' + err.message)
     }
   }
   reader.readAsText(file)
-  // 阻止自动上传
   return false
 }
 </script>
 
-<style>
-/* 自定义样式可加 */
+<style scoped>
+/* 可自定义样式 */
 </style>
