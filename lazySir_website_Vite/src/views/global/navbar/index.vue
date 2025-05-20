@@ -20,7 +20,13 @@ const menuList = [
   {
     name: '工具',
     path: '/tools/webCrypto',
-    children: [{ name: 'webCrypto加密', path: '/tools/webCrypto' }],
+    children: [
+      { name: 'webCrypto 加密解密', path: '/tools/webCrypto' },
+      {
+        path: '/tools/todoList',
+        name: 'todoList 待办事项',
+      },
+    ],
   },
 ]
 
@@ -68,7 +74,7 @@ const goTo = (url: string) => {
     <!-- 抽屉 -->
     <Drawer ref="drawer" />
     <div
-      class="text-sm text-blog_title_text hidden tablet:flex w-full justify-end items-center gap-3 h-full"
+      class="text-sm dark:text-blog_title_text_dark text-blog_title_text hidden tablet:flex w-full justify-end items-center gap-3 h-full"
     >
       <div class="flex gap-5 justify-center items-center">
         <template v-for="(item, index) in menuList" :key="index">
