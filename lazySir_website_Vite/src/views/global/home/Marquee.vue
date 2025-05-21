@@ -4,7 +4,6 @@ const goTo = (url: string) => {
   window.open(url, '_blank')
 }
 import Marquee from '@/components/public/inspiraUI/Marquee.vue'
-import Username from '@/layouts/admin/components/header/right/components/username.vue'
 // Reviews data
 const reviews = [
   {
@@ -47,6 +46,12 @@ const reviews = [
     Username: 'lazySir',
     url: 'https://lazysir.me/tools/todoList',
     img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/todoList.png',
+  },
+  {
+    name: '二维码生成器',
+    Username: 'lazySir',
+    url: 'https://www.lazysir.me/tools/qrcode',
+    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/qrCode.png',
   },
 ]
 </script>

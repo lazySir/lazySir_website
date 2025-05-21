@@ -4,17 +4,18 @@ import { useTemplateRef } from 'vue'
 import SwitchTheme from '@/components/public/Switch/theme.vue'
 import Search from '@/views/global/navbar/components/search.vue'
 import Drawer from '@/views/global/navbar/components/drawer.vue'
+
 const router = useRouter()
 const route = useRoute()
 const drawerRef = useTemplateRef('drawer')
 const openDrawer = () => {
   drawerRef.value?.open()
 }
+
 // 导航菜单列表
 const menuList = [
   { name: '首页', path: '/' },
   { name: '博客', path: '/blog' },
-  // { name: '线上作品', path: '' }, // 暂无路径
   { name: '友链', path: '/blog/friends' },
   { name: '归档', path: '/blog/archive' },
   {
@@ -23,26 +24,26 @@ const menuList = [
     children: [
       { name: '工具列表', path: '/tools' },
       { name: 'webCrypto 加密解密', path: '/tools/webCrypto' },
-      {
-        path: '/tools/todoList',
-        name: 'todoList 待办事项',
-      },
-      {
-        path: '/tools/qrCode',
-        name: '二维码生成器',
-      },
+      { name: 'todoList 待办事项', path: '/tools/todoList' },
+      { name: '二维码生成器', path: '/tools/qrCode' },
     ],
   },
 ]
+
+// 判断主菜单是否激活（支持子路径）
+const isActive = (path: string) => {
+  if (path === '/') return route.path === '/'
+  return route.path === path || route.path.startsWith(path + '/')
+}
+
+// 判断子菜单是否激活
+const isChildActive = (childPath: string) => route.path === childPath
 
 // 路由跳转函数
 const handleClick = (path: string) => {
   if (!path) return
   router.push(path)
 }
-
-// 判断当前是否是激活路由
-const isActive = (path: string) => route.path === path
 
 // 外部跳转
 const goTo = (url: string) => {
@@ -52,7 +53,7 @@ const goTo = (url: string) => {
 
 <template>
   <nav class="m-auto flex h-[64px] max-w-[1500px] justify-between items-center">
-    <!-- Logo 和名称 -->
+    <!-- Logo -->
     <div
       @click="openDrawer"
       class="flex gap-3 cursor-pointer items-center w-[200px] h-full"
@@ -70,20 +71,19 @@ const goTo = (url: string) => {
     </div>
 
     <!-- 菜单栏 -->
-    <!-- 移动端显示的菜单按钮 -->
     <IconifyIcon
       class="block tablet:hidden"
       @click="openDrawer"
       name="uim:bars"
     />
-    <!-- 抽屉 -->
     <Drawer ref="drawer" />
+
     <div
       class="text-sm dark:text-blog_title_text_dark text-blog_title_text hidden tablet:flex w-full justify-end items-center gap-3 h-full"
     >
       <div class="flex gap-5 justify-center items-center">
         <template v-for="(item, index) in menuList" :key="index">
-          <!-- 有 children 就显示下拉菜单 -->
+          <!-- 有子菜单 -->
           <el-dropdown
             v-if="item.children && item.children.length"
             trigger="hover"
@@ -101,6 +101,11 @@ const goTo = (url: string) => {
                   v-for="(child, cIndex) in item.children"
                   :key="cIndex"
                   @click.native.prevent="handleClick(child.path)"
+                  :class="
+                    isChildActive(child.path)
+                      ? 'text-lazySir_green font-bold'
+                      : ''
+                  "
                 >
                   {{ child.name }}
                 </el-dropdown-item>
@@ -108,7 +113,7 @@ const goTo = (url: string) => {
             </template>
           </el-dropdown>
 
-          <!-- 没有 children 就普通菜单项 -->
+          <!-- 无子菜单 -->
           <span
             v-else
             class="cursor-pointer"
@@ -119,8 +124,8 @@ const goTo = (url: string) => {
           </span>
         </template>
 
+        <!-- 搜索 -->
         <Search class="hidden tablet:flex cursor-pointer" />
-
         <span class="hidden laptop:flex"> | </span>
 
         <!-- 右侧图标 -->

@@ -18,6 +18,7 @@ const tools = [
     title: '二维码生成器',
     description: '快速生成批量/单个二维码，支持自定义内容、大小、颜色等。',
     url: 'https://www.lazysir.me/tools/qrcode',
+    icon: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/qrCode.png',
   },
 ]
 </script>
