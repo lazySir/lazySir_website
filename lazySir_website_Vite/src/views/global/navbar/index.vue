@@ -19,12 +19,17 @@ const menuList = [
   { name: '归档', path: '/blog/archive' },
   {
     name: '工具',
-    path: '/tools/webCrypto',
+    path: '/tools',
     children: [
+      { name: '工具列表', path: '/tools' },
       { name: 'webCrypto 加密解密', path: '/tools/webCrypto' },
       {
         path: '/tools/todoList',
         name: 'todoList 待办事项',
+      },
+      {
+        path: '/tools/qrCode',
+        name: '二维码生成器',
       },
     ],
   },

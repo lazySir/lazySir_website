@@ -11,10 +11,11 @@ const menuList = [
     path: '/blog/archive',
     icon: 'material-symbols:archive-outline',
   },
-  // 其他菜单项...
-]
-//外联列表
-const outLinkList = [
+  {
+    name: '工具',
+    path: '/tools',
+    icon: 'guidance:tools',
+  },
   {
     name: 'github',
     path: 'https://github.com/lazySir',
@@ -40,10 +41,6 @@ const isActive = (path: string) => {
 // 点击菜单项跳转
 const handleClick = (path: string) => {
   window.location.href = path
-}
-// 外部跳转函数
-const goTo = (url: string) => {
-  window.location.href = url
 }
 </script>
 
@@ -85,22 +82,6 @@ const goTo = (url: string) => {
       >
         <Theme
       /></el-tooltip>
-
-      <!-- 外联 -->
-      <el-tooltip
-        v-for="item in outLinkList"
-        class="box-item"
-        effect="dark"
-        :content="item.name"
-        placement="bottom"
-      >
-        <!-- INFO：外联 -->
-        <IconifyIcon
-          @click="goTo('https://github.com/lazySir')"
-          class="cursor-pointer text-lg hover:text-lazySir_green transition-colors"
-          :name="item.icon"
-        />
-      </el-tooltip>
     </div>
 
     <mdConfig />
