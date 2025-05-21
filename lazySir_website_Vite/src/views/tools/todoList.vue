@@ -60,11 +60,56 @@
         </el-upload>
       </div>
 
+      <!-- 筛选栏 -->
+      <div class="mb-4 flex space-x-4 items-center">
+        <el-select
+          v-model="filterCategory"
+          placeholder="分类筛选"
+          clearable
+          class="w-1/3"
+        >
+          <el-option label="全部" value="" />
+          <el-option
+            v-for="cat in categories"
+            :key="cat"
+            :label="cat"
+            :value="cat"
+          />
+        </el-select>
+
+        <!-- 年筛选 -->
+        <el-date-picker
+          v-model="filterYear"
+          type="year"
+          placeholder="筛选年份"
+          clearable
+          class="w-1/4"
+        />
+
+        <!-- 年月筛选 -->
+        <el-date-picker
+          v-model="filterYearMonth"
+          type="month"
+          placeholder="筛选年月"
+          clearable
+          class="w-1/4"
+        />
+
+        <!-- 年月日筛选 -->
+        <el-date-picker
+          v-model="filterFullDate"
+          type="date"
+          placeholder="筛选年月日"
+          clearable
+          class="w-1/4"
+        />
+      </div>
+
       <el-divider>📋 当前任务</el-divider>
 
       <ul ref="todoListRef" class="space-y-3">
         <li
-          v-for="(todo, index) in todos"
+          v-for="(todo, index) in filteredTodos"
           :key="todo.id"
           :class="[
             'border rounded p-4 bg-white shadow-sm flex justify-between items-start transition-colors duration-300',
@@ -92,7 +137,7 @@
             type="danger"
             :icon="Delete"
             size="small"
-            @click="deleteTask(index)"
+            @click="deleteTaskById(todo.id)"
             class="ml-4 self-start btn-delete"
           />
         </li>
@@ -153,9 +198,13 @@ function addTask(): void {
   saveTodos()
 }
 
-function deleteTask(index: number): void {
-  todos.value.splice(index, 1)
-  saveTodos()
+// 按 ID 删除任务，避免筛选后索引混乱
+function deleteTaskById(id: string): void {
+  const idx = todos.value.findIndex((t) => t.id === id)
+  if (idx !== -1) {
+    todos.value.splice(idx, 1)
+    saveTodos()
+  }
 }
 
 const completedCount = computed<number>(
@@ -243,124 +292,154 @@ function exportCSV() {
   a.click()
   URL.revokeObjectURL(url)
 }
-
 function handleImport(file: File) {
   const reader = new FileReader()
   reader.onload = (e) => {
     try {
       const content = e.target?.result
-      if (typeof content !== 'string') throw new Error('文件读取失败')
-      let importedTodos: Todo[] = []
+      if (!content) return
 
       if (file.name.endsWith('.json')) {
-        importedTodos = JSON.parse(content)
+        // 先用 any[] 接收，避免类型推断为 never
+        const importedAny = JSON.parse(content as string) as any[]
+        if (!Array.isArray(importedAny)) throw new Error('JSON格式错误')
+
+        const imported: Todo[] = importedAny.map((t) => {
+          return {
+            id: typeof t.id === 'string' && t.id ? t.id : crypto.randomUUID(),
+            text: typeof t.text === 'string' ? t.text : '',
+            category:
+              typeof t.category === 'string' && t.category
+                ? t.category
+                : '未分类',
+            reminder: 'reminder' in t ? t.reminder : null,
+            completed: typeof t.completed === 'boolean' ? t.completed : false,
+          }
+        })
+
+        todos.value = imported
+        saveTodos()
+        ElMessage.success('导入成功')
       } else if (file.name.endsWith('.csv')) {
-        importedTodos = parseCSV(content)
+        const lines = (content as string).split(/\r?\n/).filter(Boolean)
+        const keys = lines.shift()?.split(',') || []
+        const imported: Todo[] = []
+
+        lines.forEach((line) => {
+          const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g)
+          if (!values) return
+
+          const obj: any = {}
+          keys.forEach((k, i) => {
+            obj[k] = values[i]?.replace(/^"|"$/g, '') ?? ''
+          })
+
+          obj.completed = obj.completed === 'TRUE'
+          if (!obj.id) obj.id = crypto.randomUUID()
+          if (!obj.category) obj.category = '未分类'
+          if (!('reminder' in obj)) obj.reminder = null
+
+          imported.push(obj as Todo)
+        })
+
+        todos.value = imported
+        saveTodos()
+        ElMessage.success('导入成功')
       } else {
-        throw new Error('不支持的文件格式')
+        ElMessage.error('仅支持 JSON 和 CSV 格式文件')
       }
-
-      if (
-        !Array.isArray(importedTodos) ||
-        !importedTodos.every(
-          (t) =>
-            typeof t.id === 'string' &&
-            typeof t.text === 'string' &&
-            typeof t.category === 'string' &&
-            (typeof t.reminder === 'string' || t.reminder === null) &&
-            typeof t.completed === 'boolean',
-        )
-      ) {
-        throw new Error('导入文件格式错误')
-      }
-
-      todos.value = importedTodos
-      saveTodos()
-      ElMessage.success('导入成功！')
-    } catch (err) {
-      ElMessage.error('导入失败：' + (err as Error).message)
+    } catch {
+      ElMessage.error('导入失败，文件格式错误')
     }
   }
   reader.readAsText(file)
   return false
 }
 
-function parseCSV(content: string): Todo[] {
-  const lines = content.trim().split(/\r?\n/)
-  const header = lines.shift()?.split(',')
-  if (!header) throw new Error('CSV格式错误：缺少表头')
+// --------------- 筛选相关 ----------------
 
-  const idx = {
-    id: header.indexOf('id'),
-    text: header.indexOf('text'),
-    category: header.indexOf('category'),
-    reminder: header.indexOf('reminder'),
-    completed: header.indexOf('completed'),
-  }
-  if (Object.values(idx).some((i) => i === -1)) throw new Error('CSV缺少必要列')
+// 筛选响应式数据
+const filterCategory = ref<string | ''>('')
+const filterYear = ref<Date | null>(null)
+const filterYearMonth = ref<Date | null>(null)
+const filterFullDate = ref<Date | null>(null)
 
-  const todosParsed: Todo[] = lines.map((line) => {
-    const regex = /"([^"]|"")*"|[^,]+/g
-    const cols =
-      line
-        .match(regex)
-        ?.map((c) => c.replace(/^"|"$/g, '').replace(/""/g, '"')) || []
-    return {
-      id: cols[idx.id],
-      text: cols[idx.text],
-      category: cols[idx.category],
-      reminder: cols[idx.reminder] || null,
-      completed: cols[idx.completed].toLowerCase() === 'true',
-    }
-  })
-  return todosParsed
+function formatDateY(dateStr: string): string | null {
+  if (!dateStr) return null
+  return dateStr.slice(0, 4)
 }
+function formatDateYM(dateStr: string): string | null {
+  if (!dateStr) return null
+  return dateStr.slice(0, 7)
+}
+function formatDateYMD(dateStr: string): string | null {
+  if (!dateStr) return null
+  return dateStr.slice(0, 10)
+}
+
+// 计算过滤后的任务列表
+const filteredTodos = computed(() => {
+  return todos.value.filter((todo) => {
+    if (filterCategory.value && todo.category !== filterCategory.value)
+      return false
+
+    // 时间筛选优先级：年月日 > 年月 > 年
+    if (filterFullDate.value) {
+      const filterDateStr = filterFullDate.value.toISOString().slice(0, 10)
+      if (!todo.reminder || formatDateYMD(todo.reminder) !== filterDateStr)
+        return false
+    } else if (filterYearMonth.value) {
+      const filterYMStr = filterYearMonth.value.toISOString().slice(0, 7)
+      if (!todo.reminder || formatDateYM(todo.reminder) !== filterYMStr)
+        return false
+    } else if (filterYear.value) {
+      const filterYStr = filterYear.value.getFullYear().toString()
+      if (!todo.reminder || formatDateY(todo.reminder) !== filterYStr)
+        return false
+    }
+
+    return true
+  })
+})
+
+// ------------------- 初始化 -------------------
 
 onMounted(() => {
   loadTodos()
 
-  setInterval(() => {
-    checkReminders()
-  }, 60 * 1000)
-
-  checkReminders()
-
+  // 初始化拖拽排序
   if (todoListRef.value) {
     Sortable.create(todoListRef.value, {
       animation: 150,
-      onEnd(evt) {
-        const oldIndex = evt.oldIndex as number
-        const newIndex = evt.newIndex as number
-        const moved = todos.value.splice(oldIndex, 1)[0]
-        todos.value.splice(newIndex, 0, moved)
+      handle: 'li',
+      onEnd() {
         saveTodos()
       },
     })
   }
+
+  // 定时提醒检测，每分钟一次
+  setInterval(checkReminders, 60000)
+  checkReminders()
 })
 </script>
 
 <style scoped>
-.line-through {
-  text-decoration: line-through;
-}
-
-.btn-animate {
-  transition: transform 0.1s ease;
-}
-.btn-animate:active {
-  transform: scale(0.95);
-}
-
 .highlight {
-  background-color: #fff3c4;
+  background-color: #fef3c7;
+  border-color: #f59e0b;
 }
-
+.btn-animate {
+  transition: background-color 0.3s ease;
+}
+.btn-animate:hover {
+  background-color: #409eff;
+  color: white;
+}
 .btn-delete {
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  transition: color 0.3s ease;
 }
 .btn-delete:hover {
-  background-color: #f56c6c;
-  transform: scale(1 05);
+  color: #f56c6c;
 }
 </style>

@@ -28,9 +28,57 @@ date: 2025-05-20
 
 ### 🔔 实时提醒机制（浏览器通知集成）
 内置 `Notification API` 支持，在设置的时间点精准触发提醒，即使你忘了，系统也会记得！
+```js
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission !== 'granted') {
+    Notification.requestPermission()
+  }
+}
+
+function notify(task: Todo) {
+  if (Notification.permission === 'granted') {
+    new Notification('任务提醒', {
+      body: task.content,
+      icon: '/icon.png',
+    })
+  } else {
+    alert(`提醒：${task.content}`)
+  }
+}
+```
+
+## 🔄 拖拽排序
+使用 SortableJS 实现任务顺序自由拖拽，支持自定义优先级。
+```js
+import Sortable from 'sortablejs'
+
+onMounted(() => {
+  Sortable.create(document.getElementById('todo-list'), {
+    animation: 150,
+    onEnd: (evt) => {
+      const movedItem = todos.value.splice(evt.oldIndex!, 1)[0]
+      todos.value.splice(evt.newIndex!, 0, movedItem)
+      saveTodos()
+    },
+  })
+})
+
+```
 
 ### 📥 零门槛导入导出
 支持双格式（`.json`、`.csv`）导入导出，兼容 Excel、表格处理器，一键迁移数据无压力。
+```js
+function exportTodos() {
+  const dataStr = JSON.stringify(todos.value, null, 2)
+  const blob = new Blob([dataStr], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'todos.json'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+```
 
 ### 🧩 组件式架构，易扩展
 采用 Vue3 `<script setup>` + Composition API 编写，结构清晰、维护方便，轻松集成进任何项目。
