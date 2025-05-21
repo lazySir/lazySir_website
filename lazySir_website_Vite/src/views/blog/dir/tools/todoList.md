@@ -47,7 +47,7 @@ function notify(task: Todo) {
 }
 ```
 
-## 🔄 拖拽排序
+### 🔄 拖拽排序
 使用 SortableJS 实现任务顺序自由拖拽，支持自定义优先级。
 ```js
 import Sortable from 'sortablejs'
