@@ -22,6 +22,10 @@ export default [
             {
                 path: '/tools/qrCode',
                 name: 'QrCode', meta: { title: '二维码生成器' }, component: () => import('@/views/tools/qrCode.vue')
+            },
+            {
+                path: '/tools/exifRead',
+                name: 'ExifRead', meta: { title: 'EXIF查看' }, component: () => import('@/views/tools/exifRead.vue')
             }
         ]
     },

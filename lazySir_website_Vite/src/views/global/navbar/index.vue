@@ -16,8 +16,8 @@ const openDrawer = () => {
 const menuList = [
   { name: '首页', path: '/' },
   { name: '博客', path: '/blog' },
-  { name: '友链', path: '/blog/friends' },
-  { name: '归档', path: '/blog/archive' },
+  { name: '友链', path: '/friends' },
+  { name: '归档', path: '/archive' },
   {
     name: '工具',
     path: '/tools',
@@ -26,6 +26,7 @@ const menuList = [
       { name: 'webCrypto 加密解密', path: '/tools/webCrypto' },
       { name: 'todoList 待办事项', path: '/tools/todoList' },
       { name: '二维码生成器', path: '/tools/qrCode' },
+      { name: 'EXIF查看器', path: '/tools/exifRead' },
     ],
   },
 ]

@@ -20,6 +20,12 @@ const tools = [
     url: 'https://www.lazysir.me/tools/qrcode',
     icon: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/qrCode.png',
   },
+  {
+    title: 'EXIF 信息查看器',
+    description: '查看图片的 EXIF 信息，支持批量上传。',
+    url: 'https://www.lazysir.me/tools/exifRead',
+    icon: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/exifRead.png',
+  },
 ]
 </script>
 

@@ -53,6 +53,12 @@ const reviews = [
     url: 'https://www.lazysir.me/tools/qrcode',
     img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/qrCode.png',
   },
+  {
+    name: '图片信息查看',
+    Username: 'lazySir',
+    url: 'https://www.lazysir.me/tools/exifRead',
+    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/exifRead.png',
+  },
 ]
 </script>
 
