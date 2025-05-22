@@ -4,7 +4,9 @@
       <template v-for="(group, index) in blogStore.sortedBlogList" :key="index">
         <!-- 年份标题，不要时间点，只做文字显示 -->
 
-        <div class="text-2xl font-bold text-gray-800 mb-4">
+        <div
+          class="text-2xl font-bold dark:text-blog_title_text_dark text-gray-800 mb-4"
+        >
           {{ group.year }}
         </div>
 
@@ -19,7 +21,7 @@
           hollow="true"
         >
           <div
-            class="text-lg text-gray-800 font-medium cursor-pointer transition duration-200 hover:text-lazySir_green hover:translate-x-1"
+            class="text-lg dark:text-blog_text_dark text-gray-800 font-medium cursor-pointer transition duration-200 hover:text-lazySir_green hover:translate-x-1"
           >
             {{ blog.title }}
           </div>
