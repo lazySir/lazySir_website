@@ -101,10 +101,10 @@ export default [
                 name: 'ColorPicker',
                 component: () => import('@/views/tools/colorPicker.vue'),
                 meta: {
-                    title: '拾色器',
+                    title: '颜色类工具',
                     description: '快速选择颜色，支持HEX、RGB、HSL、CMYK等格式。',
                     img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/colorPicker.png',
-                    url: 'http://localhost:5173/tools/colorPicker',
+                    url: 'https://www.lazysir.me/tools/colorPicker',
                     username: 'lazySir',
                     featured: true
                 },
