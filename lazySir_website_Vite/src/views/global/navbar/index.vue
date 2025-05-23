@@ -1,9 +1,29 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useTemplateRef } from 'vue'
+import { useTemplateRef, ref, onMounted } from 'vue'
 import SwitchTheme from '@/components/public/Switch/theme.vue'
 import Search from '@/views/global/navbar/components/search.vue'
 import Drawer from '@/views/global/navbar/components/drawer.vue'
+
+onMounted(async () => {
+  const { default: toolsConstantRoutes } = await import('@/router/tools/index')
+
+  const toolsRoutes = toolsConstantRoutes.map((item) => {
+    return {
+      title: item.meta.title,
+      name: item.name,
+      path: item.path,
+      children: item.children
+        .filter((item) => item.meta.title !== '工具列表')
+        .map((item) => ({
+          name: item.name,
+          title: item.meta.title,
+          path: item.meta.url,
+        })),
+    }
+  })
+  menuList.value = [...blogRoutes, ...toolsRoutes] as MenuList[]
+})
 
 const router = useRouter()
 const route = useRoute()
@@ -13,24 +33,20 @@ const openDrawer = () => {
 }
 
 // 导航菜单列表
-const menuList = [
-  { name: '首页', path: '/' },
-  { name: '博客', path: '/blog' },
-  { name: '友链', path: '/friends' },
-  { name: '归档', path: '/archive' },
-  {
-    name: '工具',
-    path: '/tools',
-    children: [
-      { name: '工具列表', path: '/tools' },
-      { name: 'webCrypto 加密解密', path: '/tools/webCrypto' },
-      { name: 'todoList 待办事项', path: '/tools/todoList' },
-      { name: '二维码生成器', path: '/tools/qrCode' },
-      { name: 'EXIF查看器', path: '/tools/exifRead' },
-    ],
-  },
+let blogRoutes = [
+  { title: '首页', path: '/', name: 'Home' },
+  { title: '博客', path: '/blog', name: 'Blog' },
+  { title: '友链', path: '/friends', name: 'Friends' },
+  { title: '归档', path: '/archive', name: 'Archive' },
 ]
-
+interface MenuList {
+  name: string
+  path: string
+  title: string
+  children?: MenuList[]
+}
+// 将 menuList 改为 ref
+let menuList = ref<MenuList[]>([])
 // 判断主菜单是否激活（支持子路径）
 const isActive = (path: string) => {
   if (path === '/') return route.path === '/'
@@ -41,9 +57,8 @@ const isActive = (path: string) => {
 const isChildActive = (childPath: string) => route.path === childPath
 
 // 路由跳转函数
-const handleClick = (path: string) => {
-  if (!path) return
-  router.push(path)
+const handleClick = (name: string) => {
+  router.push({ name: name })
 }
 
 // 外部跳转
@@ -93,7 +108,7 @@ const goTo = (url: string) => {
               class="cursor-pointer text-sm"
               :class="isActive(item.path) ? 'text-lazySir_green font-bold' : ''"
             >
-              {{ item.name }}
+              {{ item.title }}
               <el-icon class="el-icon--right"><arrow-down /></el-icon>
             </span>
             <template #dropdown>
@@ -101,14 +116,14 @@ const goTo = (url: string) => {
                 <el-dropdown-item
                   v-for="(child, cIndex) in item.children"
                   :key="cIndex"
-                  @click.native.prevent="handleClick(child.path)"
+                  @click.native.prevent="handleClick(child.name)"
                   :class="
                     isChildActive(child.path)
                       ? 'text-lazySir_green font-bold'
                       : ''
                   "
                 >
-                  {{ child.name }}
+                  {{ child.title }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -119,9 +134,9 @@ const goTo = (url: string) => {
             v-else
             class="cursor-pointer"
             :class="isActive(item.path) ? 'text-lazySir_green font-bold' : ''"
-            @click="handleClick(item.path)"
+            @click="handleClick(item.name)"
           >
-            {{ item.name }}
+            {{ item.title }}
           </span>
         </template>
 

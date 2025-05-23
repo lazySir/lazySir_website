@@ -4,13 +4,13 @@ import home from '@/views/global/home/index.vue'
 </script>
 
 <template>
-  <Header>
+  <header>
     <NavBar />
-  </Header>
+  </header>
 
-  <Main>
+  <main>
     <home />
-  </Main>
+  </main>
 </template>
 
 <style scoped></style>

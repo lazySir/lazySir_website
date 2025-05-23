@@ -177,7 +177,6 @@ export const useBlogStore = defineStore('blogStore', {
             try {
                 // 使用 fetch 获取 blogData.json 文件
                 const response = await fetch('/blog/blogData.json');
-                console.log(response)
                 if (!response.ok) {
                     throw new Error('Failed to load blog data');
                 }

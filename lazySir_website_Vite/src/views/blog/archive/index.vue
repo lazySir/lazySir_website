@@ -18,7 +18,7 @@
           :timestamp="blog.date"
           type="primary"
           size="normal"
-          hollow="true"
+          :hollow="true"
         >
           <div
             class="text-lg dark:text-blog_text_dark text-gray-800 font-medium cursor-pointer transition duration-200 hover:text-lazySir_green hover:translate-x-1"

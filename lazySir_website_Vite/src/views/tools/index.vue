@@ -1,32 +1,14 @@
 <!-- src/views/tools/index.vue -->
 <script setup lang="ts">
-// 工具数据
-const tools = [
-  {
-    title: '智能 ToDo List',
-    description: '极简但强大的任务管理工具，支持提醒、导入导出等功能。',
-    url: 'https://www.lazysir.me/tools/todoList',
-    icon: 'https://cdn.jsdelivr.net/gh/lazySir/image-host/lazySir_website/tools/todoList.png',
-  },
-  {
-    title: 'WebCrypto 加密工具',
-    description: '前端加密存储工具，支持 AES、PBKDF2、导出密钥等。',
-    url: 'https://www.lazysir.me/tools/webCrypto',
-    icon: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/webCrypto.png',
-  },
-  {
-    title: '二维码生成器',
-    description: '快速生成批量/单个二维码，支持自定义内容、大小、颜色等。',
-    url: 'https://www.lazysir.me/tools/qrcode',
-    icon: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/qrCode.png',
-  },
-  {
-    title: 'EXIF 信息查看器',
-    description: '查看图片的 EXIF 信息，支持批量上传。',
-    url: 'https://www.lazysir.me/tools/exifRead',
-    icon: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/exifRead.png',
-  },
-]
+import { ref, onMounted } from 'vue'
+
+//从路由中获取工具路由
+import { ToolRoute } from '@/router/tools/index'
+const toolRoutes = ref<ToolRoute[]>([])
+onMounted(async () => {
+  const { default: toolsConstantRoutes } = await import('@/router/tools/index')
+  toolRoutes.value = toolsConstantRoutes[0].children as ToolRoute[]
+})
 </script>
 
 <template>
@@ -45,30 +27,30 @@ const tools = [
     <div class="max-w-6xl mx-auto px-4">
       <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <li
-          v-for="tool in tools"
-          :key="tool.title"
+          v-for="tool in toolRoutes"
+          :key="tool.meta.title"
           class="relative flex min-h-24 cursor-pointer items-center rounded-lg bg-white dark:bg-gray-800 px-4 py-3 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg"
         >
           <img
-            :src="tool.icon"
-            :alt="tool.title"
+            :src="tool.meta.img"
+            :alt="tool.meta.title"
             class="w-14 h-14 rounded-lg object-contain shrink-0 border border-gray-200 dark:border-gray-700"
           />
           <div class="pl-4 flex-1">
             <h4 class="text-lg font-semibold">
               <a
-                :href="tool.url"
+                :href="tool.meta.url"
                 target="_blank"
                 rel="noopener"
-                class="text-blue-600 dark:text-blue-400 hover:underline"
+                class="text-blog_title_text dark:text-blog_title_text_dark hover:underline"
               >
-                {{ tool.title }}
+                {{ tool.meta.title }}
               </a>
             </h4>
             <p
-              class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1"
+              class="text-sm text-blog_text dark:text-blog_text_dark line-clamp-2 mt-1"
             >
-              {{ tool.description }}
+              {{ tool.meta.description }}
             </p>
           </div>
         </li>

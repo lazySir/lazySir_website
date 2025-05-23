@@ -1,11 +1,34 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 // 外部跳转
 const goTo = (url: string) => {
   window.open(url, '_blank')
 }
+import type { ToolRoute } from '@/router/tools/index'
 import Marquee from '@/components/public/inspiraUI/Marquee.vue'
-// Reviews data
-const reviews = [
+
+interface ReviewItem {
+  name: string
+  username: string
+  url?: string
+  img: string
+}
+onMounted(async () => {
+  const { default: toolsConstantRoutes } = await import('@/router/tools/index')
+  const toolsRoutes = toolsConstantRoutes[0].children as ToolRoute[]
+  const mapTools: ReviewItem[] = toolsRoutes
+    .filter((item) => item.meta.title !== '工具列表')
+    .map((item) => ({
+      name: item.meta.title,
+      username: item.meta.username || 'lazySir',
+      url: item.meta.url,
+      img: item.meta.img || '', // 修正为 icon 字段
+    }))
+  // 正确拼接数组
+  reviews.value = [...reviews.value, ...mapTools]
+})
+
+let reviews = ref<ReviewItem[]>([
   {
     name: 'mock+vite+vue3 后台管理系统',
     username: 'lazySir',
@@ -35,31 +58,7 @@ const reviews = [
     url: 'https://github.com/lazySir/practice',
     img: '/home/vue2Mall.png',
   },
-  {
-    name: 'webCrypto 加密解密',
-    username: 'lazySir',
-    url: 'https://lazysir.me/tools/webCrypto',
-    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/webCrypto.png',
-  },
-  {
-    name: '智能 todoList',
-    Username: 'lazySir',
-    url: 'https://lazysir.me/tools/todoList',
-    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/todoList.png',
-  },
-  {
-    name: '二维码生成器',
-    Username: 'lazySir',
-    url: 'https://www.lazysir.me/tools/qrcode',
-    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/qrCode.png',
-  },
-  {
-    name: '图片信息查看',
-    Username: 'lazySir',
-    url: 'https://www.lazysir.me/tools/exifRead',
-    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/exifRead.png',
-  },
-]
+])
 </script>
 
 <template>

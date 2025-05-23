@@ -13,7 +13,7 @@
           placeholder="输入任务..."
           clearable
           class="w-full text-lg"
-          rows="3"
+          :rows="3"
         />
         <!-- 分类和提醒时间同一行 -->
         <div class="flex space-x-4">

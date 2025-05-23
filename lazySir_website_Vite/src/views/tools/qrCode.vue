@@ -6,8 +6,8 @@
     <el-form label-width="120px">
       <el-form-item label="二维码数据来源">
         <el-radio-group v-model="importType">
-          <el-radio-button label="manual">手动输入</el-radio-button>
-          <el-radio-button label="file">上传 TXT/CSV</el-radio-button>
+          <el-radio-button value="manual">手动输入</el-radio-button>
+          <el-radio-button value="file">上传 TXT/CSV</el-radio-button>
         </el-radio-group>
       </el-form-item>
 
@@ -15,7 +15,7 @@
         <el-input
           v-model="textInput"
           type="textarea"
-          rows="6"
+          :rows="6"
           placeholder="每行一个二维码数据"
         />
       </el-form-item>
