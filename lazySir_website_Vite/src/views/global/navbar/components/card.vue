@@ -13,7 +13,7 @@ const menuList = [
   },
   {
     name: '工具',
-    path: '/tools',
+    path: '/tools/list',
     icon: 'guidance:tools',
   },
   {
