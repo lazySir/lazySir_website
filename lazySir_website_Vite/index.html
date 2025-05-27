@@ -1,43 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
-    <!-- 设置视口宽度为设备屏幕宽度 width=device-width
-    表示视口宽度等于设备的物理屏幕宽度，确保页面在各种手机和平板设备上宽度自适应，而不是默认的
-    980px（桌面浏览器默认宽度）。 初始缩放比例为1 initial-scale=1
-    设置页面初始缩放为100%（不缩放），用户打开页面时看到的就是正常大小。
-    最大缩放比例为1 maximum-scale=1 限制用户最多只能以 1 倍大小查看，禁止放大。
-    禁止用户缩放页面 user-scalable=no
-    禁止用户用手势放大或缩小页面，避免页面布局被缩放破坏。 -->
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     />
-    <meta charset="UTF-8" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="./src/assets/images/public/author_avatar2.png"
+
+    <!-- 网页标题 -->
+    <title>lazySir</title>
+
+    <!-- 网页描述（用于搜索引擎摘要） -->
+    <meta
+      name="description"
+      content="lazySir 是一个专注于 Vite、Vue、TypeScript 等前端技术的博客平台，分享实用项目与开发心得。"
     />
+
+    <!-- favicon -->
+    <link rel="icon" href="/src/assets/images/public/author_avatar2.png" />
+
+    <!-- CSS 文件 -->
     <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/darkTheme.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>lazySir</title>
-  </head>
-  <!-- Google tag (gtag.js) -->
-  <script
-    async
-    src="https://www.googletagmanager.com/gtag/js?id=G-0R5FJYHZWY"
-  ></script>
-  <script>
-    window.dataLayer = window.dataLayer || []
-    function gtag() {
-      dataLayer.push(arguments)
-    }
-    gtag('js', new Date())
 
-    gtag('config', 'G-0R5FJYHZWY')
-  </script>
+    <!-- Open Graph 协议：用于 Facebook、QQ、Bing 等 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="lazySir - 前端开发与技术分享" />
+    <meta property="og:description" content="记录开发经验和项目实践。" />
+    <meta property="og:url" content="https://www.lazysir.me" />
+    <meta
+      property="og:image"
+      content="https://www.lazysir.me/author_avatar.png"
+    />
+
+    <!-- Twitter 卡片 -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="lazySir - 前端开发与技术分享" />
+    <meta name="twitter:description" content="记录开发经验和项目实践。" />
+    <meta
+      name="twitter:image"
+      content="https://www.lazysir.me/author_avatar.png"
+    />
+
+    <!-- JSON-LD 结构化数据（用于 Google 知识卡片） -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "lazySir",
+        "url": "https://www.lazysir.me",
+        "sameAs": ["https://github.com/lazysir", "https://twitter.com/lazysir"],
+        "jobTitle": "前端开发者",
+        "description": "分享 Vite、Vue、TypeScript 等前端开发实践"
+      }
+    </script>
+  </head>
+
   <body>
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-0R5FJYHZWY"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', 'G-0R5FJYHZWY')
+    </script>
+
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
