@@ -1,4 +1,7 @@
 import BlogFront from "@/layouts/blog/index.vue";
+//域名地址
+const DOMAIN = import.meta.env.VITE_DOMAIN_URL
+const CDNURL = import.meta.env.VITE_CDN_URL
 // 工具页面 meta 字段类型定义
 export interface ToolMeta {
     title: string;                // 工具名称或页面标题
@@ -37,74 +40,87 @@ export default [
         },
         children: [
             {
-                path: '/tools/list',
-                name: '工具列表',
+                path: 'list',
+                name: 'ToolsList',
                 component: () => import('@/views/tools/index.vue'),
                 meta: {
                     title: '工具列表',
                 },
             },
             {
-                path: '/tools/webCrypto',
+                path: 'webCrypto',
                 name: 'WebCrypto',
                 component: () => import('@/views/tools/webCrypto.vue'),
                 meta: {
                     title: 'WebCrypto 加密工具',
                     description: '前端加密存储工具，支持 AES、PBKDF2、导出密钥等。',
-                    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/webCrypto.png',
-                    url: 'https://www.lazysir.me/tools/webCrypto',
+                    img: CDNURL + '/tools/webCrypto.png',
+                    url: DOMAIN + '/tools/webCrypto',
                     username: 'lazySir',
                     featured: true
                 },
             },
             {
-                path: '/tools/todoList',
+                path: 'todoList',
                 name: 'ToDoList',
                 component: () => import('@/views/tools/todoList.vue'),
                 meta: {
                     title: '智能 ToDo List',
                     description: '极简但强大的任务管理工具，支持提醒、导入导出等功能。',
-                    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host/lazySir_website/tools/todoList.png',
-                    url: 'https://www.lazysir.me/tools/todoList',
+                    img: CDNURL + '/tools/todoList.png',
+                    url: DOMAIN + '/tools/todoList',
                     username: 'lazySir',
                     featured: true
                 },
             },
             {
-                path: '/tools/qrCode',
+                path: 'qrCode',
                 name: 'QrCode',
                 component: () => import('@/views/tools/qrCode.vue'),
                 meta: {
                     title: '二维码生成器',
                     description: '快速生成批量/单个二维码，支持自定义内容、大小、颜色等。',
-                    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/qrCode.png',
-                    url: 'https://www.lazysir.me/tools/qrcode',
+                    img: CDNURL + '/tools/qrCode.png',
+                    url: DOMAIN + '/tools/qrcode',
                     username: 'lazySir',
                     featured: true
                 },
             },
             {
-                path: '/tools/exifRead',
+                path: 'exifRead',
                 name: 'ExifRead',
                 component: () => import('@/views/tools/exifRead.vue'),
                 meta: {
                     title: 'EXIF 信息查看器',
                     description: '查看图片的 EXIF 信息，支持批量上传。',
-                    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/exifRead.png',
-                    url: 'https://www.lazysir.me/tools/exifRead',
+                    img: CDNURL + '/tools/exifRead.png',
+                    url: DOMAIN + '/tools/exifRead',
                     username: 'lazySir',
                     featured: true
                 },
             },
             {
-                path: '/tools/colorPicker',
+                path: 'colorPicker',
                 name: 'ColorPicker',
                 component: () => import('@/views/tools/colorPicker.vue'),
                 meta: {
                     title: '颜色类工具',
                     description: '快速选择颜色，支持HEX、RGB、HSL、CMYK等格式。',
-                    img: 'https://cdn.jsdelivr.net/gh/lazySir/image-host@main/lazySir_website/tools/colorPicker.png',
-                    url: 'https://www.lazysir.me/tools/colorPicker',
+                    img: CDNURL + '/tools/colorPicker.png',
+                    url: DOMAIN + '/tools/colorPicker',
+                    username: 'lazySir',
+                    featured: true
+                },
+            },
+            {
+                path: 'calendar',
+                name: 'Calendar',
+                component: () => import('@/views/tools/calendar.vue'),
+                meta: {
+                    title: '生日查询工具',
+                    description: '快速选择日期，支持农历、节日、节气等。',
+                    img: CDNURL + '/tools/calendar.png',
+                    url: DOMAIN + '/tools/calendar',
                     username: 'lazySir',
                     featured: true
                 },

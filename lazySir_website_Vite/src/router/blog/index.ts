@@ -7,10 +7,10 @@ export default [
         component: BlogFront,
         children: [
             {
-                path: '/blog', name: 'Blog', meta: { title: '首页' }, component: () => import('@/views/blog/home/index.vue')
+                path: '', name: 'BlogHome', meta: { title: '首页' }, component: () => import('@/views/blog/home/index.vue')
             },
             {
-                path: '/blog/article/:filename', name: 'BlogArticle', meta: { title: '文章' }, component: () => import('@/views/blog/articles/index.vue')
+                path: 'article/:filename', name: 'BlogArticle', meta: { title: '文章' }, component: () => import('@/views/blog/articles/index.vue')
             },
             {
                 path: '/friends', name: 'Friends', meta: { title: '友链' }, component: () => import('@/views/blog/friends/index.vue')

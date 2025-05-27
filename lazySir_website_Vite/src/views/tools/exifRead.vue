@@ -61,6 +61,7 @@
 import { ref } from 'vue'
 import { UploadFilled } from '@element-plus/icons-vue'
 import * as exifr from 'exifr'
+import { ElMessage } from 'element-plus'
 
 const exifData = ref<Record<string, any>>({})
 const gpsLink = ref<string | null>(null)
@@ -164,8 +165,9 @@ const handleFile = async (file: File) => {
     } else {
       gpsLink.value = null
     }
+    ElMessage.success('EXIF 解析成功')
   } catch (err) {
-    console.error('EXIF 解析失败:', err)
+    ElMessage.error('EXIF 解析失败:' + err)
     exifData.value = {}
     gpsLink.value = null
   }

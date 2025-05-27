@@ -7,7 +7,9 @@ import { ToolRoute } from '@/router/tools/index'
 const toolRoutes = ref<ToolRoute[]>([])
 onMounted(async () => {
   const { default: toolsConstantRoutes } = await import('@/router/tools/index')
-  toolRoutes.value = toolsConstantRoutes[0].children as ToolRoute[]
+  toolRoutes.value = toolsConstantRoutes[0].children.filter(
+    (item) => item.name != 'ToolsList',
+  ) as ToolRoute[]
 })
 </script>
 

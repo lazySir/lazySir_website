@@ -35,7 +35,7 @@ const openDrawer = () => {
 // 导航菜单列表
 let blogRoutes = [
   { title: '首页', path: '/', name: 'Home' },
-  { title: '博客', path: '/blog', name: 'Blog' },
+  { title: '博客', path: '/blog', name: 'BlogHome' },
   { title: '友链', path: '/friends', name: 'Friends' },
   { title: '归档', path: '/archive', name: 'Archive' },
 ]
