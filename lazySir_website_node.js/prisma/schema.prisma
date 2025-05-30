@@ -83,6 +83,7 @@ model adminRole {
   RoleAndMenu      RoleAndMenu[] // 角色与菜单的关联
   //多对多
   accountsAndRoles accountsAndRoles[] //用户与角色关联
+  RoleAndApi       RoleAndApi[]
 }
 
 // 用户与角色的连接表
@@ -190,4 +191,37 @@ model announcement {
   file           String?  @db.LongText // 内容，允许为空//附件
 
   @@map("announcement") // 映射到数据库中的表名
+}
+
+model Api {
+  apiId       String   @id @default(uuid()) // 主键
+  apiName     String // 接口名称，如“获取用户列表”
+  apiPath     String // 接口路径，如 /api/user/list
+  method      String // 请求方法，如 GET、POST、PUT、DELETE
+  description String? // 接口描述
+  group       String? // 所属分组，如“用户管理”
+  state       Boolean  @default(true) // 是否启用
+  requireAuth Boolean  @default(true) // 是否需要权限认证
+  createDate  DateTime @default(now())
+  updateDate  DateTime @default(now()) @updatedAt
+  accountId   String // 创建人ID
+  updateId    String? // 更新人ID
+
+  // 多对多角色绑定
+  roles RoleAndApi[]
+
+  @@unique([apiPath, method]) // 组合唯一
+  @@map("Api")
+}
+
+model RoleAndApi {
+  RoleAndApiID String @id @default(uuid())
+  roleId       String
+  apiId        String
+
+  role adminRole @relation(fields: [roleId], references: [roleId], onDelete: Cascade)
+  api  Api       @relation(fields: [apiId], references: [apiId], onDelete: Cascade)
+
+  @@unique([roleId, apiId]) // 避免重复绑定
+  @@map("RoleAndApi")
 }

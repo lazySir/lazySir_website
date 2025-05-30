@@ -11,11 +11,13 @@ const path = require('path')
 // 引入响应中间件
 const responseMiddleware = require('./middleware/responseMiddleware')
 // 引入JWT中间件
-const jwtMiddleware = require('./middleware/jwtMiddleware')
+// const jwtMiddleware = require('./middleware/jwtMiddleware')
 // 引入 Token 提取中间件
 const extractToken = require('./utils/token')
 // 引入错误处理中间件
 const errorMiddleware = require('./middleware/errorMiddleware') // 引入错误处理模块
+// 引入接口判断
+const apiCheckMiddleware = require('./middleware/checkApiMiddleware')
 //---------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------构建服务器实例区---------------
 //创建express实例
@@ -39,17 +41,19 @@ app.use(responseMiddleware)
 //处理token格式
 app.use(extractToken)
 // 解析token
-app.use(jwtMiddleware)
+// app.use(jwtMiddleware)
+// 判断权限
+app.use(apiCheckMiddleware)
 //---------------------------------------------------------------------------------------------------------------------
 //-------------前台模块-------------------------
-const frontendRoutes = require('./api/front');
-app.use('/user', frontendRoutes);  // 前台路由
+const frontendRoutes = require('./api/front')
+app.use('/user', frontendRoutes) // 前台路由
 //---------------------------------------------------------------------------------管理员路由模块------------------------
 //-------------后台模块-------------------------
-const adminRoutes = require('./api/admin');
-const apiAdminRoutes = require('./api/api');
-app.use('/admin', adminRoutes);  // 后台路由 //需要token权限的接口前缀
-app.use('/api/admin', apiAdminRoutes);  // 后台路由
+const adminRoutes = require('./api/admin')
+const apiAdminRoutes = require('./api/api')
+app.use('/admin', adminRoutes) // 后台路由 //需要token权限的接口前缀
+app.use('/api/admin', apiAdminRoutes) // 后台路由
 //---------------------------------------------------------------------------------------------------------------------
 // 使用抽离的错误处理中间件
 app.use(errorMiddleware)

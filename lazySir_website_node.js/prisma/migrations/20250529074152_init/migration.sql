@@ -176,6 +176,35 @@ CREATE TABLE `announcement` (
     PRIMARY KEY (`announcementId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Api` (
+    `apiId` VARCHAR(191) NOT NULL,
+    `apiName` VARCHAR(191) NOT NULL,
+    `apiPath` VARCHAR(191) NOT NULL,
+    `method` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `group` VARCHAR(191) NULL,
+    `state` BOOLEAN NOT NULL DEFAULT true,
+    `requireAuth` BOOLEAN NOT NULL DEFAULT true,
+    `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `accountId` VARCHAR(191) NOT NULL,
+    `updateId` VARCHAR(191) NULL,
+
+    UNIQUE INDEX `Api_apiPath_method_key`(`apiPath`, `method`),
+    PRIMARY KEY (`apiId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RoleAndApi` (
+    `RoleAndApiID` VARCHAR(191) NOT NULL,
+    `roleId` VARCHAR(191) NOT NULL,
+    `apiId` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `RoleAndApi_roleId_apiId_key`(`roleId`, `apiId`),
+    PRIMARY KEY (`RoleAndApiID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `adminInfo` ADD CONSTRAINT `adminInfo_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `adminAccount`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -196,3 +225,9 @@ ALTER TABLE `RoleAndMenu` ADD CONSTRAINT `RoleAndMenu_menuId_fkey` FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE `sysDictionary` ADD CONSTRAINT `sysDictionary_parentId_fkey` FOREIGN KEY (`parentId`) REFERENCES `sysDictionary`(`dictionaryId`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RoleAndApi` ADD CONSTRAINT `RoleAndApi_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `adminRole`(`roleId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RoleAndApi` ADD CONSTRAINT `RoleAndApi_apiId_fkey` FOREIGN KEY (`apiId`) REFERENCES `Api`(`apiId`) ON DELETE CASCADE ON UPDATE CASCADE;
