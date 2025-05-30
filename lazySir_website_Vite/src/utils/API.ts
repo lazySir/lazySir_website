@@ -94,12 +94,11 @@ interface APItype {
 
 
 const ADMIN_PREFIX = '/admin'; // 管理员通用接口前缀
-const ADMIN_PASSAGE = '/api'; // 不需要 token 验证接口前缀
 const ADMIN_PERMISSION = '/permission';
 
 const BASE_URLS = {
     // 管理员账号表接口
-    ACCOUNT: ADMIN_PASSAGE + ADMIN_PREFIX + '/account',
+    ACCOUNT: ADMIN_PREFIX + '/account',
     // 管理员信息接口
     ADMININFO: ADMIN_PREFIX + '/accountInfo',
     // 管理员菜单接口
