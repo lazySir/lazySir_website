@@ -5,16 +5,18 @@ const router = express.Router()
 
 const permissionPrefix = '/permission'
 //引入管理员路由
-const authAdminApiRouter = require('../router/admin/api')
-const authAdminMenuRouter = require('../router/admin/menu')
-const authAdminAccountRouter = require('../router/admin/accountInfo')
-const authAdminRoleRouter = require('../router/admin/role')
-const authAdminPermissionRouter = require('../router/admin/permission')
-const authAdminSystenDictionary = require('../router/admin/systemDictionary')
-const authAdminRecruitmentRouter = require('../router/admin/recruitment')
-const authAdminNewsRouter = require('../router/admin/news')
-const authAdminHonorRouter = require('../router/admin/honor')
-const authAdminAnnouncementRouter = require('../router/admin/announcement')
+const authAdminApiRouter = require('./api')
+const authAdminMenuRouter = require('./menu')
+const authAdminAccountRouter = require('./accountInfo')
+const authAdminRoleRouter = require('./role')
+const authAdminPermissionRouter = require('./permission')
+const authAdminSystenDictionary = require('./systemDictionary')
+const authAdminRecruitmentRouter = require('./recruitment')
+const authAdminNewsRouter = require('./news')
+const authAdminHonorRouter = require('./honor')
+const authAdminAnnouncementRouter = require('./announcement')
+const adminAccountRouter = require('./account')
+
 //管理员API接口
 router.use('/adminApi', authAdminApiRouter)
 //管理员账户信息接口
@@ -35,4 +37,6 @@ router.use('/news', authAdminNewsRouter)
 router.use('/honor', authAdminHonorRouter)
 //管理员：公告管理接口
 router.use('/announcement', authAdminAnnouncementRouter)
+//注册登陆接口
+router.use('/account', adminAccountRouter)
 module.exports = router

@@ -46,14 +46,12 @@ app.use(extractToken)
 app.use(apiCheckMiddleware)
 //---------------------------------------------------------------------------------------------------------------------
 //-------------前台模块-------------------------
-const frontendRoutes = require('./api/front')
+const frontendRoutes = require('./router/front/index')
 app.use('/user', frontendRoutes) // 前台路由
 //---------------------------------------------------------------------------------管理员路由模块------------------------
 //-------------后台模块-------------------------
-const adminRoutes = require('./api/admin')
-const apiAdminRoutes = require('./api/api')
-app.use('/admin', adminRoutes) // 后台路由 //需要token权限的接口前缀
-app.use('/api/admin', apiAdminRoutes) // 后台路由
+const adminRoutes = require('./router/admin/index')
+app.use('/admin', adminRoutes) // 后台路由
 //---------------------------------------------------------------------------------------------------------------------
 // 使用抽离的错误处理中间件
 app.use(errorMiddleware)
