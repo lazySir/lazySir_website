@@ -4,37 +4,39 @@ const { v4: uuidv4 } = require('uuid')
 const bcrypt = require('bcryptjs')
 //导入生成token的包
 const jwt = require('jsonwebtoken')
-require('dotenv').config()
 
 exports.register = async (req, res) => {
   try {
     // 获取客户端提交的用户信息
-    const info = req.body;
+    const info = req.body
 
     // 检查注册码是否正确
     if (info.register_code !== process.env.REGISTER_CODE) {
-      return res.myError('注册码错误!');
+      return res.myError('注册码错误!')
     }
 
     // 查询用户名是否被占用
     const existingUser = await prisma.adminAccount.findUnique({
       where: { username: info.username },
-    });
+    })
     if (existingUser) {
-      return res.myError('账号已被注册!');
+      return res.myError('账号已被注册!')
     }
 
     // 查询默认管理员角色
     const defaultRole = await prisma.adminRole.findUnique({
       where: { roleName: process.env.ADMIN_DEFAULT_ROLE_NAME },
-    });
+    })
     if (!defaultRole) {
-      return res.myError('默认管理员角色未找到!');
+      return res.myError('默认管理员角色未找到!')
     }
 
     // 生成ID和加密密码
-    const accountId = uuidv4();
-    const hashedPassword = bcrypt.hashSync(info.password, Number(process.env.SALT_ROUNDS));
+    const accountId = uuidv4()
+    const hashedPassword = bcrypt.hashSync(
+      info.password,
+      Number(process.env.SALT_ROUNDS),
+    )
 
     // 创建用户和用户信息的事务
     await prisma.$transaction(async (tx) => {
@@ -45,7 +47,7 @@ exports.register = async (req, res) => {
           username: info.username,
           password: hashedPassword,
         },
-      });
+      })
 
       // 注册 adminInfo 表
       await tx.adminInfo.create({
@@ -55,7 +57,7 @@ exports.register = async (req, res) => {
           nickname: info.nickname || '默认用户名',
           avatar: info.avatar,
         },
-      });
+      })
 
       // 添加用户角色关联
       await tx.accountsAndRoles.create({
@@ -63,16 +65,15 @@ exports.register = async (req, res) => {
           accountId,
           roleId: defaultRole.roleId,
         },
-      });
-    });
+      })
+    })
 
-    res.mySuccess('注册成功');
+    res.mySuccess('注册成功')
   } catch (err) {
-    console.error(err);
-    res.myError('服务器错误，请稍后再试');
+    console.error(err)
+    res.myError('服务器错误，请稍后再试')
   }
-};
-
+}
 
 exports.login = async (req, res) => {
   try {

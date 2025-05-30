@@ -4,7 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 //解决跨域问题
 const cors = require('cors')
-//引入dotenv env
+//引入dotenv env  加载 .env 文件中的环境变量，并把它们注入到 Node.js 的 process.env 中。
 require('dotenv').config()
 //引入path
 const path = require('path')
