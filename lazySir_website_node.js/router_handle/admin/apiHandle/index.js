@@ -1,5 +1,5 @@
 const prisma = require('../../../db')
-
+const { formatDate } = require('../../../utils')
 /**
  * 添加API接口
  * @param {*} req
@@ -73,10 +73,10 @@ exports.getApi = async (req, res) => {
     // 构造 where 条件
     const where = {
       AND: [
-        apiName ? { apiName: { contains: apiName, mode: 'insensitive' } } : {},
-        apiPath ? { apiPath: { contains: apiPath, mode: 'insensitive' } } : {},
+        apiName ? { apiName: { contains: apiName } } : {},
+        apiPath ? { apiPath: { contains: apiPath } } : {},
         method ? { method } : {},
-        group ? { group: { contains: group, mode: 'insensitive' } } : {},
+        group ? { group: { contains: group } } : {},
         typeof state === 'boolean' ? { state } : {},
         typeof requireAuth === 'boolean' ? { requireAuth } : {},
       ],
@@ -92,7 +92,11 @@ exports.getApi = async (req, res) => {
       take,
       orderBy: { updateDate: 'desc' },
     })
-
+    // 格式化日期
+    list.forEach((item) => {
+      item.createDate = formatDate(item.createDate)
+      item.updateDate = formatDate(item.updateDate)
+    })
     res.mySuccess(
       {
         total,
