@@ -220,3 +220,97 @@ exports.deleteApi = async (req, res) => {
     res.myError('删除 API 接口失败: ' + error.message, 500)
   }
 }
+
+/**
+ * 更新某个角色的 API 接口绑定关系
+ * 逻辑：先删除该角色所有绑定，再重新绑定传入的 apiIds
+ */
+exports.updateRoleApi = async (req, res) => {
+  try {
+    const { roleId, apiIds } = req.body
+    //检查roleID是否在adminRole表中存在
+    const roleExists = await prisma.adminRole.findUnique({
+      where: { roleId },
+    })
+    if (!roleExists) {
+      return res.myError('角色 ID 不存在', 404)
+    }
+    // 删除所有该角色的绑定
+    await prisma.roleAndApi.deleteMany({
+      where: { roleId },
+    })
+
+    // 如果新绑定为空，直接返回
+    if (!apiIds || apiIds.length === 0) {
+      return res.mySuccess(null, '已清空该角色的所有 API 绑定')
+    }
+
+    // 构造新的绑定记录
+    const createData = apiIds.map((apiId) => ({
+      roleId,
+      apiId,
+    }))
+
+    // 批量创建新绑定
+    const created = await prisma.roleAndApi.createMany({
+      data: createData,
+      skipDuplicates: true, // 防止重复绑定
+    })
+
+    res.mySuccess(created, '角色 API 绑定关系更新成功')
+  } catch (error) {
+    res.myError('更新角色 API 绑定关系失败: ' + error.message, 500)
+  }
+}
+
+/**
+ * 查询多个角色绑定的 API 接口列表
+ * 支持通过 roleIds 批量查询
+ */
+/**
+ * 查询多个角色绑定的 API 列表（去重）
+ * @param {*} req
+ * @param {*} res
+ */
+exports.getRoleApi = async (req, res) => {
+  try {
+    const { roleIds } = req.body
+
+    if (!Array.isArray(roleIds) || roleIds.length === 0) {
+      return res.myError('roleIds 不能为空', 400)
+    }
+
+    // 查询这些角色绑定的所有 API（含重复）
+    const bindings = await prisma.roleAndApi.findMany({
+      where: {
+        roleId: { in: roleIds },
+      },
+      include: {
+        api: true,
+      },
+    })
+
+    // 整合成不重复的 API 列表
+    const uniqueApisMap = new Map()
+    for (const item of bindings) {
+      if (!uniqueApisMap.has(item.api.apiId)) {
+        uniqueApisMap.set(item.api.apiId, item.api)
+      }
+    }
+
+    const uniqueApis = Array.from(uniqueApisMap.values())
+    // 格式化日期
+    uniqueApis.forEach((api) => {
+      api.createDate = formatDate(api.createDate)
+      api.updateDate = formatDate(api.updateDate)
+    })
+    //返回总条数
+
+    res.mySuccess(
+      { count: uniqueApis.length, data: uniqueApis },
+      '查询角色 API 权限成功',
+    )
+  } catch (error) {
+    res.myError('查询角色 API 权限失败: ' + error.message, 500)
+  }
+}
