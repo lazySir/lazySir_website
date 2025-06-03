@@ -77,6 +77,14 @@ interface AnnouncementAPI {
     adminUploadImage: Endpoint
     adminUploadFile: Endpoint
 }
+interface AdminApi {
+    getApi: Endpoint;
+    addApi: Endpoint;
+    updateApi: Endpoint;
+    deleteApi: Endpoint;
+    getRoleApi: Endpoint;
+    updateRoleApi: Endpoint;
+}
 // 定义完整的 API 类型接口
 interface APItype {
     accountAPI: AccountAPI;
@@ -89,7 +97,9 @@ interface APItype {
     newsAPI: NewsAPI;
     honorAPI: HonorAPI;
     announcementAPI: AnnouncementAPI
+    adminApi: AdminApi;
 }
+
 
 
 
@@ -115,7 +125,10 @@ const BASE_URLS = {
     NEWS: ADMIN_PREFIX + '/news',
     //荣誉管理接口
     HONOR: ADMIN_PREFIX + '/honor',
-    ANNOUNCEMENT: ADMIN_PREFIX + '/announcement'
+    //公告管理接口
+    ANNOUNCEMENT: ADMIN_PREFIX + '/announcement',
+    //管理员API管理接口
+    ADMINAPI: ADMIN_PREFIX + '/api',
 };
 
 
@@ -206,6 +219,14 @@ const announcementAPI = {
     adminUploadImage: createEndpoint(BASE_URLS.ANNOUNCEMENT, '/uploadImage', "post"),
     adminUploadFile: createEndpoint(BASE_URLS.ANNOUNCEMENT, '/uploadFile', "post"),
 }
+const adminApi: AdminApi = {
+    getApi: createEndpoint(BASE_URLS.ADMINAPI, '', "get"),
+    addApi: createEndpoint(BASE_URLS.ADMINAPI, '', "post"),
+    updateApi: createEndpoint(BASE_URLS.ADMINAPI, '', "put"),
+    deleteApi: createEndpoint(BASE_URLS.ADMINAPI, '', "delete"),
+    getRoleApi: createEndpoint(BASE_URLS.ADMINAPI + '/role', '', "get"),
+    updateRoleApi: createEndpoint(BASE_URLS.ADMINAPI + '/role', '', "put"),
+};
 // 定义整个 API 对象
 const API: APItype = {
     accountAPI,
@@ -217,7 +238,8 @@ const API: APItype = {
     recruitmentAPI,
     newsAPI,
     honorAPI,
-    announcementAPI
+    announcementAPI,
+    adminApi,
 };
 
 export default API;
