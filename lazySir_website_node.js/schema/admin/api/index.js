@@ -97,7 +97,7 @@ const api_schema_get = {
     state: Joi.boolean().allow(null),
     requireAuth: Joi.boolean().allow(null),
     page: Joi.number().min(1).default(1),
-    limit: Joi.number().min(1).max(100).default(20),
+    limit: Joi.number().min(1).max(9999).default(20),
   },
 }
 
