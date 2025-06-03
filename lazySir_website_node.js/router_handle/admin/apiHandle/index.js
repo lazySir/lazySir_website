@@ -70,7 +70,6 @@ exports.getApi = async (req, res) => {
     const skip = (parseInt(page) - 1) * parseInt(limit)
     const take = parseInt(limit)
 
-    // 构造 where 条件
     const where = {
       AND: [
         apiName ? { apiName: { contains: apiName } } : {},
@@ -82,21 +81,49 @@ exports.getApi = async (req, res) => {
       ],
     }
 
-    // 查询总数
     const total = await prisma.api.count({ where })
 
-    // 查询分页数据
     const list = await prisma.api.findMany({
       where,
       skip,
       take,
       orderBy: { updateDate: 'desc' },
     })
-    // 格式化日期
+
+    // 收集所有涉及的 accountId 和 updateId
+    const accountIdSet = new Set()
+    list.forEach((item) => {
+      if (item.accountId) accountIdSet.add(item.accountId)
+      if (item.updateId) accountIdSet.add(item.updateId)
+    })
+    const accountIds = Array.from(accountIdSet)
+
+    // 查询 adminInfo 中的 nickname
+    const adminInfos = await prisma.adminInfo.findMany({
+      where: {
+        accountId: {
+          in: accountIds,
+        },
+      },
+      select: {
+        accountId: true,
+        nickname: true,
+      },
+    })
+
+    // 构建 accountId → nickname 映射表
+    const nicknameMap = Object.fromEntries(
+      adminInfos.map((info) => [info.accountId, info.nickname]),
+    )
+
+    // 替换 accountId 和 updateId 为 createNickname 和 updateNickname，并格式化时间
     list.forEach((item) => {
       item.createDate = formatDate(item.createDate)
       item.updateDate = formatDate(item.updateDate)
+      item.createNickname = nicknameMap[item.accountId] || null
+      item.updateNickname = nicknameMap[item.updateId] || null
     })
+
     res.mySuccess(
       {
         total,
@@ -127,10 +154,6 @@ exports.updateApi = async (req, res) => {
       state = true,
       requireAuth = true,
     } = req.body
-
-    if (!apiId) {
-      return res.myError('缺少 apiId 参数', 400)
-    }
 
     // 判断是否存在该记录
     const existingApi = await prisma.api.findUnique({
@@ -182,10 +205,6 @@ exports.updateApi = async (req, res) => {
 exports.deleteApi = async (req, res) => {
   try {
     const { apiIds } = req.body
-
-    if (!Array.isArray(apiIds) || apiIds.length === 0) {
-      return res.myError('apiIds 格式不正确或为空', 400)
-    }
 
     // 查询要删除的接口是否存在（可选校验）
     const existingApis = await prisma.api.findMany({
@@ -276,11 +295,25 @@ exports.getRoleApi = async (req, res) => {
   try {
     const { roleIds } = req.body
 
-    if (!Array.isArray(roleIds) || roleIds.length === 0) {
-      return res.myError('roleIds 不能为空', 400)
+    // ✅ 校验 roleIds 是否都存在于 adminRole 表中
+    const existingRoles = await prisma.adminRole.findMany({
+      where: {
+        roleId: { in: roleIds },
+      },
+      select: { roleId: true },
+    })
+
+    const existingRoleIds = existingRoles.map((r) => r.roleId)
+    const missingRoleIds = roleIds.filter((id) => !existingRoleIds.includes(id))
+
+    if (missingRoleIds.length > 0) {
+      return res.myError(
+        `以下 roleId 不存在: ${missingRoleIds.join(', ')}`,
+        400,
+      )
     }
 
-    // 查询这些角色绑定的所有 API（含重复）
+    // ✅ 查询这些角色绑定的所有 API（可能含重复）
     const bindings = await prisma.roleAndApi.findMany({
       where: {
         roleId: { in: roleIds },
@@ -290,7 +323,7 @@ exports.getRoleApi = async (req, res) => {
       },
     })
 
-    // 整合成不重复的 API 列表
+    // ✅ 整合成不重复的 API 列表
     const uniqueApisMap = new Map()
     for (const item of bindings) {
       if (!uniqueApisMap.has(item.api.apiId)) {
@@ -299,12 +332,40 @@ exports.getRoleApi = async (req, res) => {
     }
 
     const uniqueApis = Array.from(uniqueApisMap.values())
-    // 格式化日期
+
+    // ✅ 收集所有 accountId 和 updateId
+    const accountIdSet = new Set()
+    uniqueApis.forEach((api) => {
+      if (api.accountId) accountIdSet.add(api.accountId)
+      if (api.updateId) accountIdSet.add(api.updateId)
+    })
+
+    const accountIds = Array.from(accountIdSet)
+
+    // ✅ 查询 adminInfo 表中的 nickname
+    const adminInfos = await prisma.adminInfo.findMany({
+      where: {
+        accountId: { in: accountIds },
+      },
+      select: {
+        accountId: true,
+        nickname: true,
+      },
+    })
+
+    // ✅ 构建 accountId => nickname 映射
+    const nicknameMap = {}
+    adminInfos.forEach((info) => {
+      nicknameMap[info.accountId] = info.nickname
+    })
+
+    // ✅ 添加 createNickname、updateNickname，格式化时间
     uniqueApis.forEach((api) => {
       api.createDate = formatDate(api.createDate)
       api.updateDate = formatDate(api.updateDate)
+      api.createNickname = nicknameMap[api.accountId] || ''
+      api.updateNickname = nicknameMap[api.updateId] || ''
     })
-    //返回总条数
 
     res.mySuccess(
       { count: uniqueApis.length, data: uniqueApis },
