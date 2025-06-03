@@ -18,7 +18,7 @@ const authAdminAnnouncementRouter = require('./announcement')
 const adminAccountRouter = require('./account')
 
 //管理员API接口
-router.use('/adminApi', authAdminApiRouter)
+router.use('/api', authAdminApiRouter)
 //管理员账户信息接口
 router.use('/accountInfo', authAdminAccountRouter)
 //管理员菜单接口
