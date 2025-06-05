@@ -10,7 +10,12 @@
       </el-input>
     </el-form-item>
     <el-form-item label="密码" prop="password">
-      <el-input type="password" v-model="loginAdmin.password" placeholder="请输入密码" show-password>
+      <el-input
+        type="password"
+        v-model="loginAdmin.password"
+        placeholder="请输入密码"
+        show-password
+      >
         <template #prefix>
           <el-icon class="el-input__icon">
             <lock />
@@ -20,8 +25,17 @@
     </el-form-item>
   </el-form>
   <div class="login-btn">
-    <el-button :icon="Plus" round @click="register()" size="large">注册</el-button>
-    <el-button :icon="UserFilled" round @click="handlerLogin()" size="large" type="success" :loading="loading">
+    <el-button :icon="Plus" round @click="register()" size="large"
+      >注册</el-button
+    >
+    <el-button
+      :icon="UserFilled"
+      round
+      @click="handlerLogin()"
+      size="large"
+      type="success"
+      :loading="loading"
+    >
       登录
     </el-button>
   </div>
@@ -40,23 +54,32 @@ const loginForm = ref<any>(null)
 //触发登录方法
 function handlerLogin() {
   loginForm.value.validate(async (valid: boolean) => {
-    if (valid) {
-      loading.value = true
-      let result = await adminAccountStore.login(loginAdmin)
+    if (!valid) {
+      loading.value = false
+      return false
+    }
+
+    loading.value = true
+    try {
+      const result = await adminAccountStore.login(loginAdmin)
       if (result) {
         resetForm()
         ElNotification({
           title: getTimeState(),
-          message: '欢迎登录世高智能科技有限公司后台管理',
+          message: '欢迎登录 lazysir_website 后台管理',
           type: 'success',
           duration: 3000,
         })
       }
+    } catch (error) {
+      // 可选：给出更友好的错误提示
+      // ElMessage 可能已经在 axios 拦截器里处理过了
+    } finally {
+      // 保证 loading 状态一定会被关闭
       loading.value = false
-      return true
-    } else {
-      return false
     }
+
+    return true
   })
 }
 const loginRules = reactive({

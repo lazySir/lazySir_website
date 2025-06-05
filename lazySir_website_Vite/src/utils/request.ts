@@ -17,34 +17,31 @@ service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     //配置token
     config.headers.token = getCookie('token')
     // //加载动画
-    // startLoading()
+    startLoading()
     //进度条
     NProgress.start();
     return config
 })
 //响应拦截器
-service.interceptors.response.use((res: AxiosResponse<any>) => {
-    //成功的回调函数  服务器响应数据回来以后 响应拦截器可以检测到 可以做一些事情
-
-    // //关闭加载
-    // endLoading()
-    //关闭进度条
-    NProgress.done();
-    // 假设响应数据中有 `code` 和 `message` 字段
-    const { code, message } = res.data;
-
-    if (code !== 200) {
-        ElMessage.error(message || '请求失败');
+service.interceptors.response.use(
+    (res: AxiosResponse<any>) => {
+        // 成功回调
+        NProgress.done();
+        endLoading(); // 结束加载动画
+        const { code, message } = res.data;
+        if (code != 200) {
+            ElMessage.error(message || '请求失败');
+        }
+        return res.data;
+    },
+    (error: any) => {
+        // 错误回调
+        NProgress.done();
+        endLoading(); // 结束加载动画
+        ElMessage.error(error?.response?.data?.message || '服务器异常');
+        return Promise.reject(error);
     }
-    return res.data;
-}), (error: any) => {
-    // //关闭加载
-    // endLoading()
-    //关闭进度条
-    NProgress.done();
-    //响应失败的回调函数
-    return Promise.reject(new Error(error))
-}
+);
 
 //对外暴露
 export default service;
