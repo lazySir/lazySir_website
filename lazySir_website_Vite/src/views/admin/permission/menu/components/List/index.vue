@@ -18,20 +18,7 @@
     :disabled="selectable.length == 0"
     type="danger"
   ></AuthBtn>
-  <!-- 配置栏 -->
-  <span class="radioLayout">
-    <el-radio-group v-model="tableLayout">
-      <el-radio-button value="fixed">均衡</el-radio-button>
-      <el-radio-button value="auto">自适应</el-radio-button>
-    </el-radio-group>
-  </span>
 
-  <span class="radioLayout">
-    <el-radio-group v-model="buttonLayout">
-      <el-radio-button :value="false">正方形</el-radio-button>
-      <el-radio-button :value="true">圆形</el-radio-button>
-    </el-radio-group>
-  </span>
   <el-table
     highlight-current-row
     ref="multipleTableRef"
@@ -39,45 +26,37 @@
     :data="filterTableData"
     style="width: 100%; margin-bottom: 20px"
     stripe
-    :table-layout="(tableLayout as any)"
     row-key="path"
     :border="Border"
   >
     <el-table-column width="60" />
     <el-table-column type="selection" />
 
-    <el-table-column width="83" align="center" label="路由图标">
+    <el-table-column width="45" align="center" label="图标">
       <template #default="scope">
-        <el-tag>
-          <IconifyIcon :name="scope.row.meta.icon"></IconifyIcon>
-        </el-tag>
+        <IconifyIcon :name="scope.row.meta.icon"></IconifyIcon>
       </template>
     </el-table-column>
     <el-table-column show-overflow-tooltip align="center" label="路由名称">
       <template #default="scope">
-        <el-tag>
-          <span>{{ scope.row.meta.title }}</span>
-        </el-tag>
+        <span>{{ scope.row.meta.title }}</span>
       </template>
     </el-table-column>
     <el-table-column show-overflow-tooltip align="center" label="路由值">
       <template #default="scope">
-        <el-tag>
-          <span>{{ scope.row.name }}</span>
-        </el-tag>
+        <span>{{ scope.row.name }}</span>
       </template>
     </el-table-column>
     <el-table-column show-overflow-tooltip align="center" label="路径">
       <template #default="scope">
-        <el-tag>
-          <span>{{ scope.row.path }}</span>
-        </el-tag>
+        <span>{{ scope.row.path }}</span>
       </template>
     </el-table-column>
 
     <el-table-column
       show-overflow-tooltip
-      min-width="83"
+      max-width="83"
+      width="70"
       align="center"
       prop="sortOrder"
       label="启用状态"
@@ -98,9 +77,7 @@
       label="排序值"
     >
       <template #default="scope">
-        <el-tag type="info">
-          <span>{{ scope.row.meta.sortOrder }}</span>
-        </el-tag>
+        <span>{{ scope.row.meta.sortOrder }}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -111,9 +88,7 @@
       label="创建时间"
     >
       <template #default="scope">
-        <el-tag type="warning">
-          <span>{{ scope.row.meta.createdDate }}</span>
-        </el-tag>
+        <span>{{ scope.row.meta.createdDate }}</span>
       </template>
     </el-table-column>
 
@@ -125,9 +100,7 @@
       label="更新时间"
     >
       <template #default="scope">
-        <el-tag type="warning">
-          <span>{{ scope.row.meta.updatedDate }}</span>
-        </el-tag>
+        <span>{{ scope.row.meta.updatedDate }}</span>
       </template>
     </el-table-column>
 
@@ -152,7 +125,6 @@
             size="small"
             :disabled="scope.row.meta.level > 2"
             @click="addOrUpdate({ ...scope.row }, 'add')"
-            :circle="buttonLayout"
           ></AuthBtn>
           <!-- 修改 -->
           <AuthBtn
@@ -162,7 +134,6 @@
             perm="UPDATE"
             size="small"
             @click="addOrUpdate(scope.row, 'update')"
-            :circle="buttonLayout"
           >
           </AuthBtn>
           <!-- 删除 -->
@@ -180,7 +151,6 @@
                 name="menuPermission"
                 perm="DELETE"
                 size="small"
-                :circle="buttonLayout"
               ></AuthBtn>
             </template>
           </el-popconfirm>
@@ -209,10 +179,7 @@ const handleRemoveMenus = async () => {
 const menuStore = useAdminMenuStore()
 //父级边框
 let Border = ref(true)
-//表格布局
-let tableLayout = ref('fixed')
-//按钮形状
-let buttonLayout = ref(false)
+
 //子调用父方法
 const emits = defineEmits(['showDrawer'])
 const addOrUpdate = (row: MenuTypes.Menu | void, type: string | void) => {
