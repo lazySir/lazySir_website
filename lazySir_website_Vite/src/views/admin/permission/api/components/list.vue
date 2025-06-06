@@ -1,31 +1,20 @@
 <script setup lang="ts">
 import { useAdminApiStore } from '@/stores/admin/api'
 import type { TableColumnCtx } from 'element-plus'
-import { onMounted, ref } from 'vue'
-
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
+import Dialog from '@/views/admin/permission/api/components/dialog.vue'
 const adminApiStore = useAdminApiStore()
 const sortedList = ref<AdminApiTypes.Api[]>([])
-
 onMounted(async () => {
-  await adminApiStore.getApiList({ page: 1, limit: 9999 })
-
-  // 对数据按 group + apiName 排序，保证同组连续且更稳定
-  sortedList.value = [...adminApiStore.list].sort((a, b) => {
-    if (a.apiName && b.apiName)
-      if (a.group === b.group) {
-        return a.apiName.localeCompare(b.apiName)
-      }
-    return a.group?.localeCompare(b.group || '') || 0
-  })
+  await getData()
 })
-
 interface SpanMethodProps {
   row: AdminApiTypes.Api
   column: TableColumnCtx<AdminApiTypes.Api>
   rowIndex: number
   columnIndex: number
 }
-
+//处理表格合并单元格
 const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
   if (columnIndex === 0) {
     const currentGroup = sortedList.value[rowIndex]?.group
@@ -58,17 +47,49 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
     colspan: 1,
   }
 }
+//获取数据
+const getData = async () => {
+  await adminApiStore.getApiList({ page: 1, limit: 9999 })
+  // 对数据按 group + apiName 排序，保证同组连续且更稳定
+  sortedList.value = [...adminApiStore.list].sort((a, b) => {
+    if (a.apiName && b.apiName)
+      if (a.group === b.group) {
+        return a.apiName.localeCompare(b.apiName)
+      }
+    return a.group?.localeCompare(b.group || '') || 0
+  })
+}
+const getGroups = computed(() => {
+  return Array.from(
+    new Set(sortedList.value.map((item) => item.group).filter(Boolean)),
+  ) as string[]
+})
+const DialogRef = useTemplateRef('DialogRef')
+//确认修改的回调
+const handleConfirm = async (data: AdminApiTypes.Api) => {
+  const res = await adminApiStore.addOrUpdateApi(data)
+  if (res) {
+    await getData()
+  }
+}
+//确认删除的回调
+const handleDelete = async (id: string) => {
+  const res = await adminApiStore.deleteApi(id)
+  if (res) {
+    await getData()
+  }
+}
 </script>
 
 <template>
   <AuthBtn
     :text="false"
-    content="添加角色"
-    name="rolePermission"
+    content="添加接口"
+    @click="DialogRef?.handleDialogOpen(true)"
+    name="permissionApi"
     perm="CREATE"
     type="primary"
   >
-    添加角色
   </AuthBtn>
 
   <el-table
@@ -96,6 +117,22 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
     <el-table-column show-overflow-tooltip prop="apiPath" label="接口地址" />
     <el-table-column
       show-overflow-tooltip
+      prop="updateNickname"
+      align="center"
+      label="更新人"
+      width="100"
+      sortable
+    />
+    <el-table-column
+      show-overflow-tooltip
+      prop="updateDate"
+      label="更新时间"
+      width="150"
+      sortable
+    />
+
+    <el-table-column
+      show-overflow-tooltip
       prop="method"
       label="请求方式"
       width="70"
@@ -110,6 +147,7 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
       <template #default="scope">
         <el-switch
           v-model="scope.row.state"
+          @click="handleConfirm(scope.row)"
           style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
           inline-prompt
           active-text="是"
@@ -138,20 +176,44 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
       label="操作"
     >
       <template #default="scope">
-        <AuthBtn content="详情" name="permissionApi" perm="READ">
+        <AuthBtn
+          @click="DialogRef?.handleDialogOpen(false, scope.row)"
+          content="详情"
+          name="permissionApi"
+          perm="READ"
+        >
           详情
         </AuthBtn>
 
-        <AuthBtn content="修改" name="permissionApi" perm="UPDATE">
+        <AuthBtn
+          @click="DialogRef?.handleDialogOpen(true, scope.row)"
+          content="修改"
+          name="permissionApi"
+          perm="UPDATE"
+        >
           修改
         </AuthBtn>
 
-        <AuthBtn content="删除" name="permissionApi" perm="DELETE">
-          删除
-        </AuthBtn>
+        <el-popconfirm
+          :title="`确定要删除:${scope.row.apiName} 接口吗？`"
+          confirm-button-text="确定"
+          cancel-button-text="取消"
+          @confirm="handleDelete(scope.row.apiId)"
+        >
+          <template #reference>
+            <AuthBtn content="删除" name="permissionApi" perm="DELETE">
+              删除
+            </AuthBtn>
+          </template>
+        </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
+  <Dialog
+    :groups="getGroups"
+    @addOrUpdateApiEmit="handleConfirm"
+    ref="DialogRef"
+  />
 </template>
 
 <style scoped></style>

@@ -9,3 +9,28 @@ export const reqGetApi = (data: AdminApiTypes.GetApi) => {
     })
 }
 
+export const reqAddOrUpdateApi = (data: AdminApiTypes.Api) => {
+    if (data.apiId) {
+        return requests({
+            url: API.adminApi.updateApi.url,
+            method: API.adminApi.updateApi.method,
+            data: { ...data }
+        })
+    } else {
+        return requests({
+            url: API.adminApi.addApi.url,
+            method: API.adminApi.addApi.method,
+            data: { ...data }
+        })
+    }
+
+}
+export const reqDeleteApi = (apiId: string) => {
+    return requests({
+        url: API.adminApi.deleteApi.url,
+        method: API.adminApi.deleteApi.method,
+        data: {
+            apiIds: [apiId]
+        }
+    })
+}

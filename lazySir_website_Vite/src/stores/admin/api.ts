@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import {
-    reqGetApi
+    reqGetApi, reqAddOrUpdateApi, reqDeleteApi
 } from '@/api/admin/api'
 import { ElMessage } from 'element-plus'
 interface APIrequest extends RequestTypes.request {
@@ -51,6 +51,28 @@ export const useAdminApiStore = defineStore('adminApi', {
                 this.list = res.data.list
                 this.total = res.data.total
                 return true
+            }
+        },
+        //新增或修改Api
+        async addOrUpdateApi(data: AdminApiTypes.Api) {
+            const res: APIrequest = await reqAddOrUpdateApi(data) as any
+            if (res.code == 200) {
+                ElMessage.success(res.message || '操作成功')
+                return true
+            } else {
+                ElMessage.error(res.message || '操作失败')
+                return false
+            }
+        },
+        async deleteApi(id: string) {
+            const res: APIrequest = await reqDeleteApi(id) as any
+            if (res.code == 200) {
+                ElMessage.success(res.message || '删除成功')
+                //重新获取API列表
+                return true
+            } else {
+                ElMessage.error(res.message || '删除失败')
+                return false
             }
         }
     }
