@@ -17,14 +17,14 @@ interface SpanMethodProps {
 //处理表格合并单元格
 const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
   if (columnIndex === 0) {
-    const currentGroup = sortedList.value[rowIndex]?.group
+    const currentGroup = sortedList.value[rowIndex]?.groupValue
     const prevGroup =
-      rowIndex > 0 ? sortedList.value[rowIndex - 1]?.group : null
+      rowIndex > 0 ? sortedList.value[rowIndex - 1]?.groupValue : null
 
     if (currentGroup !== prevGroup) {
       let rowspan = 1
       for (let i = rowIndex + 1; i < sortedList.value.length; i++) {
-        if (sortedList.value[i].group === currentGroup) {
+        if (sortedList.value[i].groupValue === currentGroup) {
           rowspan++
         } else {
           break
@@ -53,15 +53,15 @@ const getData = async () => {
   // 对数据按 group + apiName 排序，保证同组连续且更稳定
   sortedList.value = [...adminApiStore.list].sort((a, b) => {
     if (a.apiName && b.apiName)
-      if (a.group === b.group) {
+      if (a.groupValue === b.groupValue) {
         return a.apiName.localeCompare(b.apiName)
       }
-    return a.group?.localeCompare(b.group || '') || 0
+    return a.groupValue?.localeCompare(b.groupValue || '') || 0
   })
 }
 const getGroups = computed(() => {
   return Array.from(
-    new Set(sortedList.value.map((item) => item.group).filter(Boolean)),
+    new Set(sortedList.value.map((item) => item.groupValue).filter(Boolean)),
   ) as string[]
 })
 const DialogRef = useTemplateRef('DialogRef')
@@ -70,6 +70,9 @@ const handleConfirm = async (data: AdminApiTypes.Api) => {
   const res = await adminApiStore.addOrUpdateApi(data)
   if (res) {
     await getData()
+    if (DialogRef.value) {
+      DialogRef.value.clearApiForm()
+    }
   }
 }
 //确认删除的回调
@@ -77,6 +80,9 @@ const handleDelete = async (id: string) => {
   const res = await adminApiStore.deleteApi(id)
   if (res) {
     await getData()
+    if (DialogRef.value) {
+      DialogRef.value.clearApiForm()
+    }
   }
 }
 </script>
@@ -102,7 +108,7 @@ const handleDelete = async (id: string) => {
   >
     <el-table-column
       show-overflow-tooltip
-      prop="group"
+      prop="groupValue"
       label="分组名称"
       sortable
       width="150"
@@ -133,7 +139,7 @@ const handleDelete = async (id: string) => {
 
     <el-table-column
       show-overflow-tooltip
-      prop="method"
+      prop="methodValue"
       label="请求方式"
       width="70"
       align="center"

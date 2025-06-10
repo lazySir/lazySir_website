@@ -10,9 +10,9 @@ exports.addApi = async (req, res) => {
     const {
       apiName,
       apiPath,
-      method,
+      methodId,
       description,
-      group,
+      groupId,
       state = true,
       requireAuth = true,
     } = req.body
@@ -21,21 +21,66 @@ exports.addApi = async (req, res) => {
     const exist = await prisma.api.findFirst({
       where: {
         apiPath,
-        method,
+        methodId,
       },
     })
-    console.log('exist', exist)
+
     if (exist) {
       return res.myError('该 API 接口路径和方法已存在', 400)
     }
 
+    // 验证 methodId 是否属于 key 为 'methods' 的子字典
+    const methodRoot = await prisma.sysDictionary.findFirst({
+      where: {
+        key: 'methods',
+      },
+    })
+
+    if (!methodRoot) {
+      return res.myError('未找到 methods 字典项', 400)
+    }
+
+    const validMethod = await prisma.sysDictionary.findFirst({
+      where: {
+        dictionaryId: methodId,
+        parentId: methodRoot.dictionaryId,
+      },
+    })
+
+    if (!validMethod) {
+      return res.myError('methodId 无效，不属于 methods 字典项', 400)
+    }
+
+    // 验证 groupId 是否属于 key 为 'apiGroup' 的子字典（或你定义的 group key）
+    const groupRoot = await prisma.sysDictionary.findFirst({
+      where: {
+        key: 'apiGroup',
+      },
+    })
+
+    if (!groupRoot) {
+      return res.myError('未找到 apiGroup 字典项', 400)
+    }
+
+    const validGroup = await prisma.sysDictionary.findFirst({
+      where: {
+        dictionaryId: groupId,
+        parentId: groupRoot.dictionaryId,
+      },
+    })
+
+    if (!validGroup) {
+      return res.myError('groupId 无效，不属于 apiGroup 字典项', 400)
+    }
+
+    // 创建 API
     const newApi = await prisma.api.create({
       data: {
         apiName,
         apiPath,
-        method,
+        methodId,
         description,
-        group,
+        groupId,
         state,
         requireAuth,
         accountId: req.user.accountId, // 创建人ID
@@ -45,7 +90,7 @@ exports.addApi = async (req, res) => {
 
     res.mySuccess(newApi, 'API 接口添加成功')
   } catch (error) {
-    res.myError('添加 API 接口失败:' + error.message, 500)
+    res.myError('添加 API 接口失败: ' + error.message, 500)
   }
 }
 
@@ -59,45 +104,39 @@ exports.getApi = async (req, res) => {
     const {
       apiName,
       apiPath,
-      method,
-      group,
       state,
       requireAuth,
       page = 1,
       limit = 20,
     } = req.query
-
     const skip = (parseInt(page) - 1) * parseInt(limit)
     const take = parseInt(limit)
-
     const where = {
       AND: [
         apiName ? { apiName: { contains: apiName } } : {},
         apiPath ? { apiPath: { contains: apiPath } } : {},
-        method ? { method } : {},
-        group ? { group: { contains: group } } : {},
         typeof state === 'boolean' ? { state } : {},
         typeof requireAuth === 'boolean' ? { requireAuth } : {},
       ],
     }
-
     const total = await prisma.api.count({ where })
-
     const list = await prisma.api.findMany({
       where,
       skip,
       take,
       orderBy: { updateDate: 'desc' },
     })
-
-    // 收集所有涉及的 accountId 和 updateId
+    // 收集 accountId / updateId / groupId / methodId
     const accountIdSet = new Set()
+    const dictionaryIdSet = new Set()
     list.forEach((item) => {
       if (item.accountId) accountIdSet.add(item.accountId)
       if (item.updateId) accountIdSet.add(item.updateId)
+      if (item.groupId) dictionaryIdSet.add(item.groupId)
+      if (item.methodId) dictionaryIdSet.add(item.methodId)
     })
     const accountIds = Array.from(accountIdSet)
-
+    const dictionaryIds = Array.from(dictionaryIdSet)
     // 查询 adminInfo 中的 nickname
     const adminInfos = await prisma.adminInfo.findMany({
       where: {
@@ -110,20 +149,38 @@ exports.getApi = async (req, res) => {
         nickname: true,
       },
     })
-
-    // 构建 accountId → nickname 映射表
     const nicknameMap = Object.fromEntries(
       adminInfos.map((info) => [info.accountId, info.nickname]),
     )
-
-    // 替换 accountId 和 updateId 为 createNickname 和 updateNickname，并格式化时间
+    // 查询字典信息
+    const dictionaries = await prisma.sysDictionary.findMany({
+      where: {
+        dictionaryId: {
+          in: dictionaryIds,
+        },
+      },
+      select: {
+        dictionaryId: true,
+        key: true,
+        value: true,
+      },
+    })
+    const dictionaryMap = Object.fromEntries(
+      dictionaries.map((d) => [d.dictionaryId, { key: d.key, value: d.value }]),
+    )
+    // 加工返回数据
     list.forEach((item) => {
       item.createDate = formatDate(item.createDate)
       item.updateDate = formatDate(item.updateDate)
       item.createNickname = nicknameMap[item.accountId] || null
       item.updateNickname = nicknameMap[item.updateId] || null
+      const methodInfo = dictionaryMap[item.methodId] || {}
+      item.methodKey = methodInfo.key || null
+      item.methodValue = methodInfo.value || null
+      const groupInfo = dictionaryMap[item.groupId] || {}
+      item.groupKey = groupInfo.key || null
+      item.groupValue = groupInfo.value || null
     })
-
     res.mySuccess(
       {
         total,
@@ -137,6 +194,7 @@ exports.getApi = async (req, res) => {
     res.myError('获取 API 接口列表失败: ' + error.message, 500)
   }
 }
+
 /**
  * 更新 API 接口信息
  * @param {*} req
@@ -148,46 +206,83 @@ exports.updateApi = async (req, res) => {
       apiId,
       apiName,
       apiPath,
-      method,
+      methodId,
       description,
-      group,
+      groupId,
       state = true,
       requireAuth = true,
     } = req.body
 
-    // 判断是否存在该记录
+    // 检查记录是否存在
     const existingApi = await prisma.api.findUnique({
       where: { apiId },
     })
-
     if (!existingApi) {
       return res.myError('要更新的 API 接口不存在', 404)
     }
 
-    // 检查是否有其他 API 使用了相同的路径和方法
+    // 校验路径 + methodId 是否唯一（排除当前 apiId）
     const duplicate = await prisma.api.findFirst({
       where: {
         apiPath,
-        method,
-        NOT: { apiId }, // 排除当前自身
+        methodId,
+        NOT: { apiId },
       },
     })
-
     if (duplicate) {
       return res.myError('已存在相同路径和方法的其他 API 接口', 400)
     }
 
+    // 获取 methods 的根 dictionaryId
+    const methodRoot = await prisma.sysDictionary.findFirst({
+      where: { key: 'methods' },
+    })
+    if (!methodRoot) {
+      return res.myError('未找到方法类型字典定义', 400)
+    }
+
+    // 检查 methodId 是否为 methods 子项
+    const methodValid = await prisma.sysDictionary.findFirst({
+      where: {
+        dictionaryId: methodId,
+        parentId: methodRoot.dictionaryId,
+      },
+    })
+    if (!methodValid) {
+      return res.myError('无效的 methodId', 400)
+    }
+
+    // 获取 groups 的根 dictionaryId
+    const groupRoot = await prisma.sysDictionary.findFirst({
+      where: { key: 'apiGroup' },
+    })
+    if (!groupRoot) {
+      return res.myError('未找到分组类型字典定义', 400)
+    }
+
+    // 检查 groupId 是否为 groups 子项
+    const groupValid = await prisma.sysDictionary.findFirst({
+      where: {
+        dictionaryId: groupId,
+        parentId: groupRoot.dictionaryId,
+      },
+    })
+    if (!groupValid) {
+      return res.myError('无效的 groupId', 400)
+    }
+
+    // 执行更新
     const updatedApi = await prisma.api.update({
       where: { apiId },
       data: {
         apiName,
         apiPath,
-        method,
+        methodId,
         description,
-        group,
+        groupId,
         state,
         requireAuth,
-        updateId: req.user.accountId, // 更新人 ID
+        updateId: req.user.accountId,
       },
     })
 

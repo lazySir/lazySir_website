@@ -197,9 +197,9 @@ model Api {
   apiId       String   @id @default(uuid()) // 主键
   apiName     String // 接口名称，如“获取用户列表”
   apiPath     String // 接口路径，如 /api/user/list
-  method      String // 请求方法，如 GET、POST、PUT、DELETE
+  methodId    String // 请求方法，如 GET、POST、PUT、DELETE
   description String? // 接口描述
-  group       String? // 所属分组，如“用户管理”
+  groupId     String? // 所属分组，如“用户管理”
   state       Boolean  @default(true) // 是否启用
   requireAuth Boolean  @default(true) // 是否需要权限认证
   createDate  DateTime @default(now())
@@ -210,7 +210,7 @@ model Api {
   // 多对多角色绑定
   roles RoleAndApi[]
 
-  @@unique([apiPath, method]) // 组合唯一
+  @@unique([apiPath, methodId]) // 组合唯一
   @@map("Api")
 }
 

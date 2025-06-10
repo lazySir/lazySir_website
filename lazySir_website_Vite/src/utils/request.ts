@@ -17,7 +17,7 @@ service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     //配置token
     config.headers.token = getCookie('token')
     // //加载动画
-    startLoading()
+    // startLoading()
     //进度条
     NProgress.start();
     return config
@@ -27,7 +27,7 @@ service.interceptors.response.use(
     (res: AxiosResponse<any>) => {
         // 成功回调
         NProgress.done();
-        endLoading(); // 结束加载动画
+        // endLoading(); // 结束加载动画
         const { code, message } = res.data;
         if (code != 200) {
             ElMessage.error(message || '请求失败');
@@ -37,7 +37,7 @@ service.interceptors.response.use(
     (error: any) => {
         // 错误回调
         NProgress.done();
-        endLoading(); // 结束加载动画
+        // endLoading(); // 结束加载动画
         ElMessage.error(error?.response?.data?.message || '服务器异常');
         return Promise.reject(error);
     }

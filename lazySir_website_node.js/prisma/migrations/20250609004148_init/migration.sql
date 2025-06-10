@@ -181,9 +181,9 @@ CREATE TABLE `Api` (
     `apiId` VARCHAR(191) NOT NULL,
     `apiName` VARCHAR(191) NOT NULL,
     `apiPath` VARCHAR(191) NOT NULL,
-    `method` VARCHAR(191) NOT NULL,
+    `methodId` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
-    `group` VARCHAR(191) NULL,
+    `groupId` VARCHAR(191) NULL,
     `state` BOOLEAN NOT NULL DEFAULT true,
     `requireAuth` BOOLEAN NOT NULL DEFAULT true,
     `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -191,7 +191,7 @@ CREATE TABLE `Api` (
     `accountId` VARCHAR(191) NOT NULL,
     `updateId` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `Api_apiPath_method_key`(`apiPath`, `method`),
+    UNIQUE INDEX `Api_apiPath_methodId_key`(`apiPath`, `methodId`),
     PRIMARY KEY (`apiId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

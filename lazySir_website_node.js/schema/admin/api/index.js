@@ -16,20 +16,19 @@ const apiPath = Joi.string()
   .required()
   .error(new Error('apiPath格式不正确或为空'))
 
-const method = Joi.string()
-  .valid('GET', 'POST', 'PUT', 'DELETE', 'PATCH')
+const methodId = Joi.string()
   .required()
-  .error(new Error('method格式不正确或为空，必须为GET/POST/PUT/DELETE/PATCH'))
+  .error(new Error('methodId格式不正确或为空'))
 
 const description = Joi.string()
   .max(500)
   .allow(null, '')
   .error(new Error('description格式不正确'))
 
-const group = Joi.string()
+const groupId = Joi.string()
   .max(255)
   .allow(null, '')
-  .error(new Error('group格式不正确'))
+  .error(new Error('groupId格式不正确'))
 
 const state = Joi.boolean()
   .default(true)
@@ -55,9 +54,9 @@ const api_schema_add = {
   body: {
     apiName,
     apiPath,
-    method,
+    methodId,
     description,
-    group,
+    groupId,
     state,
     requireAuth,
   },
@@ -68,9 +67,9 @@ const api_schema_update = {
     apiId,
     apiName,
     apiPath,
-    method,
+    methodId,
     description,
-    group,
+    groupId,
     state,
     requireAuth,
   },
@@ -90,14 +89,10 @@ const api_schema_get = {
   query: {
     apiName: Joi.string().max(255).allow(null, ''),
     apiPath: Joi.string().max(255).allow(null, ''),
-    method: Joi.string()
-      .valid('GET', 'POST', 'PUT', 'DELETE', 'PATCH')
-      .allow(null, ''),
-    group: Joi.string().max(255).allow(null, ''),
     state: Joi.boolean().allow(null),
     requireAuth: Joi.boolean().allow(null),
     page: Joi.number().min(1).default(1),
-    limit: Joi.number().min(1).max(9999).default(20),
+    limit: Joi.number().min(1).max(9999).default(999),
   },
 }
 

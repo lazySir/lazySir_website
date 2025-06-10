@@ -28,7 +28,7 @@ export const useAdminApiStore = defineStore('adminApi', {
             const groupMap: Record<string, AdminApiTypes.Api[]> = {};
 
             state.list.forEach(api => {
-                const group = api.group || '未分组';
+                const group = api.groupValue || '未分组';
                 if (!groupMap[group]) {
                     groupMap[group] = [];
                 }
@@ -60,7 +60,6 @@ export const useAdminApiStore = defineStore('adminApi', {
                 ElMessage.success(res.message || '操作成功')
                 return true
             } else {
-                ElMessage.error(res.message || '操作失败')
                 return false
             }
         },
@@ -71,7 +70,6 @@ export const useAdminApiStore = defineStore('adminApi', {
                 //重新获取API列表
                 return true
             } else {
-                ElMessage.error(res.message || '删除失败')
                 return false
             }
         }
