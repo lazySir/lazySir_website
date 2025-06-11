@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import {
-    reqGetApi, reqAddOrUpdateApi, reqDeleteApi
+    reqGetApi, reqAddOrUpdateApi, reqDeleteApi, reqGetRoleApi, reqUpdateRoleApi
 } from '@/api/admin/api'
 import { ElMessage } from 'element-plus'
 interface APIrequest extends RequestTypes.request {
@@ -19,6 +19,7 @@ export const useAdminApiStore = defineStore('adminApi', {
         return {
             list: [] as AdminApiTypes.Api[], //API列表
             total: 0 as number, //API总数
+            roleApiList: [] as AdminApiTypes.Api[] //角色API权限列表
         }
     },
     //相当于computed
@@ -40,6 +41,10 @@ export const useAdminApiStore = defineStore('adminApi', {
                 isParent: true,
                 children,
             }));
+        },
+        //只返回角色的apiId
+        roleApiIds(state) {
+            return state.roleApiList.map(api => api.apiId);
         }
     },
 
@@ -68,6 +73,25 @@ export const useAdminApiStore = defineStore('adminApi', {
             if (res.code == 200) {
                 ElMessage.success(res.message || '删除成功')
                 //重新获取API列表
+                return true
+            } else {
+                return false
+            }
+        },
+        //获取角色API权限
+        async getRoleApi(roleId: string) {
+            const res: APIrequest = await reqGetRoleApi([roleId]) as any
+            if (res.code == 200) {
+                this.roleApiList = res.data.list
+                return true
+            } else {
+                return false
+            }
+        },
+        async updateRoleApi(roleId: string, apiIds: string[]) {
+            const res: APIrequest = await reqUpdateRoleApi(roleId, apiIds) as any
+            if (res.code == 200) {
+                ElMessage.success(res.message || '更新成功')
                 return true
             } else {
                 return false

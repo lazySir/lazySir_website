@@ -34,3 +34,22 @@ export const reqDeleteApi = (apiId: string) => {
         }
     })
 }
+//更新角色api接口权限
+export const reqUpdateRoleApi = (roleId: string, apiIds: string[]) => {
+    return requests({
+        url: API.adminApi.updateRoleApi.url,
+        method: API.adminApi.updateRoleApi.method,
+        data: {
+            roleId,
+            apiIds
+        }
+    })
+}
+//获取角色api接口权限
+export const reqGetRoleApi = (data: Array<string>) => {
+    return requests({
+        url: API.adminApi.getRoleApi.url,
+        method: API.adminApi.getRoleApi.method,
+        params: { roleIds: data }
+    })
+}

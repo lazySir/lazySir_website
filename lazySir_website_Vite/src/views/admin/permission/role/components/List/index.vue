@@ -1,55 +1,39 @@
 <template>
-  <!-- <div v-if="hasPermission(userStore.buttons.Role.perm, 'READ')"> -->
   <div class="control">
     <!-- 添加角色 -->
-    <!-- v-show="hasPermission(userStore.buttons.Role.perm, 'CREATE')" -->
-    <AuthBtn
-      :text="false"
-      content="添加角色"
-      name="rolePermission"
-      perm="CREATE"
-      type="primary"
-      @click="edit"
-      >添加角色
-    </AuthBtn>
-    <!-- 批量删除角色 -->
-    <el-popconfirm
-      @confirm="deleteRole()"
-      cancel-button-text="取消"
-      confirm-button-text="确定"
-      title="确定删除?"
-    >
-      <template #reference>
-        <!-- v-show="hasPermission(userStore.buttons.Role.perm, 'DELETE')" -->
-        <AuthBtn
-          :text="false"
-          name="rolePermission"
-          content="批量删除"
-          perm="DELETES"
-          type="danger"
-          :disabled="selected.length > 1 ? false : true"
-          class="delete"
-          >批量删除
-        </AuthBtn>
-      </template>
-    </el-popconfirm>
-
-    <!-- 分页控制 -->
-
-    <el-radio-group v-model="small">
-      <el-radio-button :value="false">默认</el-radio-button>
-      <el-radio-button :value="true">小</el-radio-button>
-    </el-radio-group>
     <div>
-      背景:
-      <el-switch v-model="background" class="ml-2" />
+      <AuthBtn
+        :text="false"
+        content="添加角色"
+        name="rolePermission"
+        perm="CREATE"
+        type="primary"
+        @click="edit"
+        >添加角色
+      </AuthBtn>
+      <!-- 批量删除角色 -->
+      <el-popconfirm
+        @confirm="deleteRole()"
+        cancel-button-text="取消"
+        confirm-button-text="确定"
+        title="确定删除?"
+      >
+        <template #reference>
+          <!-- v-show="hasPermission(userStore.buttons.Role.perm, 'DELETE')" -->
+          <AuthBtn
+            :text="false"
+            name="rolePermission"
+            content="批量删除"
+            perm="DELETES"
+            type="danger"
+            :disabled="selected.length > 1 ? false : true"
+            class="delete"
+            >批量删除
+          </AuthBtn>
+        </template>
+      </el-popconfirm>
     </div>
-    <div class="ml-4">
-      禁用分页: <el-switch v-model="disabled" class="ml-2" />
-    </div>
-    <span class="isShowBorder"
-      >显示边框: <el-switch v-model="isShowBorder"
-    /></span>
+
     <el-input
       v-model="search"
       placeholder="请输入角色名称搜索"
@@ -58,9 +42,9 @@
     ></el-input>
   </div>
   <el-table
+    :border="true"
     highlight-current-row
     @selection-change="handleSelectionChange"
-    :border="isShowBorder"
     :data="filterRoleList"
     style="width: 100%"
   >
@@ -92,28 +76,14 @@
       show-overflow-tooltip
     >
     </el-table-column>
-    <el-table-column
-      show-overflow-tooltip
-      align="center"
-      sortable
-      prop="createDate"
-      label="创建时间"
-    >
-    </el-table-column>
-    <el-table-column
-      show-overflow-tooltip
-      align="center"
-      prop="createUsername"
-      label="创建人"
-    >
-    </el-table-column>
+
     <el-table-column
       show-overflow-tooltip
       align="center"
       sortable
       prop="updateDate"
       label="更新时间"
-      min-width="165"
+      width="165"
     >
     </el-table-column>
     <el-table-column
@@ -121,24 +91,28 @@
       align="center"
       prop="updateUsername"
       label="更新人"
-      min-width="165"
+      width="165"
     >
     </el-table-column>
 
-    <el-table-column
-      fixed="right"
-      align="center"
-      label="操作"
-      width="230"
-      min-width="230"
-    >
+    <el-table-column fixed="right" align="center" label="操作">
       <template #default="scope">
         <AuthBtn
           type="primary"
-          content="权限"
+          content="菜单"
           name="rolePermission"
           perm="UPDATE"
-          @click="edit(scope.row, 'auth')"
+          @click="edit(scope.row, 'menu')"
+          size="small"
+          icon="lock"
+        >
+        </AuthBtn>
+        <AuthBtn
+          type="primary"
+          content="接口"
+          name="rolePermission"
+          perm="UPDATE"
+          @click="edit(scope.row, 'api')"
           size="small"
           icon="lock"
         >
@@ -178,27 +152,18 @@
       v-model:current-page="adminRoleStore.PageAndSize.page"
       v-model:page-size="adminRoleStore.PageAndSize.limit"
       :page-sizes="[3, 5, 7, 10]"
-      :small="small"
-      :disabled="disabled"
-      :background="background"
       layout=" prev, pager, next, jumper,sizes,total,"
       :total="adminRoleStore.PageAndSize.total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
   </div>
-  <!-- </div> -->
-  <!-- <div v-else>
-      {{ "没有查询权限" }}
-    </div> -->
 </template>
 <script lang="ts" setup>
 import { Search } from '@element-plus/icons-vue'
 import { useAdminRoleStore } from '@/stores/admin/role'
 import { ref, onMounted, computed } from 'vue'
 const adminRoleStore = useAdminRoleStore()
-//是否显示边框
-const isShowBorder = ref(true)
 const selected = ref<String[]>([])
 //搜索的内容
 let search = ref('')
@@ -219,13 +184,13 @@ const deleteRole = async (val: string | void) => {
   await adminRoleStore.deleteRole(selected.value as any)
 }
 
-const small = ref(false)
-const background = ref(false)
-const disabled = ref(false)
 //获取角色列表
 onMounted(() => {
-  adminRoleStore.getRoleList()
+  getData()
 })
+const getData = async () => {
+  await adminRoleStore.getRoleList()
+}
 //搜索
 const filterRoleList = computed(() => {
   return adminRoleStore.roleList.filter(
@@ -246,6 +211,9 @@ const handleSizeChange = async () => {
 const handleCurrentChange = async () => {
   await adminRoleStore.getRoleList()
 }
+defineExpose({
+  getData,
+})
 </script>
 <style scoped>
 .el-table {
