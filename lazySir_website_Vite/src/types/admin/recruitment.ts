@@ -63,8 +63,8 @@ declare namespace RecruitmentTypes {
         title?: string | null;     // 标题，最大255，允许为空
         content?: string | null;   // 内容，最大2000，允许为空
         isHot?: boolean | null;    // 是否热门，布尔值，允许为空
-        page?: number | null;      // 当前页数，整数，1-255
-        limit?: number | null;     // 每页条数，整数，1-255
+        page?: number;      // 当前页数，整数，1-255
+        limit?: number;     // 每页条数，整数，1-255
     }
 
 

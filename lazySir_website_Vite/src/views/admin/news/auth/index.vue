@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import List from '@/views/admin/news/list.vue'
 import Edit from '@/views/admin/news/edit.vue'
-
+import BasePagination from '@/components/public/basePagination.vue'
 import { useAdminNewsStore } from '@/stores/admin/news'
 const adminNewsStore = useAdminNewsStore()
 import { ref, onMounted } from 'vue'
@@ -259,15 +259,15 @@ const handleCurrentChange = async (val: number) => {
     />
     <el-row style="margin-top: 2px">
       <el-col :offset="9" :span="12">
-        <el-pagination
+        <BasePagination
+          class="self-center mt-3 mb-3"
           v-model:current-page="filterSearch.page"
           v-model:page-size="filterSearch.limit"
-          :page-sizes="[5, 10, 20, 99]"
-          layout="total, sizes, prev, pager, next, jumper"
           :total="adminNewsStore.totalCount"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-      /></el-col>
+        />
+      </el-col>
     </el-row>
   </el-card>
   <Edit

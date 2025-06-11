@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BasePagination from '@/components/public/basePagination.vue'
 import HonorList from '@/views/admin/honor/list.vue'
 import { useAdminHonorStore } from '@/stores/admin/honor'
 import { ref, onMounted } from 'vue'
@@ -193,15 +194,15 @@ const handleCompany = (val: string) => {
     />
     <el-row style="margin-top: 3px" :gutter="10">
       <el-col :offset="8" :span="10">
-        <el-pagination
+        <BasePagination
+          class="self-center mt-3 mb-3"
           v-model:current-page="filterSearch.page"
           v-model:page-size="filterSearch.limit"
-          :page-sizes="[5, 10, 15, 20, 25, 999]"
-          layout="total, sizes, prev, pager, next, jumper"
           :total="adminHonorStore.total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-      /></el-col>
+        />
+      </el-col>
     </el-row>
   </el-card>
 </template>

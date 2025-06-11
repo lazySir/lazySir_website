@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BasePagination from '@/components/public/basePagination.vue'
 import { onMounted, ref, provide, watch } from 'vue'
 import List from '@/views/admin/announcement/list.vue'
 import Edit from '@/views/admin/announcement/edit.vue'
@@ -250,15 +251,15 @@ provide(/* 注入名 */ 'announcement', /* 值 */ announcement)
     />
     <el-row style="margin-top: 2px">
       <el-col :offset="9" :span="12">
-        <el-pagination
+        <BasePagination
+          class="self-center mt-3 mb-3"
           v-model:current-page="filterSearch.page"
           v-model:page-size="filterSearch.limit"
-          :page-sizes="[5, 10, 20, 99]"
-          layout="total, sizes, prev, pager, next, jumper"
           :total="adminAnnouncementStore.total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-      /></el-col>
+        />
+      </el-col>
     </el-row>
   </el-card>
   <Edit @emits_changePage="changePage" v-else />

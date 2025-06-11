@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BasePagination from '@/components/public/basePagination.vue'
 import Category from '@/components/admin/category.vue'
 import RecruitmentList from '@/views/admin/recruitment/list.vue'
 import Edit from '@/views/admin/recruitment/edit.vue'
@@ -224,11 +225,10 @@ const handleSelectedChange = (val: number) => {
       />
       <el-row style="margin-top: 2px">
         <el-col :offset="9" :span="12">
-          <el-pagination
+          <BasePagination
+            class="self-center mt-3 mb-3"
             v-model:current-page="filterValues.page"
             v-model:page-size="filterValues.limit"
-            :page-sizes="[5, 10, 15, 20, 99]"
-            layout=" prev, pager, next, jumper,sizes,total,"
             :total="adminRecruitmentStore.totalCount"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"

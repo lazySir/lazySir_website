@@ -148,11 +148,10 @@
     </el-table-column>
   </el-table>
   <div class="demo-pagination-block">
-    <el-pagination
+    <BasePagination
+      class="self-center mt-3 mb-3"
       v-model:current-page="adminRoleStore.PageAndSize.page"
       v-model:page-size="adminRoleStore.PageAndSize.limit"
-      :page-sizes="[3, 5, 7, 10]"
-      layout=" prev, pager, next, jumper,sizes,total,"
       :total="adminRoleStore.PageAndSize.total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -160,6 +159,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import BasePagination from '@/components/public/basePagination.vue'
 import { Search } from '@element-plus/icons-vue'
 import { useAdminRoleStore } from '@/stores/admin/role'
 import { ref, onMounted, computed } from 'vue'
