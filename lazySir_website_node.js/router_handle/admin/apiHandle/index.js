@@ -388,8 +388,7 @@ exports.updateRoleApi = async (req, res) => {
  */
 exports.getRoleApi = async (req, res) => {
   try {
-    const { roleIds } = req.body
-
+    const { roleIds } = req.query
     // ✅ 校验 roleIds 是否都存在于 adminRole 表中
     const existingRoles = await prisma.adminRole.findMany({
       where: {
@@ -463,7 +462,7 @@ exports.getRoleApi = async (req, res) => {
     })
 
     res.mySuccess(
-      { count: uniqueApis.length, data: uniqueApis },
+      { count: uniqueApis.length, list: uniqueApis },
       '查询角色 API 权限成功',
     )
   } catch (error) {

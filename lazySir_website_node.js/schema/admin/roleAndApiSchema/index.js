@@ -9,18 +9,18 @@ const roleId = Joi.string()
 const apiId = Joi.string().max(255).error(new Error('接口 ID 格式不正确或为空'))
 
 const roleIds = Joi.array()
-  .items(roleId)
+  .items(String)
   .required()
   .error(new Error('角色 ID 数组格式不正确或为空'))
 
 const apiIds = Joi.array()
-  .items(apiId)
+  .items(String)
   .required()
   .error(new Error('接口 ID 数组格式不正确或为空'))
 
 // ---------- 查：根据 roleIds + apiIds 查询 ----------
 const roleApi_schema_get = {
-  body: {
+  query: {
     roleIds,
   },
 }

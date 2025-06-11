@@ -1,29 +1,21 @@
-
 const prisma = require('../../../db')
 const { formatDate } = require('../../../utils/index')
 // 处理菜单格式
 const formatRoutes = (menu) => {
   // 先按 sortOrder 升序排序
   const sortedMenu = menu.sort((a, b) => {
-    return (a.sortOrder || 0) - (b.sortOrder || 0);
-  });
+    return (a.sortOrder || 0) - (b.sortOrder || 0)
+  })
 
   return sortedMenu.map((item) => {
     // 将 menuName 和 menuValue 修改为 name 和 value，并将其余属性放入 meta 中
-    const {
-      menuName: name,
-      menuValue: value,
-      path,
-      children,
-      ...rest
-    } = item;
+    const { menuName: name, menuValue: value, path, children, ...rest } = item
 
     // 构建 meta 对象，包含剩余属性
-    const meta = { ...rest };
+    const meta = { ...rest }
 
     // 如果有子菜单，递归处理 children
-    const updatedChildren =
-      children.length > 0 ? formatRoutes(children) : [];
+    const updatedChildren = children.length > 0 ? formatRoutes(children) : []
 
     return {
       path,
@@ -33,19 +25,15 @@ const formatRoutes = (menu) => {
         ...meta, // 将其他属性放入 meta
       },
       children: updatedChildren,
-    };
-  });
+    }
+  })
 }
 exports.getAuth = async (req, res) => {
-  const { rolesId, flag } = req.body; // 从请求的 body 中获取 rolesId 数组和 flag 标志
+  const { rolesId, flag } = req.body // 从请求的 body 中获取 rolesId 数组和 flag 标志
 
   // 检查是否提供了 rolesId，且 rolesId 是否为数组
   if (!rolesId) {
-    return res.myError('未提供角色ID数组');
-  }
-  // 如果 rolesId 为空数组则返回空数组
-  if (rolesId.length === 0) {
-    return res.myError('未查询到角色，请联系管理员处理');
+    return res.myError('未提供角色ID数组')
   }
 
   try {
@@ -57,95 +45,92 @@ exports.getAuth = async (req, res) => {
         },
       },
       select: {
-        menu: true
+        menu: true,
       },
-    });
-
-    // 如果没有关联的菜单，返回空数组
-    if (roleMenus.length === 0) {
-      return res.myError('没有查询到有任何菜单权限，请联系管理员处理');
-    }
+    })
 
     // 提取所有菜单信息
-    let menus = roleMenus.map((rm) => rm.menu);
+    let menus = roleMenus.map((rm) => rm.menu)
     // 构建一个包含所有父级菜单的递归函数
     const fetchParentMenus = async (menu) => {
       if (menu.parentId) {
         const parentMenu = await prisma.adminMenu.findUnique({
           where: {
             menuId: menu.parentId,
-          }
-        });
+          },
+        })
 
         // 如果找到父菜单，并且它尚未包含在菜单列表中，则将其添加
         if (parentMenu && !menuIds.has(parentMenu.menuId)) {
-          menuIds.add(parentMenu.menuId);
-          uniqueMenus.push(parentMenu);
-          await fetchParentMenus(parentMenu); // 递归获取父级菜单
+          menuIds.add(parentMenu.menuId)
+          uniqueMenus.push(parentMenu)
+          await fetchParentMenus(parentMenu) // 递归获取父级菜单
         }
       }
-    };
+    }
 
     // 对菜单进行去重，确保相同的菜单不会重复
-    const uniqueMenus = [];
-    const menuIds = new Set();
+    const uniqueMenus = []
+    const menuIds = new Set()
 
     // 遍历菜单并添加到 uniqueMenus，同时根据 flag 决定是否递归获取父级菜单
     for (const menu of menus) {
       if (!menuIds.has(menu.menuId)) {
-        menuIds.add(menu.menuId);
-        uniqueMenus.push(menu);
+        menuIds.add(menu.menuId)
+        uniqueMenus.push(menu)
         if (flag) {
-          await fetchParentMenus(menu); // 如果 flag 为 true，获取该菜单的父菜单
+          await fetchParentMenus(menu) // 如果 flag 为 true，获取该菜单的父菜单
         }
       }
     }
 
     // 如果 flag 为 false，直接返回去重后的菜单列表，不构建菜单树
     if (!flag) {
-      return res.mySuccess(uniqueMenus); // 直接返回菜单列表
+      return res.mySuccess(uniqueMenus) // 直接返回菜单列表
     }
 
     // 将菜单按层级关系进行 children 整理
     const buildMenuTree = (menuList, parentId = null) => {
-      const filteredMenus = menuList.filter((menu) => menu.parentId === parentId);
+      const filteredMenus = menuList.filter(
+        (menu) => menu.parentId === parentId,
+      )
 
       // 仅当 flag 为 true 时进行排序
       if (flag) {
-        filteredMenus.sort((a, b) => a.sortOrder - b.sortOrder);
+        filteredMenus.sort((a, b) => a.sortOrder - b.sortOrder)
       }
 
       return filteredMenus.map((menu) => ({
         ...menu,
         children: buildMenuTree(menuList, menu.menuId), // 递归构建子菜单
-      }));
-    };
+      }))
+    }
 
     // 构建菜单树
-    let menuTree = buildMenuTree(uniqueMenus);
+    let menuTree = buildMenuTree(uniqueMenus)
     menuTree = formatRoutes(menuTree)
     const filterStateRoutes = (menu) => {
       return menu
-        .filter(item => item.meta.state == true) // 先过滤当前层级的菜单
-        .map(item => {
+        .filter((item) => item.meta.state == true) // 先过滤当前层级的菜单
+        .map((item) => {
           // 递归处理子菜单
           if (item.children) {
             return {
               ...item,
-              children: filterStateRoutes(item.children) // 递归调用
-            };
+              children: filterStateRoutes(item.children), // 递归调用
+            }
           }
-          return item; // 如果没有子菜单，直接返回当前菜单项
-        });
-    };
+          return item // 如果没有子菜单，直接返回当前菜单项
+        })
+    }
     menuTree = filterStateRoutes(menuTree)
     // 返回构建后的菜单树
-    return res.mySuccess(menuTree);
+    return res.mySuccess(menuTree)
   } catch (error) {
-    console.error('获取角色菜单失败:', error);
-    return res.myError('获取角色菜单失败');
+    console.error('获取角色菜单失败:', error)
+    return res.myError('获取角色菜单失败')
   }
-};
+}
 
 exports.updateAuth = async (req, res) => {
   const { menusId, roleId } = req.body
@@ -270,9 +255,9 @@ exports.getRole = async (req, res) => {
     })
 
     //过滤掉state为false的
-    roles = roles.filter(item => {
-      return item.roles.state === true; // 保留 state 为 true 的项
-    });
+    roles = roles.filter((item) => {
+      return item.roles.state === true // 保留 state 为 true 的项
+    })
 
     // 如果没有角色，返回空数组
     const formattedRoles =
