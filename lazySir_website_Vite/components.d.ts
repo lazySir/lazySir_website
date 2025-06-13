@@ -14,6 +14,7 @@ declare module 'vue' {
     BlurReveal: typeof import('./src/components/public/inspiraUI/BlurReveal.vue')['default']
     Category: typeof import('./src/components/admin/category.vue')['default']
     Dropdown: typeof import('./src/components/public/UiverseUi/dropdown.vue')['default']
+    Echarts: typeof import('./src/components/admin/echarts.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
