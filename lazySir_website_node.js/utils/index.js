@@ -13,3 +13,18 @@ exports.formatDate = (date) => {
     .format(date)
     .replace(/\//g, '-') // 将 "/" 替换为 "-"
 }
+
+// 通用校验函数：校验指定 key 下的子项是否存在
+exports.validateChildDictionary = async (key, id) => {
+  const prisma = require('../db')
+  const root = await prisma.sysDictionary.findFirst({ where: { key } })
+  if (!root) throw new Error(`未找到字典项（${key}）`)
+  const child = await prisma.sysDictionary.findFirst({
+    where: {
+      dictionaryId: id,
+      parentId: root.dictionaryId,
+    },
+  })
+  if (!child) throw new Error(`${key} 的 ID 无效，不属于其子项`)
+  return child
+}

@@ -1,5 +1,6 @@
 const prisma = require('../../../db')
-const { formatDate } = require('../../../utils')
+const { formatDate, validateChildDictionary } = require('../../../utils')
+
 /**
  * 添加通知
  * @param {*} req
@@ -7,51 +8,59 @@ const { formatDate } = require('../../../utils')
  */
 exports.add = async (req, res) => {
   try {
-    const { title, content, typeId, levelId, state = true } = req.body
-
+    const {
+      title,
+      content,
+      typeId,
+      levelId,
+      state = true,
+      receiverIds = [],
+    } = req.body
     const senderId = req.user.accountId
 
-    // 校验 typeId 是否属于字典 key 为 'noticeType'
-    const typeRoot = await prisma.sysDictionary.findFirst({
-      where: { key: 'notificationType' },
-    })
-
-    if (!typeRoot) {
-      return res.myError('未找到通知类型（notificationType）字典项', 400)
+    let validType, validLevel
+    try {
+      validType = await validateChildDictionary('notificationType', typeId)
+      validLevel = await validateChildDictionary('level', levelId)
+    } catch (err) {
+      return res.myError(err.message, 400)
     }
 
-    const validType = await prisma.sysDictionary.findFirst({
-      where: {
-        dictionaryId: typeId,
-        parentId: typeRoot.dictionaryId,
-      },
-    })
+    const isDesignation = validType.key === 'designation'
+    let receiverRecords = []
 
-    if (!validType) {
-      return res.myError('typeId 无效，不属于通知类型字典项', 400)
+    if (isDesignation) {
+      if (!Array.isArray(receiverIds) || receiverIds.length === 0) {
+        return res.myError('通知类型为“指定人员”时，receiverIds 不可为空', 400)
+      }
+
+      // ✅ 校验 receiverIds 中是否都存在于 adminInfo.accountId
+      const validAccounts = await prisma.adminInfo.findMany({
+        where: {
+          accountId: {
+            in: receiverIds,
+          },
+        },
+        select: { accountId: true },
+      })
+
+      const validAccountIds = validAccounts.map((a) => a.accountId)
+      const invalidIds = receiverIds.filter(
+        (id) => !validAccountIds.includes(id),
+      )
+
+      if (invalidIds.length > 0) {
+        return res.myError(
+          `以下接收人ID无效，不存在于系统中：${invalidIds.join(', ')}`,
+          400,
+        )
+      }
+
+      receiverRecords = receiverIds.map((receiverId) => ({
+        receiverId,
+      }))
     }
 
-    // 校验 levelId 是否属于字典 key 为 'level'
-    const levelRoot = await prisma.sysDictionary.findFirst({
-      where: { key: 'level' },
-    })
-
-    if (!levelRoot) {
-      return res.myError('未找到通知等级（level）字典项', 400)
-    }
-
-    const validLevel = await prisma.sysDictionary.findFirst({
-      where: {
-        dictionaryId: levelId,
-        parentId: levelRoot.dictionaryId,
-      },
-    })
-
-    if (!validLevel) {
-      return res.myError('levelId 无效，不属于通知等级字典项', 400)
-    }
-
-    // 创建通知
     const newNotification = await prisma.notification.create({
       data: {
         title,
@@ -63,12 +72,22 @@ exports.add = async (req, res) => {
       },
     })
 
+    if (receiverRecords.length > 0) {
+      await prisma.notificationReceiver.createMany({
+        data: receiverRecords.map((r) => ({
+          ...r,
+          notificationId: newNotification.notificationId,
+        })),
+        skipDuplicates: true,
+      })
+    }
+
     res.mySuccess(newNotification, '通知添加成功')
   } catch (error) {
+    console.error('添加通知失败:', error)
     res.myError('添加通知失败: ' + error.message, 500)
   }
 }
-
 /**
  * 查询通知列表接口（支持分页、模糊查询、时间范围筛选）
  * @param {*} req
@@ -183,7 +202,6 @@ exports.get = async (req, res) => {
         ...item,
         typeValue: sysdictionaryMap[item.typeId] || null,
         levelValue: sysdictionaryMap[item.levelId] || null,
-        senderNickName: item.sender ? item.sender.nickname : null,
         createDate: formatDate(item.createDate),
       }
     })
@@ -212,11 +230,7 @@ exports.update = async (req, res) => {
   try {
     const { notificationId, title, content, typeId, levelId, state } = req.body
 
-    if (!notificationId) {
-      return res.myError('缺少通知ID', 400)
-    }
-
-    // 先查找是否存在该通知
+    // 查找是否存在该通知
     const existing = await prisma.notification.findUnique({
       where: { notificationId },
     })
@@ -230,42 +244,23 @@ exports.update = async (req, res) => {
     if (content !== undefined) updateData.content = content
     if (state !== undefined) updateData.state = state
 
-    // 若提供 typeId，则验证其是否为合法子项
+    // ✅ 替换成统一校验逻辑
     if (typeId !== undefined) {
-      const typeRoot = await prisma.sysDictionary.findFirst({
-        where: { key: 'notificationType' },
-      })
-      if (!typeRoot) return res.myError('未找到通知类型字典项', 400)
-
-      const validType = await prisma.sysDictionary.findFirst({
-        where: {
-          dictionaryId: typeId,
-          parentId: typeRoot.dictionaryId,
-        },
-      })
-      if (!validType)
-        return res.myError('typeId 无效，不属于通知类型字典项', 400)
-
-      updateData.typeId = typeId
+      try {
+        await validateChildDictionary('notificationType', typeId)
+        updateData.typeId = typeId
+      } catch (err) {
+        return res.myError('typeId 无效：' + err.message, 400)
+      }
     }
 
-    // 若提供 levelId，则验证其是否为合法子项
     if (levelId !== undefined) {
-      const levelRoot = await prisma.sysDictionary.findFirst({
-        where: { key: 'level' },
-      })
-      if (!levelRoot) return res.myError('未找到通知等级字典项', 400)
-
-      const validLevel = await prisma.sysDictionary.findFirst({
-        where: {
-          dictionaryId: levelId,
-          parentId: levelRoot.dictionaryId,
-        },
-      })
-      if (!validLevel)
-        return res.myError('levelId 无效，不属于通知等级字典项', 400)
-
-      updateData.levelId = levelId
+      try {
+        await validateChildDictionary('level', levelId)
+        updateData.levelId = levelId
+      } catch (err) {
+        return res.myError('levelId 无效：' + err.message, 400)
+      }
     }
 
     const updated = await prisma.notification.update({
@@ -275,7 +270,7 @@ exports.update = async (req, res) => {
 
     return res.mySuccess(updated, '通知更新成功')
   } catch (error) {
-    console.error(error)
+    console.error('通知更新失败:', error)
     return res.myError('更新通知失败: ' + error.message, 500)
   }
 }
@@ -314,5 +309,159 @@ exports.delete = async (req, res) => {
   } catch (error) {
     console.error(error)
     res.myError('删除通知失败: ' + error.message, 500)
+  }
+}
+
+exports.addReceiver = async (req, res) => {
+  const { notificationId } = req.body
+  const receiverId = req.user.accountId // 当前登录用户账号
+
+  try {
+    // 检查通知是否存在
+    const notification = await prisma.notification.findUnique({
+      where: { notificationId },
+    })
+
+    if (!notification) {
+      return res.myError('通知ID不存在', 404)
+    }
+
+    // 检查是否已有接收记录
+    const exist = await prisma.notificationReceiver.findFirst({
+      where: {
+        notificationId,
+        receiverId,
+      },
+    })
+
+    if (exist) {
+      return res.mySuccess(null, '该通知已存在接收记录')
+    }
+
+    // 添加接收记录
+    const result = await prisma.notificationReceiver.create({
+      data: {
+        notificationId,
+        receiverId,
+      },
+    })
+
+    res.mySuccess(result, '接收记录添加成功')
+  } catch (err) {
+    res.myError('添加接收记录失败: ' + err.message, 500)
+  }
+}
+
+exports.updateReceiver = async (req, res) => {
+  const { notificationId, isRead } = req.body
+  const receiverId = req.user.accountId // 当前登录用户账号
+
+  try {
+    // 查找是否存在对应的接收记录
+    const exist = await prisma.notificationReceiver.findFirst({
+      where: {
+        notificationId,
+        receiverId,
+      },
+    })
+    if (!exist) {
+      return res.myError('接收记录不存在', 404)
+    }
+
+    // 只由后端控制 readAt 字段
+    await prisma.notificationReceiver.update({
+      where: {
+        notificationReceiverId: exist.notificationReceiverId,
+      },
+      data: {
+        isRead,
+        readAt: isRead ? new Date() : null, // 只在标记为已读时设置当前时间
+      },
+    })
+
+    res.mySuccess('阅读状态更新成功', 200)
+  } catch (err) {
+    res.myError('更新阅读状态失败: ' + err.message, 500)
+  }
+}
+exports.getReceiver = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query
+
+    // 查询总数
+    const total = await prisma.notificationReceiver.count()
+
+    // 查询记录列表，包含通知内容、发送人昵称、接收人昵称
+    const records = await prisma.notificationReceiver.findMany({
+      skip: (page - 1) * limit,
+      take: Number(limit),
+      orderBy: {
+        receiveDate: 'desc',
+      },
+      include: {
+        notification: {
+          include: {
+            sender: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    // 提取通知 typeId 和 levelId
+    const notifications = records.map((r) => r.notification).filter(Boolean)
+    const typeIds = [
+      ...new Set(notifications.map((n) => n.typeId).filter(Boolean)),
+    ]
+    const levelIds = [
+      ...new Set(notifications.map((n) => n.levelId).filter(Boolean)),
+    ]
+
+    // 查字典
+    const dictionaries = await prisma.sysDictionary.findMany({
+      where: {
+        dictionaryId: {
+          in: [...typeIds, ...levelIds],
+        },
+      },
+    })
+
+    const dictMap = Object.fromEntries(
+      dictionaries.map((d) => [d.dictionaryId, d.value]),
+    )
+
+    // 构建返回结果（typeValue / levelValue 放进 notification 中）
+    const result = records.map((record) => {
+      const notification = record.notification
+      return {
+        ...record,
+        receiveDate: formatDate(record.receiveDate),
+        readAt: record.readAt ? formatDate(record.readAt) : null,
+        notification: {
+          ...notification,
+          createDate: notification?.createDate
+            ? formatDate(notification.createDate)
+            : null,
+          typeValue: dictMap[notification?.typeId] || null,
+          levelValue: dictMap[notification?.levelId] || null,
+        },
+      }
+    })
+
+    return res.mySuccess(
+      {
+        list: result,
+        total,
+        page: Number(page),
+        limit: Number(limit),
+      },
+      '接收记录查询成功',
+    )
+  } catch (error) {
+    console.error(error)
+    return res.myError('查询接收记录失败：' + error.message, 500)
   }
 }
