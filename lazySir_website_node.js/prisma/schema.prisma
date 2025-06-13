@@ -23,23 +23,28 @@ model adminAccount {
 }
 
 model adminInfo {
-  accountInfoId    String             @id @default(uuid()) // 主键，类型为字符串
-  phone            String?            @unique // 电话，允许为 null
-  accountId        String             @unique // 关联的 accountId，不能为 null
-  age              Int? // 年龄，允许为 null
-  gender           Boolean? // 性别，使用布尔值表示
-  email            String?            @unique // 邮箱，允许为 null
-  nickname         String? // 昵称，允许为 null
-  address          String? // 地址，允许为 null
-  state            Boolean?           @default(true) // 用户状态
-  isDelete         Boolean?           @default(false) // 删除标志，使用布尔值表示
-  avatar           String?            @default("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80") // 头像
-  createDate       DateTime?          @default(now()) // 创建时间，默认为当前时间
-  updateDate       DateTime?          @default(now()) @updatedAt // 更新时间，默认为当前时间，并在更新时自动更改
+  accountInfoId         String                 @id @default(uuid()) // 主键，类型为字符串
+  phone                 String?                @unique // 电话，允许为 null
+  accountId             String                 @unique // 关联的 accountId，不能为 null
+  age                   Int? // 年龄，允许为 null
+  gender                Boolean? // 性别，使用布尔值表示
+  email                 String?                @unique // 邮箱，允许为 null
+  nickname              String? // 昵称，允许为 null
+  address               String? // 地址，允许为 null
+  state                 Boolean?               @default(true) // 用户状态
+  isDelete              Boolean?               @default(false) // 删除标志，使用布尔值表示
+  avatar                String?                @default("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80") // 头像
+  createDate            DateTime?              @default(now()) // 创建时间，默认为当前时间
+  updateDate            DateTime?              @default(now()) @updatedAt // 更新时间，默认为当前时间，并在更新时自动更改
   //1对1 
-  adminAccount     adminAccount       @relation(fields: [accountId], references: [accountId], onDelete: Cascade) // 当用户被删除时，与之相关的 adminAccountInfo 也会被删除
+  adminAccount          adminAccount           @relation(fields: [accountId], references: [accountId], onDelete: Cascade) // 当用户被删除时，与之相关的 adminAccountInfo 也会被删除
   //多对多
-  accountsAndRoles accountsAndRoles[]
+  accountsAndRoles      accountsAndRoles[]
+  // 作为通知接收人：一个管理员可以接收多个通知
+  receivedNotifications notificationReceiver[] @relation("AdminToReceiver")
+
+  // 作为通知发送人：一个管理员可以发送多个通知
+  sentNotifications notification[] @relation("AdminToSender")
 
   @@index([accountId]) // 创建索引以加快根据 accountId 的查询速度
   @@map("adminInfo") // 映射到数据库中的表名
@@ -198,7 +203,7 @@ model Api {
   apiName     String // 接口名称，如“获取用户列表”
   apiPath     String // 接口路径，如 /api/user/list
   methodId    String // 请求方法，如 GET、POST、PUT、DELETE
-  description String? // 接口描述
+  description String?  @db.LongText // 通知内容// 接口描述
   groupId     String? // 所属分组，如“用户管理”
   state       Boolean  @default(true) // 是否启用
   requireAuth Boolean  @default(true) // 是否需要权限认证
@@ -224,4 +229,44 @@ model RoleAndApi {
 
   @@unique([roleId, apiId]) // 避免重复绑定
   @@map("RoleAndApi")
+}
+
+//通知表单
+model notification {
+  notificationId String   @id @default(uuid()) // 主键：通知ID
+  title          String // 通知标题
+  content        String?  @db.LongText // 通知内容
+  typeId         String // 通知类型（如 system / announcement / message）
+  levelId        String // 优先等级
+  senderId       String // 发送人账号（关联 adminInfo.accountId）
+  createDate     DateTime @default(now()) // 创建时间
+  state          Boolean  @default(true) // 是否启用
+
+  // 发件人关联：一个通知对应一个管理员（发送者）
+  sender adminInfo @relation("AdminToSender", fields: [senderId], references: [accountId], onDelete: Cascade)
+
+  // 接收人关联：一个通知可被多个接收者接收
+  receivers notificationReceiver[]
+
+  @@map("notification") // 映射到数据库中的表名
+}
+
+//通知接受表
+model notificationReceiver {
+  notificationReceiverId String    @id @default(uuid()) // 主键
+  notificationId         String // 通知ID
+  receiverId             String // 接收人账号（关联 adminInfo.accountId）
+  isRead                 Boolean   @default(false) // 是否已读
+  readAt                 DateTime? // 阅读时间
+  receiveDate            DateTime  @default(now()) // 接收时间
+
+  // 与通知表的关联（一个通知对应多个接收记录）
+  notification notification @relation(fields: [notificationId], references: [notificationId], onDelete: Cascade)
+
+  // 与管理员的接收人关联（一个接收人可接收多个通知）
+  receiver adminInfo @relation("AdminToReceiver", fields: [receiverId], references: [accountId], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@index([receiverId])
+  @@map("notificationReceiver")
 }

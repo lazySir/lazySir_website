@@ -16,7 +16,7 @@ const authAdminNewsRouter = require('./news')
 const authAdminHonorRouter = require('./honor')
 const authAdminAnnouncementRouter = require('./announcement')
 const adminAccountRouter = require('./account')
-
+const adminNotification = require('./notification')
 //管理员API接口
 router.use('/api', authAdminApiRouter)
 //管理员账户信息接口
@@ -39,4 +39,6 @@ router.use('/honor', authAdminHonorRouter)
 router.use('/announcement', authAdminAnnouncementRouter)
 //注册登陆接口
 router.use('/account', adminAccountRouter)
+//通知接口
+router.use('/notification', adminNotification)
 module.exports = router

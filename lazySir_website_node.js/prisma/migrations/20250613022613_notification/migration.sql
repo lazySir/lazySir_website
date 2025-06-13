@@ -182,7 +182,7 @@ CREATE TABLE `Api` (
     `apiName` VARCHAR(191) NOT NULL,
     `apiPath` VARCHAR(191) NOT NULL,
     `methodId` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` LONGTEXT NULL,
     `groupId` VARCHAR(191) NULL,
     `state` BOOLEAN NOT NULL DEFAULT true,
     `requireAuth` BOOLEAN NOT NULL DEFAULT true,
@@ -203,6 +203,34 @@ CREATE TABLE `RoleAndApi` (
 
     UNIQUE INDEX `RoleAndApi_roleId_apiId_key`(`roleId`, `apiId`),
     PRIMARY KEY (`RoleAndApiID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `notification` (
+    `notificationId` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `content` LONGTEXT NULL,
+    `typeId` VARCHAR(191) NOT NULL,
+    `levelId` VARCHAR(191) NOT NULL,
+    `senderId` VARCHAR(191) NOT NULL,
+    `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `state` BOOLEAN NOT NULL DEFAULT true,
+
+    PRIMARY KEY (`notificationId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `notificationReceiver` (
+    `notificationReceiverId` VARCHAR(191) NOT NULL,
+    `notificationId` VARCHAR(191) NOT NULL,
+    `receiverId` VARCHAR(191) NOT NULL,
+    `isRead` BOOLEAN NOT NULL DEFAULT false,
+    `readAt` DATETIME(3) NULL,
+    `receiveDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    INDEX `notificationReceiver_notificationId_idx`(`notificationId`),
+    INDEX `notificationReceiver_receiverId_idx`(`receiverId`),
+    PRIMARY KEY (`notificationReceiverId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -231,3 +259,12 @@ ALTER TABLE `RoleAndApi` ADD CONSTRAINT `RoleAndApi_roleId_fkey` FOREIGN KEY (`r
 
 -- AddForeignKey
 ALTER TABLE `RoleAndApi` ADD CONSTRAINT `RoleAndApi_apiId_fkey` FOREIGN KEY (`apiId`) REFERENCES `Api`(`apiId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `notification` ADD CONSTRAINT `notification_senderId_fkey` FOREIGN KEY (`senderId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `notificationReceiver` ADD CONSTRAINT `notificationReceiver_notificationId_fkey` FOREIGN KEY (`notificationId`) REFERENCES `notification`(`notificationId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `notificationReceiver` ADD CONSTRAINT `notificationReceiver_receiverId_fkey` FOREIGN KEY (`receiverId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
