@@ -160,6 +160,15 @@ exports.get = async (req, res) => {
             nickname: true,
           },
         },
+        receivers: {
+          select: {
+            receiver: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
       },
       skip: (page - 1) * limit,
       take: Number(limit),
@@ -197,12 +206,13 @@ exports.get = async (req, res) => {
     })
 
     // 构造返回结果，新增 typeValue 和 levelValue，不替换原字段
-    const result = notifications.map((item) => {
+    const result = notifications.map(({ receivers, ...item }) => {
       return {
         ...item,
         typeValue: sysdictionaryMap[item.typeId] || null,
         levelValue: sysdictionaryMap[item.levelId] || null,
         createDate: formatDate(item.createDate),
+        receiver: receivers.map((r) => r.receiver?.nickname).filter(Boolean),
       }
     })
 
@@ -243,7 +253,6 @@ exports.update = async (req, res) => {
     if (title !== undefined) updateData.title = title
     if (content !== undefined) updateData.content = content
     if (state !== undefined) updateData.state = state
-
     // ✅ 替换成统一校验逻辑
     if (typeId !== undefined) {
       try {
@@ -406,6 +415,20 @@ exports.getReceiver = async (req, res) => {
                 nickname: true,
               },
             },
+            receivers: {
+              select: {
+                receiver: {
+                  select: {
+                    nickname: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        receiver: {
+          select: {
+            nickname: true,
           },
         },
       },
@@ -433,13 +456,14 @@ exports.getReceiver = async (req, res) => {
       dictionaries.map((d) => [d.dictionaryId, d.value]),
     )
 
-    // 构建返回结果（typeValue / levelValue 放进 notification 中）
+    // 构建返回结果
     const result = records.map((record) => {
       const notification = record.notification
       return {
         ...record,
         receiveDate: formatDate(record.receiveDate),
         readAt: record.readAt ? formatDate(record.readAt) : null,
+        receiver: record.receiver?.nickname || null,
         notification: {
           ...notification,
           createDate: notification?.createDate
@@ -447,6 +471,8 @@ exports.getReceiver = async (req, res) => {
             : null,
           typeValue: dictMap[notification?.typeId] || null,
           levelValue: dictMap[notification?.levelId] || null,
+          receivers:
+            notification?.receivers?.map((r) => r.receiver?.nickname) || [],
         },
       }
     })
@@ -463,5 +489,158 @@ exports.getReceiver = async (req, res) => {
   } catch (error) {
     console.error(error)
     return res.myError('查询接收记录失败：' + error.message, 500)
+  }
+}
+
+//管理员获取个人通知接口
+
+exports.getMyNotifications = async (req, res) => {
+  const receiverId = req.user.accountId
+
+  try {
+    // Step 1: 查找字典中 key 为 admin 或 system 的 typeId
+    const dicts = await prisma.sysDictionary.findMany({
+      where: {
+        key: { in: ['admin', 'system'] },
+      },
+    })
+
+    // 将结果映射为 key 到 dictionaryId 的对象
+    const dictMap = {}
+    for (const d of dicts) {
+      dictMap[d.key] = d.dictionaryId
+    }
+
+    const missingKeys = []
+    if (!dictMap.admin) missingKeys.push('admin')
+    if (!dictMap.system) missingKeys.push('system')
+
+    if (missingKeys.length > 0) {
+      return res.myError(`字典中未找到 key: ${missingKeys.join(', ')}`, 404)
+    }
+
+    const typeIds = [dictMap.admin, dictMap.system]
+
+    // Step 2: 查询通知表中 typeId 匹配且 state 为 true 的通知
+    const notifications = await prisma.notification.findMany({
+      where: {
+        typeId: { in: typeIds },
+        state: true,
+      },
+    })
+
+    const allNotificationIds = notifications.map((n) => n.notificationId)
+
+    // Step 3: 为当前用户补全 notificationReceiver（如果未存在）
+    const existingReceiverRecords = await prisma.notificationReceiver.findMany({
+      where: {
+        notificationId: { in: allNotificationIds },
+        receiverId,
+      },
+      select: {
+        notificationId: true,
+      },
+    })
+
+    const existingIds = new Set(
+      existingReceiverRecords.map((r) => r.notificationId),
+    )
+
+    const missingRecords = allNotificationIds
+      .filter((id) => !existingIds.has(id))
+      .map((notificationId) => ({
+        notificationId,
+        receiverId,
+      }))
+
+    if (missingRecords.length > 0) {
+      await prisma.notificationReceiver.createMany({
+        data: missingRecords,
+        skipDuplicates: true,
+      })
+    }
+
+    // Step 4: 查询用户自己的接收记录（带通知详情，且通知启用）
+    const receiverRecords = await prisma.notificationReceiver.findMany({
+      where: {
+        receiverId,
+        notification: {
+          state: true,
+        },
+      },
+      orderBy: {
+        receiveDate: 'desc',
+      },
+      include: {
+        notification: {
+          include: {
+            sender: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    // Step 5: 构造响应数据（含通知标题、内容、类型、等级、发送人昵称、时间等）
+
+    // 先收集所有通知的 typeId 和 levelId
+    const allTypeIds = new Set()
+    const allLevelIds = new Set()
+
+    receiverRecords.forEach((r) => {
+      if (r.notification.typeId) allTypeIds.add(r.notification.typeId)
+      if (r.notification.levelId) allLevelIds.add(r.notification.levelId)
+    })
+
+    // 查询对应的字典项
+    const dictEntries = await prisma.sysDictionary.findMany({
+      where: {
+        dictionaryId: {
+          in: [...allTypeIds, ...allLevelIds],
+        },
+      },
+      select: {
+        dictionaryId: true,
+        value: true,
+      },
+    })
+
+    // 构造 dictionaryId → value 的映射
+    const dictMapById = Object.fromEntries(
+      dictEntries.map((d) => [d.dictionaryId, d.value]),
+    )
+
+    // 构造最终结果
+    const result = receiverRecords.map((r) => ({
+      notificationReceiverId: r.notificationReceiverId,
+      isRead: r.isRead,
+      readAt: r.readAt ? formatDate(r.readAt) : null,
+      receiveDate: formatDate(r.receiveDate),
+      notification: {
+        notificationId: r.notification.notificationId,
+        title: r.notification.title,
+        content: r.notification.content,
+        typeId: r.notification.typeId,
+        levelId: r.notification.levelId,
+        typeValue: dictMapById[r.notification.typeId] || null,
+        levelValue: dictMapById[r.notification.levelId] || null,
+        senderNickname: r.notification.sender?.nickname || null,
+        createDate: formatDate(r.notification.createDate),
+      },
+    }))
+
+    return res.mySuccess(
+      {
+        list: result,
+        total: result.length,
+      },
+      '个人通知列表获取成功',
+    )
+  } catch (error) {
+    console.error(error)
+    return res.myError('获取通知失败：' + error.message, 500)
   }
 }

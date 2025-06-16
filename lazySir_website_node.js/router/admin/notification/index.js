@@ -56,4 +56,6 @@ router.put(
   expressJoi(notificationReceiver_schema_update),
   authAdminNotificationHandle.updateReceiver,
 )
+//管理员获取个人通知
+router.get('/personal', authAdminNotificationHandle.getMyNotifications)
 module.exports = router
