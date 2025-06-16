@@ -85,22 +85,16 @@ interface AdminApi {
     getRoleApi: Endpoint;
     updateRoleApi: Endpoint;
 }
-// 定义完整的 API 类型接口
-interface APItype {
-    accountAPI: AccountAPI;
-    adminInfoAPI: AdminInfoAPI;
-    menuAPI: MenuAPI;
-    roleAPI: RoleAPI;
-    permissionAPI: PermissionAPI;
-    sysDictionaryAPI: SysDictionaryAPI;
-    recruitmentAPI: RecruitmentAPI;
-    newsAPI: NewsAPI;
-    honorAPI: HonorAPI;
-    announcementAPI: AnnouncementAPI
-    adminApi: AdminApi;
+
+interface NotificationAPI {
+    getNotification: Endpoint;
+    addNotification: Endpoint;
+    updateNotification: Endpoint;
+    deleteNotification: Endpoint;
+    getNotificationReceiver: Endpoint;
+    updateNotificationReceiver: Endpoint;
+    getAdminPersonalNotifiction: Endpoint;
 }
-
-
 
 
 const ADMIN_PREFIX = '/admin'; // 管理员通用接口前缀
@@ -129,6 +123,8 @@ const BASE_URLS = {
     ANNOUNCEMENT: ADMIN_PREFIX + '/announcement',
     //管理员API管理接口
     ADMINAPI: ADMIN_PREFIX + '/api',
+    //通知管理接口
+    NOTIFICATION: ADMIN_PREFIX + '/notification',
 };
 
 
@@ -227,6 +223,33 @@ const adminApi: AdminApi = {
     getRoleApi: createEndpoint(BASE_URLS.ADMINAPI + '/role', '', "get"),
     updateRoleApi: createEndpoint(BASE_URLS.ADMINAPI + '/role', '', "put"),
 };
+const notificationApi: NotificationAPI = {
+    getNotification: createEndpoint(BASE_URLS.NOTIFICATION, '', "get"),
+    updateNotification: createEndpoint(BASE_URLS.NOTIFICATION, '', "put"),
+    deleteNotification: createEndpoint(BASE_URLS.NOTIFICATION, '', "delete"),
+    addNotification: createEndpoint(BASE_URLS.NOTIFICATION, '', "post"),
+    getNotificationReceiver: createEndpoint(BASE_URLS.NOTIFICATION, '/receiver', "get"),
+    updateNotificationReceiver: createEndpoint(BASE_URLS.NOTIFICATION, '/receiver', "put"),
+    getAdminPersonalNotifiction: createEndpoint(BASE_URLS.NOTIFICATION, '/personal', "get"),
+}
+
+
+// 定义完整的 API 类型接口
+interface APItype {
+    accountAPI: AccountAPI;
+    adminInfoAPI: AdminInfoAPI;
+    menuAPI: MenuAPI;
+    roleAPI: RoleAPI;
+    permissionAPI: PermissionAPI;
+    sysDictionaryAPI: SysDictionaryAPI;
+    recruitmentAPI: RecruitmentAPI;
+    newsAPI: NewsAPI;
+    honorAPI: HonorAPI;
+    announcementAPI: AnnouncementAPI
+    adminApi: AdminApi;
+    notificationApi: NotificationAPI;
+}
+
 // 定义整个 API 对象
 const API: APItype = {
     accountAPI,
@@ -240,6 +263,7 @@ const API: APItype = {
     honorAPI,
     announcementAPI,
     adminApi,
+    notificationApi
 };
 
 export default API;
