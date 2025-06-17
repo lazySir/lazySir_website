@@ -111,19 +111,29 @@ const notificationReceiver_schema_update = {
 }
 const notificationReceiver_schema_query = {
   query: {
-    notificationId: Joi.string()
-      .allow(null, '')
-      .error(new Error('通知ID格式不正确')),
-
-    receiverId: Joi.string()
-      .allow(null, '')
-      .error(new Error('接收人账号格式不正确')),
+    title: Joi.string().allow(null, '').error(new Error('标题格式不正确')),
 
     isRead: Joi.boolean().allow(null).error(new Error('是否已读必须为布尔值')),
 
-    receiveDateFrom: Joi.date()
+    content: Joi.string().allow(null, '').error(new Error('内容格式不正确')),
+
+    receiverNickname: Joi.string()
       .allow(null, '')
-      .error(new Error('接收时间起始格式不正确')),
+      .error(new Error('接收人昵称格式不正确')),
+
+    senderNickName: Joi.string()
+      .allow(null, '')
+      .error(new Error('发送人昵称格式不正确')),
+
+    receiveDateFrom: Joi.date()
+      .iso()
+      .allow(null, '')
+      .error(new Error('接收起始时间格式不正确')),
+
+    receiveDateTo: Joi.date()
+      .iso()
+      .allow(null, '')
+      .error(new Error('接收结束时间格式不正确')),
 
     page: Joi.number()
       .integer()
@@ -136,6 +146,18 @@ const notificationReceiver_schema_query = {
       .min(1)
       .default(10)
       .error(new Error('每页数量必须是正整数')),
+
+    typeId: Joi.string()
+      .uuid()
+      .allow(null, '')
+      .error(new Error('通知类型ID格式不正确')),
+
+    levelId: Joi.string()
+      .uuid()
+      .allow(null, '')
+      .error(new Error('通知等级ID格式不正确')),
+
+    state: Joi.boolean().allow(null).error(new Error('状态必须为布尔值')),
   },
 }
 

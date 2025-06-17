@@ -394,13 +394,96 @@ exports.updateReceiver = async (req, res) => {
 }
 exports.getReceiver = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query
+    const {
+      page = 1,
+      limit = 10,
+      title,
+      isRead,
+      content,
+      receiverNickname,
+      senderNickName,
+      receiveDateFrom,
+      receiveDateTo,
+      typeId,
+      levelId,
+      state,
+    } = req.query
+
+    // 构造筛选条件
+    const where = {
+      ...(isRead !== undefined && isRead !== null && { isRead }),
+
+      ...(receiveDateFrom && {
+        receiveDate: { gte: new Date(receiveDateFrom) },
+      }),
+      ...(receiveDateTo && {
+        receiveDate: {
+          ...(receiveDateFrom ? { gte: new Date(receiveDateFrom) } : {}),
+          lte: new Date(receiveDateTo),
+        },
+      }),
+
+      ...(state !== undefined &&
+        state !== null && {
+          notification: { state },
+        }),
+
+      ...(title && {
+        notification: {
+          ...(state !== undefined && state !== null && { state }),
+          title: { contains: title },
+        },
+      }),
+
+      ...(content && {
+        notification: {
+          ...(state !== undefined && state !== null && { state }),
+          content: { contains: content },
+        },
+      }),
+
+      ...(typeId && {
+        notification: {
+          ...(state !== undefined && state !== null && { state }),
+          typeId,
+        },
+      }),
+
+      ...(levelId && {
+        notification: {
+          ...(state !== undefined && state !== null && { state }),
+          levelId,
+        },
+      }),
+
+      ...(receiverNickname && {
+        receiver: {
+          nickname: {
+            contains: receiverNickname,
+          },
+        },
+      }),
+
+      ...(senderNickName && {
+        notification: {
+          ...(state !== undefined && state !== null && { state }),
+          sender: {
+            nickname: {
+              contains: senderNickName,
+            },
+          },
+        },
+      }),
+    }
 
     // 查询总数
-    const total = await prisma.notificationReceiver.count()
+    const total = await prisma.notificationReceiver.count({
+      where,
+    })
 
     // 查询记录列表，包含通知内容、发送人昵称、接收人昵称
     const records = await prisma.notificationReceiver.findMany({
+      where,
       skip: (page - 1) * limit,
       take: Number(limit),
       orderBy: {
