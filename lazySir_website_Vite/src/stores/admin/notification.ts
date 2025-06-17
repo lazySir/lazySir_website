@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reqGetNotification, reqAddorUpdateNotification } from '@/api/admin/notification'
+import { reqGetNotification, reqAddorUpdateNotification, reqDeleteNotification } from '@/api/admin/notification'
 import { ElMessage } from 'element-plus'
 interface NotificationRequest extends RequestTypes.request {
     data: {
@@ -24,11 +24,19 @@ export const useNotificationStore = defineStore('NotificationStore', {
             if (res.code == 200) {
                 this.list = res.data.list
                 this.total = res.data.total
-                console.log(res.data)
             }
         },
         async addOrUpdateNotification(val: NotificationTypes.addOrupdateNotification) {
             const res: NotificationRequest = await reqAddorUpdateNotification(val) as any
+            if (res.code == 200) {
+                ElMessage.success(res.message)
+                return true
+            } else {
+                return false
+            }
+        },
+        async deleteNotification(val: String[]) {
+            const res: NotificationRequest = await reqDeleteNotification(val) as any
             if (res.code == 200) {
                 ElMessage.success(res.message)
                 return true

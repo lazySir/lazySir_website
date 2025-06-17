@@ -53,5 +53,6 @@ export default [
     'material-symbols:cancel-presentation-outline',
     'material-symbols:encrypted-outline-rounded',
     'ic:baseline-remove-red-eye',
-    'ri:calendar-2-line'
+    'ri:calendar-2-line',
+    'material-symbols:circle-notifications'
 ]

@@ -1,41 +1,17 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue'
-import { useNotificationStore } from '@/stores/admin/notification'
-import Dialog from '@/views/admin/notification/dialog.vue'
-const notificationStore = useNotificationStore()
-const getList = async (val?: NotificationTypes.getNotificationList) => {
-  await notificationStore.getNotificationList(val)
-  handleUpdate()
-}
-onMounted(() => {
-  getList()
-})
-const DialogRef = useTemplateRef('DialogRef')
+import { ref } from 'vue'
+const props = defineProps<{
+  list: NotificationTypes.list[]
+}>()
+
+const emits = defineEmits(['openDialog', 'deleteEmits'])
 // @select="handleSelectionChange"
 const handleOpenDialog = (
   type: 'add' | 'read' | 'update',
   val?: NotificationTypes.list,
 ) => {
-  DialogRef.value?.openDialog(type, val)
+  emits('openDialog', type, val)
 }
-//更新或新增
-const handleAddorUpdate = async (
-  val: NotificationTypes.addOrupdateNotification,
-) => {
-  const res = await notificationStore.addOrUpdateNotification(val)
-  if (res) {
-    DialogRef.value?.closed()
-    getList()
-  }
-}
-const emits = defineEmits(['update'])
-const handleUpdate = () => {
-  emits('update', notificationStore.total)
-}
-defineExpose({
-  handleOpenDialog,
-  getList,
-})
 // 显示不同颜色类型：success / warning / danger / info / default
 const getLevelType = (level?: string) => {
   switch (level) {
@@ -51,12 +27,27 @@ const getLevelType = (level?: string) => {
       return 'success'
   }
 }
+const deleteList = ref<String[]>([])
+//当被选中的新闻发生变化时
+const handleSelectionChange = (val: Array<NotificationTypes.list>) => {
+  deleteList.value = val.map((item) => item.notificationId)
+}
+const handleDelete = (val?: NotificationTypes.list) => {
+  if (val) {
+    emits('deleteEmits', true, [val.notificationId])
+  } else {
+    emits('deleteEmits', false, deleteList.value)
+  }
+}
+
+//删除
 </script>
 
 <template>
   <el-table
     highlight-current-row
-    :data="notificationStore.list"
+    @selection-change="handleSelectionChange"
+    :data="props.list"
     border
     style="width: 100%"
   >
@@ -81,6 +72,7 @@ const getLevelType = (level?: string) => {
       align="center"
       show-overflow-tooltip
       label="通知等级"
+      sortable
       prop="levelValue"
       width="width"
     >
@@ -135,7 +127,7 @@ const getLevelType = (level?: string) => {
           @click="handleOpenDialog('read', scope.row)"
           type="primary"
           content="详情"
-          name="adminHonorAuth"
+          name="NotificationAuth"
           perm="READ"
         >
         </AuthBtn>
@@ -143,17 +135,20 @@ const getLevelType = (level?: string) => {
           @click="handleOpenDialog('update', scope.row)"
           type="primary"
           content="编辑"
-          name="adminHonorAuth"
+          name="NotificationAuth"
           perm="UPDATE"
         >
         </AuthBtn>
-        <!-- @confirm="handleDelete([scope.row.honorId])" -->
-        <el-popconfirm :title="`是否确定删除${scope.row.name}`">
+
+        <el-popconfirm
+          @confirm="handleDelete(scope.row)"
+          :title="`是否确定删除${scope.row.title}`"
+        >
           <template #reference>
             <AuthBtn
               type="primary"
               content="删除"
-              name="adminHonorAuth"
+              name="NotificationAuth"
               perm="DELETE"
             >
             </AuthBtn>
@@ -162,7 +157,6 @@ const getLevelType = (level?: string) => {
       </template>
     </el-table-column>
   </el-table>
-  <Dialog @submit="handleAddorUpdate" ref="DialogRef" />
 </template>
 
 <style scoped></style>

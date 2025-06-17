@@ -67,6 +67,7 @@ const closed = () => {
   } as NotificationTypes.addOrupdateNotification
   openType.value = 'read'
   isShow.value = false
+  selectedReceivers.value = []
 }
 //暴露方法
 defineExpose({
@@ -155,7 +156,11 @@ defineExpose({
         />
       </el-form-item>
       <el-form-item
-        v-if="openType == 'add' && adminList.length > 0"
+        v-if="
+          openType == 'add' &&
+          adminList.length > 0 &&
+          EditInfo.typeId == '71ccb4b5-ad38-4fd7-8fa6-7dec2fe1b205'
+        "
         label="接收人员"
         prop="receiver"
       >

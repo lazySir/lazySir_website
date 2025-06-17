@@ -25,3 +25,12 @@ export const reqAddorUpdateNotification = (val: NotificationTypes.addOrupdateNot
     }
 
 }
+export const reqDeleteNotification = (val: String[]) => {
+    return requests({
+        url: API.notificationApi.deleteNotification.url,
+        method: API.notificationApi.deleteNotification.method,
+        data: {
+            notificationIds: val
+        }
+    })
+}
