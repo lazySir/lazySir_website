@@ -37,4 +37,56 @@ declare namespace NotificationTypes {
         receiverIds?: string[];
     }
 
+
+    interface receive {
+        notificationReceiverId: string,
+        notificationId: string,
+        receiverId: string,
+        isRead: false,
+        readAt: null,
+        receiveDate: string,
+        notification: list,
+        receiver: string
+
+    }
+    interface receiveUpdate {
+        notificationId: string,
+        isRead: boolean
+    }
+    interface receiveGet {
+        title?: string,
+        isRead?: boolean,
+        content?: string
+        receiverNickname?: string
+        receiveDateFrom?: string,
+        receiveDateTo?: string,
+        page?: number
+        limit?: number
+        typeId?: string,
+        levelId?: string
+        senderNickName?: string,
+        state?: boolean
+    }
+    interface personalNotification {
+        notificationReceiverId: string,
+        isRead: boolean
+        readAt: string
+        receiveDate: string
+        notification: {
+            notificationId: string
+            title: string
+            content: string
+            typeId: string
+            levelId: string
+            typeValue: string
+            levelValue: string
+            senderNickname: string
+            createDate: string
+        }
+    }
+    interface personalNotificationGet {
+        limit: number,
+        page: number
+    }
+
 }

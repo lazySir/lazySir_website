@@ -91,8 +91,8 @@ interface NotificationAPI {
     addNotification: Endpoint;
     updateNotification: Endpoint;
     deleteNotification: Endpoint;
-    getNotificationReceiver: Endpoint;
-    updateNotificationReceiver: Endpoint;
+    getNotificationReceive: Endpoint;
+    updateNotificationReceive: Endpoint;
     getAdminPersonalNotifiction: Endpoint;
 }
 
@@ -228,8 +228,8 @@ const notificationApi: NotificationAPI = {
     updateNotification: createEndpoint(BASE_URLS.NOTIFICATION, '', "put"),
     deleteNotification: createEndpoint(BASE_URLS.NOTIFICATION, '', "delete"),
     addNotification: createEndpoint(BASE_URLS.NOTIFICATION, '', "post"),
-    getNotificationReceiver: createEndpoint(BASE_URLS.NOTIFICATION, '/receiver', "get"),
-    updateNotificationReceiver: createEndpoint(BASE_URLS.NOTIFICATION, '/receiver', "put"),
+    getNotificationReceive: createEndpoint(BASE_URLS.NOTIFICATION, '/receiver', "get"),
+    updateNotificationReceive: createEndpoint(BASE_URLS.NOTIFICATION, '/receiver', "put"),
     getAdminPersonalNotifiction: createEndpoint(BASE_URLS.NOTIFICATION, '/personal', "get"),
 }
 
