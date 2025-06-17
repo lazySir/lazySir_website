@@ -113,9 +113,8 @@ exports.get = async (req, res) => {
     const queryConditions = {}
 
     if (notificationId) queryConditions.notificationId = notificationId
-    if (title) queryConditions.title = { contains: title, mode: 'insensitive' }
-    if (content)
-      queryConditions.content = { contains: content, mode: 'insensitive' }
+    if (title) queryConditions.title = { contains: title }
+    if (content) queryConditions.content = { contains: content }
     if (typeId) {
       const tid =
         typeof typeId === 'object' && typeId.value ? typeId.value : typeId
