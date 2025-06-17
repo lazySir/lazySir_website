@@ -387,7 +387,7 @@ exports.updateReceiver = async (req, res) => {
       },
     })
 
-    res.mySuccess('阅读状态更新成功', 200)
+    res.mySuccess(null, '阅读状态更新成功')
   } catch (err) {
     res.myError('更新阅读状态失败: ' + err.message, 500)
   }
