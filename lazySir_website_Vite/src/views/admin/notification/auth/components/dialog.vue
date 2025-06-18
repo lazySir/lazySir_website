@@ -15,7 +15,7 @@ const openDialog = (
   val?: NotificationTypes.list,
 ) => {
   isShow.value = true
-  EditInfo.value = val ?? ({} as NotificationTypes.addOrupdateNotification)
+  EditInfo.value = JSON.parse(JSON.stringify(val))
   openType.value = type
 }
 // 显示不同颜色类型：success / warning / danger / info / default

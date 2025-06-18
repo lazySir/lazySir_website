@@ -172,7 +172,7 @@ const handleCurrentChange = (val: number) => {
           @click="readNotification(scope.row)"
           type="primary"
           content="详情"
-          name="adminNotificationReceive"
+          name="adminNotificationPersonal"
           perm="READ"
         >
         </AuthBtn>
