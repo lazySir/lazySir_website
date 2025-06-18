@@ -2,7 +2,8 @@
 import Collapse from '@/layouts/admin/components/header/right/components/collapse.vue'
 import Search from '@/layouts/admin/components/header/right/components/search.vue'
 import Clothes from '@/layouts/admin/components/header/right/components/clothes/index.vue'
-import assemblySize from '@/layouts/admin/components/header/right/components/assemblySize.vue';
+import assemblySize from '@/layouts/admin/components/header/right/components/assemblySize.vue'
+import Bell from '@/layouts/admin/components/header/right/components/bell.vue'
 </script>
 
 <template>
@@ -13,7 +14,7 @@ import assemblySize from '@/layouts/admin/components/header/right/components/ass
     <assemblySize />
     <Search />
     <Collapse />
-    <IconifyIcon name="mdi-bell-outline" />
+    <Bell />
   </div>
 </template>
 

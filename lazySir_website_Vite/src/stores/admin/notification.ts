@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { reqGetNotification, reqAddorUpdateNotification, reqDeleteNotification, reqGetNotificationReceive, reqUpdateNotificationReceive, reqGetPersonNotification } from '@/api/admin/notification'
-import { ElMessage } from 'element-plus'
+import { ElMessage, notificationTypes } from 'element-plus'
 interface NotificationRequest extends RequestTypes.request {
     data: {
         list: NotificationTypes.list[],
@@ -34,7 +34,14 @@ export const useNotificationStore = defineStore('NotificationStore', {
         }
 
     },
-    getters: {},
+    getters: {
+        //先将个人通知未读的进行排序，获取所有未读的通知
+        getPersonalUnRead(state) {
+            return state.ownAllList.filter((item: NotificationTypes.personalNotification) => {
+                return item.isRead == false
+            })
+        },
+    },
     actions: {
         async getNotificationList(val?: NotificationTypes.getNotificationList) {
             const res: NotificationRequest = await reqGetNotification(val) as any

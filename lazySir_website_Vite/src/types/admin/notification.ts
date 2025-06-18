@@ -82,6 +82,7 @@ declare namespace NotificationTypes {
             levelValue: string
             senderNickname: string
             createDate: string
+            senderAvatar: string
         }
     }
     interface personalNotificationGet {
