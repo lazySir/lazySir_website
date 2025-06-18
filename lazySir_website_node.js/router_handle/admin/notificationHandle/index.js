@@ -125,8 +125,7 @@ exports.get = async (req, res) => {
         typeof levelId === 'object' && levelId.value ? levelId.value : levelId
       queryConditions.levelId = lid
     }
-    if (state !== undefined && state !== '')
-      queryConditions.state = state === 'true'
+    if (state !== undefined && state !== '') queryConditions.state = state
     if (createDateFrom)
       queryConditions.createDate = { gte: new Date(createDateFrom) }
     if (createDateTo)
@@ -587,7 +586,6 @@ exports.getMyNotifications = async (req, res) => {
       },
     })
 
-    // 将结果映射为 key 到 dictionaryId 的对象
     const dictMap = {}
     for (const d of dicts) {
       dictMap[d.key] = d.dictionaryId
@@ -659,6 +657,7 @@ exports.getMyNotifications = async (req, res) => {
             sender: {
               select: {
                 nickname: true,
+                avatar: true, // 新增 avatar
               },
             },
           },
@@ -668,7 +667,6 @@ exports.getMyNotifications = async (req, res) => {
 
     // Step 5: 构造响应数据（含通知标题、内容、类型、等级、发送人昵称、时间等）
 
-    // 先收集所有通知的 typeId 和 levelId
     const allTypeIds = new Set()
     const allLevelIds = new Set()
 
@@ -677,7 +675,6 @@ exports.getMyNotifications = async (req, res) => {
       if (r.notification.levelId) allLevelIds.add(r.notification.levelId)
     })
 
-    // 查询对应的字典项
     const dictEntries = await prisma.sysDictionary.findMany({
       where: {
         dictionaryId: {
@@ -690,12 +687,10 @@ exports.getMyNotifications = async (req, res) => {
       },
     })
 
-    // 构造 dictionaryId → value 的映射
     const dictMapById = Object.fromEntries(
       dictEntries.map((d) => [d.dictionaryId, d.value]),
     )
 
-    // 构造最终结果
     const result = receiverRecords.map((r) => ({
       notificationReceiverId: r.notificationReceiverId,
       isRead: r.isRead,
@@ -710,6 +705,7 @@ exports.getMyNotifications = async (req, res) => {
         typeValue: dictMapById[r.notification.typeId] || null,
         levelValue: dictMapById[r.notification.levelId] || null,
         senderNickname: r.notification.sender?.nickname || null,
+        senderAvatar: r.notification.sender?.avatar || null, // 新增字段
         createDate: formatDate(r.notification.createDate),
       },
     }))
