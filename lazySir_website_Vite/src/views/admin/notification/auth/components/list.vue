@@ -31,12 +31,11 @@ const deleteList = ref<String[]>([])
 //当被选中的新闻发生变化时
 const handleSelectionChange = (val: Array<NotificationTypes.list>) => {
   deleteList.value = val.map((item) => item.notificationId)
+  emits('deleteEmits', false, deleteList.value)
 }
 const handleDelete = (val?: NotificationTypes.list) => {
   if (val) {
     emits('deleteEmits', true, [val.notificationId])
-  } else {
-    emits('deleteEmits', false, deleteList.value)
   }
 }
 
