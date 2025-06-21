@@ -233,6 +233,57 @@ CREATE TABLE `notificationReceiver` (
     PRIMARY KEY (`notificationReceiverId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `task` (
+    `taskId` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `taskName` VARCHAR(191) NOT NULL,
+    `deadline` DATETIME(3) NOT NULL,
+    `content` LONGTEXT NOT NULL,
+    `statusId` VARCHAR(191) NOT NULL,
+    `creatorId` VARCHAR(191) NOT NULL,
+    `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `task_taskName_key`(`taskName`),
+    PRIMARY KEY (`taskId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `taskReport` (
+    `reportId` VARCHAR(191) NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
+    `reporterId` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `content` LONGTEXT NOT NULL,
+    `attachment` VARCHAR(191) NULL,
+    `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`reportId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `taskExecutor` (
+    `id` VARCHAR(191) NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
+    `executorId` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `taskExecutor_taskId_executorId_key`(`taskId`, `executorId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `taskViewer` (
+    `id` VARCHAR(191) NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
+    `viewerId` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `taskViewer_taskId_viewerId_key`(`taskId`, `viewerId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `adminInfo` ADD CONSTRAINT `adminInfo_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `adminAccount`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -268,3 +319,24 @@ ALTER TABLE `notificationReceiver` ADD CONSTRAINT `notificationReceiver_notifica
 
 -- AddForeignKey
 ALTER TABLE `notificationReceiver` ADD CONSTRAINT `notificationReceiver_receiverId_fkey` FOREIGN KEY (`receiverId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `task` ADD CONSTRAINT `task_creatorId_fkey` FOREIGN KEY (`creatorId`) REFERENCES `adminInfo`(`accountId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskReport` ADD CONSTRAINT `taskReport_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `task`(`taskId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskReport` ADD CONSTRAINT `taskReport_reporterId_fkey` FOREIGN KEY (`reporterId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskExecutor` ADD CONSTRAINT `taskExecutor_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `task`(`taskId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskExecutor` ADD CONSTRAINT `taskExecutor_executorId_fkey` FOREIGN KEY (`executorId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskViewer` ADD CONSTRAINT `taskViewer_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `task`(`taskId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskViewer` ADD CONSTRAINT `taskViewer_viewerId_fkey` FOREIGN KEY (`viewerId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
