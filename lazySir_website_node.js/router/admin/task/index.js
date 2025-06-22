@@ -12,22 +12,22 @@ const authAdminTaskRouterHandle = require('../../../router_handle/admin/taskHand
 //新增任务
 router.post('/', expressJoi(task_schema_add), authAdminTaskRouterHandle.addTask)
 // //查询任务
-// router.get(
-//   '/',
-//   expressJoi(task_schema_query),
-//   authAdminNewsRouterHandle.getNews,
-// )
+router.get(
+  '/',
+  expressJoi(task_schema_query),
+  authAdminTaskRouterHandle.getTasks,
+)
 // //修改任务
-// router.put(
-//   '/',
-//   expressJoi(task_schema_update),
-//   authAdminTaskRouterHandle.updateTask,
-// )
+router.put(
+  '/',
+  expressJoi(task_schema_update),
+  authAdminTaskRouterHandle.updateTask,
+)
 // //删除任务
-// router.delete(
-//   '/',
-//   expressJoi(task_schema_delete),
-//   authAdminNewsRouterHandle.deleteNews,
-// )
+router.delete(
+  '/',
+  expressJoi(task_schema_delete),
+  authAdminTaskRouterHandle.deleteTasks,
+)
 
 module.exports = router

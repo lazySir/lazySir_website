@@ -28,12 +28,12 @@ const task_schema_add = {
     executorIds: Joi.array()
       .items(Joi.string().required().error(new Error('执行人ID格式有误')))
       .required()
-      .error(new Error('执行人ID列表不能为空')),
+      .error(new Error('执行人ID列表不能为空或不为数组')),
 
     viewerIds: Joi.array()
       .items(Joi.string().error(new Error('授权查看人ID格式有误')))
       .allow(null, '')
-      .error(new Error('授权查看人列表格式不正确')),
+      .error(new Error('授权查看人列表格式不正确或不为数组')),
   },
 }
 
@@ -66,12 +66,12 @@ const task_schema_update = {
     executorIds: Joi.array()
       .items(Joi.string().required().error(new Error('执行人ID格式有误')))
       .required()
-      .error(new Error('执行人ID列表不能为空')),
+      .error(new Error('执行人ID列表不能为空或不为数组')),
 
     viewerIds: Joi.array()
       .items(Joi.string().error(new Error('授权查看人ID格式有误')))
       .allow(null, '')
-      .error(new Error('授权查看人列表格式不正确')),
+      .error(new Error('授权查看人列表格式不正确或不为数组')),
   },
 }
 
@@ -111,7 +111,7 @@ const task_schema_delete = {
     taskIds: Joi.array()
       .items(Joi.string().required().error(new Error('任务ID不能为空')))
       .required()
-      .error(new Error('任务ID列表不能为空')),
+      .error(new Error('任务ID列表不能为空或不为数组')),
   },
 }
 module.exports = {
