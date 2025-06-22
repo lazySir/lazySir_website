@@ -8,6 +8,7 @@ const cors = require('cors')
 require('dotenv').config()
 //引入path
 const path = require('path')
+
 // 引入响应中间件
 const responseMiddleware = require('./middleware/responseMiddleware')
 // 引入JWT中间件
@@ -18,12 +19,18 @@ const extractToken = require('./utils/token')
 const errorMiddleware = require('./middleware/errorMiddleware') // 引入错误处理模块
 // 引入接口判断
 const apiCheckMiddleware = require('./middleware/checkApiMiddleware')
+//引入数据库连接检测
+const checkDbReady = require('./middleware/checkDbReady')
 //---------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------构建服务器实例区---------------
 //创建express实例
 const app = express()
 //---------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------使用服务器插件区域-------------
+//自定义错误处理函数
+app.use(responseMiddleware)
+// ✅ 一行搞定数据库检测
+app.use(checkDbReady)
 app.use(cors())
 //配置解析表单数据的中间件
 app.use(express.urlencoded({ extended: false }))
@@ -36,8 +43,7 @@ app.use(express.urlencoded({ extended: true }))
 //---------------------------------------------------------------------------静态资源------------------------------
 app.use(express.static(path.join(__dirname, 'public')))
 //---------------------------------------------------------------------------路由之前的中间件------------------------
-//自定义错误处理函数
-app.use(responseMiddleware)
+
 //处理token格式
 app.use(extractToken)
 // 解析token
