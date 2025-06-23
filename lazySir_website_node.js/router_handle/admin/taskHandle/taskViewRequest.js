@@ -450,3 +450,89 @@ exports.getMyTaskViewRequests = async (req, res) => {
     res.myError('查询个人申请失败: ' + err.message, 500)
   }
 }
+/**
+ * 查询当前用户未被授权且未申请的任务列表
+ * @param {*} req
+ * @param {*} res
+ */
+exports.getTasksUserCanApplyView = async (req, res) => {
+  try {
+    const accountId = req.user.accountId
+
+    // ✅ 查询当前用户已经被授权的任务ID列表
+    const [viewerTaskIds, executorTaskIds, appliedTaskIds] = await Promise.all([
+      prisma.taskViewer.findMany({
+        where: { viewerId: accountId },
+        select: { taskId: true },
+      }),
+      prisma.taskExecutor.findMany({
+        where: { executorId: accountId },
+        select: { taskId: true },
+      }),
+      prisma.taskViewRequest.findMany({
+        where: { applicantId: accountId },
+        select: { taskId: true },
+      }),
+    ])
+
+    // 提取 taskId 数组
+    const excludeIds = [
+      ...viewerTaskIds,
+      ...executorTaskIds,
+      ...appliedTaskIds,
+    ].map((item) => item.taskId)
+
+    // ✅ 查询未被授权、未执行、未申请的任务
+    const tasks = await prisma.task.findMany({
+      where: {
+        taskId: {
+          notIn: excludeIds,
+        },
+      },
+      select: {
+        taskId: true,
+        title: true,
+        taskName: true,
+        statusId: true,
+        creator: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
+      orderBy: {
+        createDate: 'desc',
+      },
+    })
+
+    // ✅ 获取所有状态ID对应的字典值
+    const statusIds = [...new Set(tasks.map((t) => t.statusId))]
+    const statusDicts = await prisma.sysDictionary.findMany({
+      where: {
+        dictionaryId: { in: statusIds },
+      },
+      select: {
+        dictionaryId: true,
+        value: true,
+      },
+    })
+    const statusMap = Object.fromEntries(
+      statusDicts.map((d) => [d.dictionaryId, d.value]),
+    )
+
+    // ✅ 格式化返回
+    const formatted = tasks.map((task) => ({
+      taskId: task.taskId,
+      title: task.title,
+      taskName: task.taskName,
+      creatorNickname: task.creator.nickname,
+      statusId: task.statusId,
+      statusValue: statusMap[task.statusId] || '',
+    }))
+
+    res.mySuccess(formatted, '获取可申请查看的任务列表成功')
+  } catch (err) {
+    console.error('获取可申请查看的任务失败:', err)
+    res.myError('获取可申请查看的任务失败: ' + err.message, 500)
+  }
+}

@@ -64,4 +64,9 @@ router.get(
   expressJoi(taskViewRequest_schema_queryPersonal),
   authAdminTaskViewRequestRouterHandle.getMyTaskViewRequests,
 )
+//查询个人能申请的任务列表
+router.get(
+  '/taskApprovalList',
+  authAdminTaskViewRequestRouterHandle.getTasksUserCanApplyView,
+)
 module.exports = router
