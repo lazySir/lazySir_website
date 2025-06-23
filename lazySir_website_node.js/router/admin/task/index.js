@@ -14,6 +14,7 @@ const {
   taskViewRequest_schema_add,
   taskViewRequest_schema_approve,
   taskViewRequest_schema_query,
+  taskViewRequest_schema_queryPersonal,
 } = require('../../../schema/admin/taskSchema/taskViewRequest')
 //任务管理处理函数
 const authAdminTaskRouterHandle = require('../../../router_handle/admin/taskHandle')
@@ -56,5 +57,11 @@ router.get(
   '/taskViewRequest',
   expressJoi(taskViewRequest_schema_query),
   authAdminTaskViewRequestRouterHandle.getTaskViewRequests,
+)
+//查询个人申请列表
+router.get(
+  '/taskViewRequest/personal',
+  expressJoi(taskViewRequest_schema_queryPersonal),
+  authAdminTaskViewRequestRouterHandle.getMyTaskViewRequests,
 )
 module.exports = router

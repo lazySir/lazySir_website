@@ -52,9 +52,29 @@ const taskViewRequest_schema_query = {
       .error(new Error('每页数量必须是正整数')),
   },
 }
-
+const taskViewRequest_schema_queryPersonal = {
+  query: {
+    taskName: Joi.string()
+      .allow(null, '')
+      .error(new Error('任务代号格式不正确')),
+    statusId: Joi.string()
+      .allow(null, '')
+      .error(new Error('审批状态格式不正确')),
+    page: Joi.number()
+      .integer()
+      .min(1)
+      .default(1)
+      .error(new Error('分页页码必须是正整数')),
+    limit: Joi.number()
+      .integer()
+      .min(1)
+      .default(10)
+      .error(new Error('每页数量必须是正整数')),
+  },
+}
 module.exports = {
   taskViewRequest_schema_add,
   taskViewRequest_schema_approve,
   taskViewRequest_schema_query,
+  taskViewRequest_schema_queryPersonal,
 }

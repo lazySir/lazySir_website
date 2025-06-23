@@ -176,6 +176,11 @@ exports.approveTaskViewRequest = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
+/**
+ * 查询任务查看授权申请记录
+ * @param {*} req
+ * @param {*} res
+ */
 exports.getTaskViewRequests = async (req, res) => {
   try {
     const {
@@ -224,7 +229,7 @@ exports.getTaskViewRequests = async (req, res) => {
       }
     }
 
-    // ✅ 如果不是超级管理员，限制只能看到自己创建的任务下的申请记录
+    // ✅ 如果不是超级管理员，只能查看自己创建的任务的申请记录
     if (!superAdmin) {
       where.task = {
         ...where.task,
@@ -235,7 +240,7 @@ exports.getTaskViewRequests = async (req, res) => {
     // ✅ 查询总数
     const total = await prisma.taskViewRequest.count({ where })
 
-    // ✅ 查询记录
+    // ✅ 查询数据
     const requests = await prisma.taskViewRequest.findMany({
       where,
       include: {
@@ -245,6 +250,7 @@ exports.getTaskViewRequests = async (req, res) => {
             taskName: true,
             title: true,
             deadline: true,
+            creatorId: true,
           },
         },
         applicant: {
@@ -269,6 +275,24 @@ exports.getTaskViewRequests = async (req, res) => {
       take: Number(limit),
     })
 
+    // ✅ 收集所有 statusId 并查询字典表中的中文值
+    const statusIds = [...new Set(requests.map((r) => r.statusId))]
+    const statusDicts = await prisma.sysDictionary.findMany({
+      where: {
+        dictionaryId: {
+          in: statusIds,
+        },
+      },
+      select: {
+        dictionaryId: true,
+        value: true,
+      },
+    })
+
+    const statusMap = Object.fromEntries(
+      statusDicts.map((dict) => [dict.dictionaryId, dict.value]),
+    )
+
     // ✅ 格式化返回数据
     const formatted = requests.map((item) => ({
       requestId: item.requestId,
@@ -292,6 +316,7 @@ exports.getTaskViewRequests = async (req, res) => {
         : null,
       reason: item.reason || '',
       statusId: item.statusId,
+      statusValue: statusMap[item.statusId] || '', // ✅ 新增字段：状态中文名
       approveNote: item.approveNote || '',
       createDate: formatDate(item.createDate),
       updateDate: formatDate(item.updateDate),
@@ -310,5 +335,118 @@ exports.getTaskViewRequests = async (req, res) => {
   } catch (err) {
     console.error('查询授权申请失败:', err)
     res.myError('查询授权申请失败: ' + err.message, 500)
+  }
+}
+
+exports.getMyTaskViewRequests = async (req, res) => {
+  try {
+    const { taskName, statusId, page = 1, limit = 10 } = req.query
+
+    const accountId = req.user.accountId // 当前登录用户ID
+
+    const where = {
+      applicantId: accountId,
+    }
+
+    // ✅ 筛选审批状态
+    if (statusId) {
+      where.statusId = statusId
+    }
+
+    // ✅ 筛选任务代号
+    if (taskName) {
+      where.task = {
+        taskName: {
+          contains: taskName,
+        },
+      }
+    }
+
+    // ✅ 获取总条数
+    const total = await prisma.taskViewRequest.count({ where })
+
+    // ✅ 获取分页数据
+    const requests = await prisma.taskViewRequest.findMany({
+      where,
+      include: {
+        task: {
+          select: {
+            taskId: true,
+            taskName: true,
+            title: true,
+            deadline: true,
+          },
+        },
+        approver: {
+          select: {
+            accountId: true,
+            nickname: true,
+            state: true,
+          },
+        },
+      },
+      orderBy: {
+        createDate: 'desc',
+      },
+      skip: (Number(page) - 1) * Number(limit),
+      take: Number(limit),
+    })
+
+    // ✅ 提取所有 statusId，批量查询字典表
+    const statusIds = [...new Set(requests.map((item) => item.statusId))]
+    const statusDicts = await prisma.sysDictionary.findMany({
+      where: {
+        dictionaryId: {
+          in: statusIds,
+        },
+      },
+      select: {
+        dictionaryId: true,
+        value: true,
+      },
+    })
+
+    // ✅ 构建字典映射
+    const statusMap = Object.fromEntries(
+      statusDicts.map((dict) => [dict.dictionaryId, dict.value]),
+    )
+
+    // ✅ 格式化结果
+    const formatted = requests.map((item) => ({
+      requestId: item.requestId,
+      task: {
+        taskId: item.task.taskId,
+        taskName: item.task.taskName,
+        title: item.task.title,
+        deadline: formatDate(item.task.deadline),
+      },
+      approver: item.approver
+        ? {
+            accountId: item.approver.accountId,
+            nickname: item.approver.nickname,
+            state: item.approver.state,
+          }
+        : null,
+      reason: item.reason || '',
+      statusId: item.statusId,
+      statusValue: statusMap[item.statusId] || '', // ✅ 新增字段：状态中文名
+      approveNote: item.approveNote || '',
+      createDate: formatDate(item.createDate),
+      updateDate: formatDate(item.updateDate),
+    }))
+
+    // ✅ 返回结果
+    res.mySuccess(
+      {
+        list: formatted,
+        total,
+        page: Number(page),
+        limit: Number(limit),
+      },
+      '个人申请列表获取成功',
+    )
+  } catch (err) {
+    console.error('查询个人申请失败:', err)
+    res.myError('查询个人申请失败: ' + err.message, 500)
   }
 }
