@@ -255,13 +255,30 @@ CREATE TABLE `taskReport` (
     `taskId` VARCHAR(191) NOT NULL,
     `reporterId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `status` VARCHAR(191) NOT NULL,
+    `statusId` VARCHAR(191) NOT NULL,
+    `note` VARCHAR(191) NULL,
     `content` LONGTEXT NOT NULL,
     `attachment` VARCHAR(191) NULL,
     `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`reportId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `taskViewRequest` (
+    `requestId` VARCHAR(191) NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
+    `applicantId` VARCHAR(191) NOT NULL,
+    `reason` VARCHAR(191) NULL,
+    `statusId` VARCHAR(191) NOT NULL,
+    `approverId` VARCHAR(191) NULL,
+    `approveNote` VARCHAR(191) NULL,
+    `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `taskViewRequest_taskId_applicantId_key`(`taskId`, `applicantId`),
+    PRIMARY KEY (`requestId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -328,6 +345,15 @@ ALTER TABLE `taskReport` ADD CONSTRAINT `taskReport_taskId_fkey` FOREIGN KEY (`t
 
 -- AddForeignKey
 ALTER TABLE `taskReport` ADD CONSTRAINT `taskReport_reporterId_fkey` FOREIGN KEY (`reporterId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskViewRequest` ADD CONSTRAINT `taskViewRequest_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `task`(`taskId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskViewRequest` ADD CONSTRAINT `taskViewRequest_applicantId_fkey` FOREIGN KEY (`applicantId`) REFERENCES `adminInfo`(`accountId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `taskViewRequest` ADD CONSTRAINT `taskViewRequest_approverId_fkey` FOREIGN KEY (`approverId`) REFERENCES `adminInfo`(`accountId`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `taskExecutor` ADD CONSTRAINT `taskExecutor_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `task`(`taskId`) ON DELETE CASCADE ON UPDATE CASCADE;

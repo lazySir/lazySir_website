@@ -47,10 +47,13 @@ model adminInfo {
   sentNotifications notification[] @relation("AdminToSender")
 
   // 与 task 表的关联
-  createdTasks  task[]         @relation("TaskCreator")
-  executedTasks taskExecutor[] // 任务执行人列表
-  viewedTasks   taskViewer[] //任务授权人列表
-  taskReports   taskReport[] // 任务报告列表
+  createdTasks             task[]            @relation("TaskCreator")
+  executedTasks            taskExecutor[] // 任务执行人列表
+  viewedTasks              taskViewer[] //任务授权人列表
+  taskReports              taskReport[] // 任务报告列表
+  //task审批
+  taskViewRequestsApplied  taskViewRequest[] @relation("Applicant") // 我申请的查看权限
+  taskViewRequestsApproved taskViewRequest[] @relation("Approver") // 我审批的查看权限
 
   @@index([accountId]) // 创建索引以加快根据 accountId 的查询速度
   @@map("adminInfo") // 映射到数据库中的表名
@@ -278,20 +281,21 @@ model notificationReceiver {
 }
 
 model task {
-  taskId     String         @id @default(uuid()) // 主键
-  title      String // 任务标题
-  taskName   String         @unique // 任务代号
-  deadline   DateTime // 任务截止日期
-  content    String         @db.LongText // 加密存储的任务内容
-  statusId   String // 执行状态（如：未开启、进行中、已完成、解密等）
-  creatorId  String // 创建人
-  createDate DateTime       @default(now()) //创建时间
-  updateDate DateTime       @default(now()) @updatedAt //更新时间
+  taskId          String            @id @default(uuid()) // 主键
+  title           String // 任务标题
+  taskName        String            @unique // 任务代号
+  deadline        DateTime // 任务截止日期
+  content         String            @db.LongText // 加密存储的任务内容
+  statusId        String // 字典：任务状态：（如：未开启、进行中、已完成、解密等）
+  creatorId       String // 创建人
+  createDate      DateTime          @default(now()) //创建时间
+  updateDate      DateTime          @default(now()) @updatedAt //更新时间
   // 关系
-  creator    adminInfo      @relation("TaskCreator", fields: [creatorId], references: [accountId]) // 创建人
-  executors  taskExecutor[] // 多执行人
-  viewers    taskViewer[] // 授权查看人
-  reports    taskReport[] // 汇报记录
+  creator         adminInfo         @relation("TaskCreator", fields: [creatorId], references: [accountId]) // 创建人
+  executors       taskExecutor[] // 多执行人
+  viewers         taskViewer[] // 授权查看人
+  reports         taskReport[] // 汇报记录
+  taskViewRequest taskViewRequest[]
 
   @@map("task")
 }
@@ -302,7 +306,8 @@ model taskReport {
   taskId     String // 关联任务
   reporterId String // 汇报人ID（一般为执行人）
   title      String // 汇报标题
-  statusId   String // 汇报状态 已提交、完成、不处理、待处理
+  statusId   String // 字典：任务进展  ：已提交、完成、不处理、待处理
+  note       String? //备注
   content    String    @db.LongText // 汇报内容
   attachment String? // 附件链接，可选
   createDate DateTime  @default(now()) // 汇报时间
@@ -311,6 +316,25 @@ model taskReport {
   reporter   adminInfo @relation(fields: [reporterId], references: [accountId], onDelete: Cascade)
 
   @@map("taskReport")
+}
+
+model taskViewRequest {
+  requestId   String   @id @default(uuid()) // 主键
+  taskId      String // 任务 ID
+  applicantId String // 申请人 ID
+  reason      String? // 申请理由
+  statusId    String // 字典：审批状态：（如：待审核、已批准、已拒绝）
+  approverId  String? // 审批人 ID
+  approveNote String? // 审批备注
+  createDate  DateTime @default(now()) // 申请时间
+  updateDate  DateTime @default(now()) @updatedAt // 更新时间
+
+  task      task       @relation(fields: [taskId], references: [taskId], onDelete: Cascade) // 关联任务
+  applicant adminInfo  @relation("Applicant", fields: [applicantId], references: [accountId], onDelete: Cascade) // 关联申请人
+  approver  adminInfo? @relation("Approver", fields: [approverId], references: [accountId], onDelete: SetNull) // 关联审批人
+
+  @@unique([taskId, applicantId])
+  @@map("taskViewRequest")
 }
 
 //任务执行人列表
