@@ -46,3 +46,12 @@ exports.validatePerson = async (ids) => {
   })
   return validExecutors
 }
+
+/**
+ * 判断当前用户是否是超级管理员
+ * @param {object} req - Express 请求对象
+ * @returns {boolean}
+ */
+exports.isSuperAdmin = (req) => {
+  return req?.user?.accountId === process.env.SUPER_ADMIN_ID
+}
