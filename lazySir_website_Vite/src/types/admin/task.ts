@@ -1,0 +1,43 @@
+declare namespace taskTypes {
+    type user = {
+        nickname: string,
+        accountId: string,
+        state: boolean
+    }
+    interface taskList {
+        taskId: string, // 任务id
+        title: string, // 任务标题
+        taskName: string, // 任务名称
+        deadline: string, // 任务截止时间
+        content: string, // 任务内容
+        canViewContent?: boolean, // 是否可以查看任务内容
+        statusId: string, // 任务状态id
+        statusValue: string, // 任务状态
+        creatorId: string,// 创建者id
+        createDate: string, // 创建时间
+        updateDate: string,// 更新时间
+        creator: user, // 创建者
+        executors: user[], // 执行者
+        viewers: user[]
+    }
+    interface addOrUpdateTask {
+        taskId?: string
+        title: string
+        taskName: string
+        deadline: string
+        content: string
+        statusId: string
+        executorIds: string[]
+        viewerIds?: string[]
+    }
+    interface getTaskList {
+        title?: string
+        taskName?: string
+        statusId?: string
+        creatorNickname?: string
+        deadlineFrom?: string
+        deadlineTo?: string
+        page?: number
+        limit?: number
+    }
+}

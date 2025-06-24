@@ -95,8 +95,45 @@ interface NotificationAPI {
     updateNotificationReceive: Endpoint;
     getAdminPersonalNotifiction: Endpoint;
 }
-
-
+//任务API
+interface TaskAPI {
+    addTask: Endpoint;
+    updateTask: Endpoint;
+    deleteTask: Endpoint;
+    getTask: Endpoint;
+}
+//任务授权API
+interface TaskAuthorizedAPI {
+    //新增任务授权
+    addTaskAuthorized: Endpoint;
+    //审批任务授权
+    updateTaskAuthorized: Endpoint;
+    //管理员查询审批列表
+    getTaskAuthorized: Endpoint;
+    //查询个人申请列表
+    getPersonalTaskAuthorized: Endpoint;
+    //查询可申请任务列表
+    getTaskAuthorizedList: Endpoint;
+}
+//汇报管理
+interface taskReportAPI {
+    //新增汇报
+    addTaskReport: Endpoint;
+    //更新汇报
+    updateTaskReport: Endpoint;
+    //删除汇报
+    deleteTaskReport: Endpoint;
+    //查询汇报
+    getTaskReport: Endpoint;
+    //任务图片上传
+    uploadTaskImage: Endpoint;
+    //任务文件上传
+    uploadTaskFile: Endpoint;
+    //查询授权任务汇报列表
+    getTaskReportPersonal: Endpoint;
+    //查询可汇报任务列表
+    getTaskReportList: Endpoint;
+}
 const ADMIN_PREFIX = '/admin'; // 管理员通用接口前缀
 const ADMIN_PERMISSION = '/permission';
 
@@ -125,6 +162,12 @@ const BASE_URLS = {
     ADMINAPI: ADMIN_PREFIX + '/api',
     //通知管理接口
     NOTIFICATION: ADMIN_PREFIX + '/notification',
+    //任务管理接口
+    TASK: ADMIN_PREFIX + '/task',
+    //任务授权接口
+    TASKAUTHORIZED: ADMIN_PREFIX + '/task' + '/taskViewRequest',
+    //任务汇报接口
+    TASKREPORT: ADMIN_PREFIX + '/task' + '/taskReport'
 };
 
 
@@ -232,6 +275,39 @@ const notificationApi: NotificationAPI = {
     updateNotificationReceive: createEndpoint(BASE_URLS.NOTIFICATION, '/receiver', "put"),
     getAdminPersonalNotifiction: createEndpoint(BASE_URLS.NOTIFICATION, '/personal', "get"),
 }
+//任务管理
+const taskApi: TaskAPI = {
+    getTask: createEndpoint(BASE_URLS.TASK, '/', "get"),
+    addTask: createEndpoint(BASE_URLS.TASK, '/', "post"),
+    updateTask: createEndpoint(BASE_URLS.TASK, '/', "put"),
+    deleteTask: createEndpoint(BASE_URLS.TASK, '/', "delete"),
+}
+//任务报告
+const taskReportApi: taskReportAPI = {
+    addTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "post"),
+    getTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "get"),
+    updateTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "put"),
+    deleteTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "delete"),
+    uploadTaskFile: createEndpoint(BASE_URLS.TASKREPORT, '/uploadFile', "post"),
+    uploadTaskImage: createEndpoint(BASE_URLS.TASKREPORT, '/uploadImage', "post"),
+    //查询授权任务汇报列表
+    getTaskReportPersonal: createEndpoint(BASE_URLS.TASKREPORT, '/personal', "get"),
+    //查询可汇报任务列表
+    getTaskReportList: createEndpoint(BASE_URLS.TASKREPORT, '/taskReportList', "get"),
+}
+//任务授权表
+const taskAuthorizedApi: TaskAuthorizedAPI = {
+    //查询授权任务列表
+    getTaskAuthorized: createEndpoint(BASE_URLS.TASKAUTHORIZED, '/', "get"),
+    //添加授权任务
+    addTaskAuthorized: createEndpoint(BASE_URLS.TASKAUTHORIZED, '/', "post"),
+    //更新授权任务
+    updateTaskAuthorized: createEndpoint(BASE_URLS.TASKAUTHORIZED, '/', "put"),
+    //查询个人申请列表
+    getPersonalTaskAuthorized: createEndpoint(BASE_URLS.TASKAUTHORIZED, '/personal', "get"),
+    //查询授权任务汇报列表
+    getTaskAuthorizedList: createEndpoint(BASE_URLS.TASKAUTHORIZED, '/taskApprovalList', "get"),
+}
 
 
 // 定义完整的 API 类型接口
@@ -248,6 +324,9 @@ interface APItype {
     announcementAPI: AnnouncementAPI
     adminApi: AdminApi;
     notificationApi: NotificationAPI;
+    taskApi: TaskAPI;
+    taskReportApi: taskReportAPI;
+    taskAuthorizedApi: TaskAuthorizedAPI;
 }
 
 // 定义整个 API 对象
@@ -263,7 +342,10 @@ const API: APItype = {
     honorAPI,
     announcementAPI,
     adminApi,
-    notificationApi
+    notificationApi,
+    taskApi,
+    taskReportApi,
+    taskAuthorizedApi
 };
 
 export default API;
