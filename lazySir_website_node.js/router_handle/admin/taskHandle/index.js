@@ -5,6 +5,16 @@ const {
   validatePerson,
 } = require('../../../utils')
 const { encrypt, decrypt } = require('../../../utils/crypto ')
+// 获取状态 ID => 对应值的映射
+async function getDictionaryValueMap(ids) {
+  const dicts = await prisma.sysDictionary.findMany({
+    where: { dictionaryId: { in: ids } },
+  })
+  return dicts.reduce((acc, cur) => {
+    acc[cur.dictionaryId] = cur.value
+    return acc
+  }, {})
+}
 /**
  * 添加任务
  * @param {*} req
@@ -246,11 +256,6 @@ exports.updateTask = async (req, res) => {
   }
 }
 
-/**
- * 获取任务列表（分页 + 筛选 + 权限判断）
- * @param {*} req
- * @param {*} res
- */
 exports.getTasks = async (req, res) => {
   try {
     const {
@@ -268,17 +273,9 @@ exports.getTasks = async (req, res) => {
 
     const where = {}
 
-    if (title) {
-      where.title = { contains: title }
-    }
-
-    if (taskName) {
-      where.taskName = { contains: taskName }
-    }
-
-    if (statusId) {
-      where.statusId = statusId
-    }
+    if (title) where.title = { contains: title }
+    if (taskName) where.taskName = { contains: taskName }
+    if (statusId) where.statusId = statusId
 
     if (deadlineFrom || deadlineTo) {
       where.deadline = {}
@@ -294,10 +291,10 @@ exports.getTasks = async (req, res) => {
       }
     }
 
-    // 查询总数
+    // ✅ 查询总数
     const total = await prisma.task.count({ where })
 
-    // 查询任务数据（包含执行人、查看人等）
+    // ✅ 查询任务数据
     const tasks = await prisma.task.findMany({
       where,
       include: {
@@ -338,7 +335,13 @@ exports.getTasks = async (req, res) => {
       take: Number(limit),
     })
 
-    // 格式化并加上权限控制
+    // ✅ 提取所有状态ID
+    const statusIds = [...new Set(tasks.map((t) => t.statusId))]
+
+    // ✅ 获取字典映射（状态值）
+    const statusDictMap = await getDictionaryValueMap(statusIds)
+
+    // ✅ 格式化数据
     const formattedTasks = tasks.map((task) => {
       const executorIds = task.executors.map((e) => e.executor.accountId)
       const viewerIds = task.viewers.map((v) => v.viewer.accountId)
@@ -356,6 +359,7 @@ exports.getTasks = async (req, res) => {
         content: canViewContent ? decrypt(task.content) : '无权限查看',
         canViewContent,
         statusId: task.statusId,
+        statusValue: statusDictMap[task.statusId] || '', // ✅ 状态值
         creatorId: task.creatorId,
         createDate: formatDate(task.createDate),
         updateDate: formatDate(task.updateDate),
@@ -377,6 +381,7 @@ exports.getTasks = async (req, res) => {
       }
     })
 
+    // ✅ 返回结果
     res.mySuccess(
       {
         list: formattedTasks,
