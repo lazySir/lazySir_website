@@ -77,20 +77,20 @@ router.get(
 )
 //查询个人能申请的任务列表
 router.get(
-  '/taskApprovalList',
+  '/taskViewRequest/taskApprovalList',
   authAdminTaskViewRequestRouterHandle.getTasksUserCanApplyView,
 )
 
 //-----------------------------------------汇报-----------------------------------------
 //任务图片上传地址
 router.post(
-  '/uploadImage',
+  '/taskReport/uploadImage',
   taskUpload.single('img'),
   authAdminTaskReportRouterHandle.uploadTaskImg,
 )
 //任务文件上传地址
 router.post(
-  '/uploadFile',
+  '/taskReport/uploadFile',
   taskUpload.single('file'),
   authAdminTaskReportRouterHandle.uploadTaskFile,
 )
@@ -120,7 +120,7 @@ router.get(
 )
 //查询个人可汇报任务列表
 router.get(
-  '/taskReportList',
+  '/taskReport/taskReportList',
   authAdminTaskReportRouterHandle.getReportableTasks,
 )
 //删除汇报记录
