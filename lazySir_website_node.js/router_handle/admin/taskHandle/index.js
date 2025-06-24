@@ -207,7 +207,7 @@ exports.updateTask = async (req, res) => {
         taskName,
         deadline: new Date(deadline),
         content: encryptContent,
-        statusId: validStatus.value,
+        statusId,
       },
     })
 
