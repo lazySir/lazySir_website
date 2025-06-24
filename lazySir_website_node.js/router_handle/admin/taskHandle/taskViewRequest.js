@@ -104,7 +104,7 @@ exports.approveTaskViewRequest = async (req, res) => {
     }
 
     // ✅ 判断审批人身份
-    if (request.task.creatorId !== approverId) {
+    if (request.task.creatorId !== approverId || !isSuperAdmin(req)) {
       return res.myError('你不是该任务的创建人，无法审批', 403)
     }
 
