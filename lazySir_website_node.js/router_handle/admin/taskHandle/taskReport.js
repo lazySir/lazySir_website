@@ -307,7 +307,7 @@ exports.deleteTaskReport = async (req, res) => {
   }
 }
 /**
- * 查询当前用户可查看的任务汇报记录（需在 taskViewer 表中）
+ * 查询当前用户可查看的任务汇报记录（包含授权或任务状态为“解密”）
  * @param {*} req
  * @param {*} res
  */
@@ -329,16 +329,27 @@ exports.getAuthorizedTaskReports = async (req, res) => {
 
     const accountId = req.user.accountId
 
-    // ✅ 获取当前用户授权查看的任务ID列表
-    const authorizedTasks = await prisma.taskViewer.findMany({
-      where: {
-        viewerId: accountId,
-      },
-      select: {
-        taskId: true,
-      },
+    // ✅ 获取授权的任务ID
+    const viewerTasks = await prisma.taskViewer.findMany({
+      where: { viewerId: accountId },
+      select: { taskId: true },
     })
-    const authorizedTaskIds = authorizedTasks.map((item) => item.taskId)
+
+    // ✅ 获取状态为“解密”的任务ID
+    const decryptedTasks = await prisma.task.findMany({
+      where: {
+        statusId: process.env.taskStatus_DECRYPTION,
+      },
+      select: { taskId: true },
+    })
+
+    // ✅ 合并 taskId 并去重
+    const authorizedTaskIds = [
+      ...new Set([
+        ...viewerTasks.map((t) => t.taskId),
+        ...decryptedTasks.map((t) => t.taskId),
+      ]),
+    ]
 
     if (authorizedTaskIds.length === 0) {
       return res.mySuccess(
@@ -347,11 +358,9 @@ exports.getAuthorizedTaskReports = async (req, res) => {
       )
     }
 
-    // ✅ 构造查询条件
+    // ✅ 构造 where 条件
     const where = {
-      taskId: {
-        in: authorizedTaskIds,
-      },
+      taskId: { in: authorizedTaskIds },
     }
 
     if (title) where.title = { contains: title }
@@ -370,9 +379,7 @@ exports.getAuthorizedTaskReports = async (req, res) => {
     }
     if (reporterNickname) {
       where.reporter = {
-        nickname: {
-          contains: reporterNickname,
-        },
+        nickname: { contains: reporterNickname },
       }
     }
 
@@ -407,7 +414,7 @@ exports.getAuthorizedTaskReports = async (req, res) => {
       take: Number(limit),
     })
 
-    // ✅ 获取所有相关的字典状态值
+    // ✅ 获取所有涉及的状态值
     const allStatusIds = [
       ...new Set([
         ...reports.map((r) => r.statusId),
@@ -417,7 +424,7 @@ exports.getAuthorizedTaskReports = async (req, res) => {
 
     const statusDictMap = await getDictionaryValueMap(allStatusIds)
 
-    // ✅ 格式化数据
+    // ✅ 格式化返回数据
     const formatted = reports.map((item) => ({
       reportId: item.reportId,
       title: item.title,
@@ -457,6 +464,7 @@ exports.getAuthorizedTaskReports = async (req, res) => {
     res.myError('查询可查看任务汇报失败: ' + err.message, 500)
   }
 }
+
 /**
  * 获取当前用户可汇报的任务列表
  * @param {*} req
