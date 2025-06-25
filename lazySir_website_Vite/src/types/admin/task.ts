@@ -18,6 +18,8 @@ declare namespace taskTypes {
         updateDate: string,// 更新时间
         creator: user, // 创建者
         executors: user[], // 执行者
+        executorIds?: string[], // 执行者id
+        viewerIds?: string[], // 查看者id
         viewers: user[]
     }
     interface addOrUpdateTask {

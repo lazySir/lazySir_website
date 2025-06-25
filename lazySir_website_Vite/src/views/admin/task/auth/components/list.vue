@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 const props = defineProps<{
   list: taskTypes.taskList[]
 }>()
@@ -20,11 +21,30 @@ const getLevelType = (level?: string) => {
       return 'info'
   }
 }
+const selectedTask = ref<string[]>([])
+type openType = 'read' | 'update' | 'add'
+const emits = defineEmits(['emitsDialog', 'selectedChange', 'emitsDelete'])
+const openDialog = (type: openType, val?: taskTypes.taskList) => {
+  emits('emitsDialog', type, val)
+}
+const handleSelectionChange = (val: taskTypes.taskList[]) => {
+  selectedTask.value = val.map((item) => item.taskId)
+  emits('selectedChange', selectedTask.value)
+}
+const handleDelete = (id: string) => {
+  console.log(2)
+  emits('emitsDelete', id)
+}
 </script>
 
 <template>
-  <!-- @selection-change="handleSelectionChange" -->
-  <el-table highlight-current-row :data="props.list" border style="width: 100%">
+  <el-table
+    @selection-change="handleSelectionChange"
+    highlight-current-row
+    :data="props.list"
+    border
+    style="width: 100%"
+  >
     <el-table-column type="selection" width="40" />
     <el-table-column
       align="center"
@@ -95,33 +115,43 @@ const getLevelType = (level?: string) => {
       align="center"
       fixed="right"
       label="操作"
-      width="240"
-      min-width="240"
+      width="260"
+      min-width="260"
     >
       <template #default="scope">
-        <!-- @click="handleOpenDialog('read', scope.row)" -->
         <AuthBtn
           type="primary"
-          content="详情"
-          name="NotificationAuth"
+          v-if="!scope.row.canViewContent"
+          content="解密"
+          name="adminTaskAuth"
           perm="READ"
         >
         </AuthBtn>
-        <!-- @click="handleOpenDialog('update', scope.row)" -->
+        <AuthBtn
+          type="primary"
+          content="详情"
+          @click="openDialog('read', scope.row)"
+          name="adminTaskAuth"
+          perm="READ"
+        >
+        </AuthBtn>
         <AuthBtn
           type="primary"
           content="编辑"
-          name="NotificationAuth"
+          @click="openDialog('update', scope.row)"
+          name="adminTaskAuth"
           perm="UPDATE"
         >
         </AuthBtn>
-        <!-- @confirm="handleDelete(scope.row)" -->
-        <el-popconfirm :title="`是否确定删除${scope.row.title}`">
+        <el-popconfirm
+          @confirm="handleDelete(scope.row.taskId)"
+          :title="`是否确定删除${scope.row.title}`"
+        >
           <template #reference>
             <AuthBtn
               type="primary"
               content="删除"
-              name="NotificationAuth"
+              name="adminTaskAuth"
               perm="DELETE"
             >
             </AuthBtn>

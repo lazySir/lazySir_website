@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reqGetTaskList } from '@/api/admin/task'
+import { reqGetTaskList, reqAddOrUpdateTask, reqDeleteTask } from '@/api/admin/task'
 import { ElMessage } from 'element-plus'
 interface taskRequest extends RequestTypes.request {
     data: {
@@ -18,16 +18,39 @@ export const useAdminTaskStore = defineStore('adminTaskStore', {
     },
     actions: {
         //获取任务列表
-        async getTaskList(params?: taskTypes.getTaskList) {
-            const res: taskRequest = await reqGetTaskList(params) as any
+        async getTaskList(data?: taskTypes.getTaskList) {
+            const res: taskRequest = await reqGetTaskList(data) as any
             if (res.code === 200) {
                 this.taskList = res.data.list
                 this.taskTotal = res.data.total
                 return true
             } else {
-                ElMessage.error(res.message)
+
                 return false
             }
         },
+        //修改或新增任务
+        async addOrUpdateTask(data: taskTypes.addOrUpdateTask) {
+            const res = await reqAddOrUpdateTask(data) as any
+            if (res.code === 200) {
+                ElMessage.success(res.message)
+                return true
+            } else {
+
+                return false
+            }
+        },
+        //删除任务
+        async deleteTask(data: string[]) {
+            const res = await reqDeleteTask(data) as any
+            if (res.code === 200) {
+                ElMessage.success(res.message)
+                return true
+            } else {
+
+                return false
+            }
+        }
     }
 })
+

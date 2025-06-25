@@ -54,5 +54,6 @@ export default [
     'material-symbols:encrypted-outline-rounded',
     'ic:baseline-remove-red-eye',
     'ri:calendar-2-line',
-    'material-symbols:circle-notifications'
+    'material-symbols:circle-notifications',
+    'material-symbols:task-outline-sharp'
 ]
