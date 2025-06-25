@@ -3,6 +3,7 @@ const {
   formatDate,
   validateChildDictionary,
   validatePerson,
+  isSuperAdmin,
 } = require('../../../utils')
 const { encrypt, decrypt } = require('../../../utils/crypto ')
 // 获取状态 ID => 对应值的映射
@@ -150,7 +151,10 @@ exports.updateTask = async (req, res) => {
     if (!existingTask) {
       return res.myError(`任务不存在`, 404)
     }
-
+    //检查是否是任务创建人
+    if (existingTask.creatorId !== req.user.accountId) {
+      return res.myError(`只有任务创建人可以修改任务`, 403)
+    }
     // ✅ 检查 taskName 是否被其他任务占用
     const duplicate = await prisma.task.findFirst({
       where: {
@@ -345,9 +349,13 @@ exports.getTasks = async (req, res) => {
     const formattedTasks = tasks.map((task) => {
       const executorIds = task.executors.map((e) => e.executor.accountId)
       const viewerIds = task.viewers.map((v) => v.viewer.accountId)
+      const isDecryptionStatus =
+        task.statusId === process.env.taskStatus_DECRYPTION
+      const isCreator = task.creatorId === currentAccountId
 
       const canViewContent =
-        task.creator.accountId === currentAccountId ||
+        isDecryptionStatus || isCreator || isSuperAdmin(req)
+      task.creator.accountId === currentAccountId ||
         executorIds.includes(currentAccountId) ||
         viewerIds.includes(currentAccountId)
 
@@ -405,15 +413,16 @@ exports.getTasks = async (req, res) => {
 exports.deleteTasks = async (req, res) => {
   try {
     const { taskIds } = req.body
+    const currentAccountId = req.user.accountId
 
-    // 校验是否存在非法 taskId
+    // ✅ 查询任务是否存在，获取 taskName 和 creatorId
     const existingTasks = await prisma.task.findMany({
       where: {
         taskId: {
           in: taskIds,
         },
       },
-      select: { taskId: true },
+      select: { taskId: true, taskName: true, creatorId: true },
     })
 
     const existingTaskIds = existingTasks.map((t) => t.taskId)
@@ -423,7 +432,20 @@ exports.deleteTasks = async (req, res) => {
       return res.myError(`以下任务ID不存在：${invalidIds.join(', ')}`, 400)
     }
 
-    // ✅ 只需要删除 task，子表会自动被删除（onDelete: Cascade）
+    // ✅ 找出不是当前用户创建的任务
+    const unauthorizedTasks = existingTasks.filter(
+      (t) => t.creatorId !== currentAccountId,
+    )
+
+    if (unauthorizedTasks.length > 0) {
+      const unauthorizedTaskNames = unauthorizedTasks.map((t) => t.taskName)
+      return res.myError(
+        `无权限删除以下任务（非本人创建）：${unauthorizedTaskNames.join(', ')}`,
+        403,
+      )
+    }
+
+    // ✅ 删除任务（子表 onDelete: Cascade 会自动删除）
     await prisma.task.deleteMany({
       where: {
         taskId: {
@@ -432,8 +454,9 @@ exports.deleteTasks = async (req, res) => {
       },
     })
 
-    res.mySuccess(null, `成功删除${taskIds.length}条任务`)
+    res.mySuccess(null, `成功删除 ${taskIds.length} 条任务`)
   } catch (error) {
+    console.error('删除任务失败:', error)
     res.myError('删除任务失败: ' + error.message, 500)
   }
 }
