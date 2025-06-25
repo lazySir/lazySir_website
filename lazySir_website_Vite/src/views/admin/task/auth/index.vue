@@ -51,7 +51,6 @@ const handleDeletes = async () => {
   }
 }
 const handleDelete = async (id: string) => {
-  console.log(123)
   const res = await adminTaskStore.deleteTask([id])
   if (res) {
     getData()

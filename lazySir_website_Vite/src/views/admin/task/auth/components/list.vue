@@ -32,7 +32,6 @@ const handleSelectionChange = (val: taskTypes.taskList[]) => {
   emits('selectedChange', selectedTask.value)
 }
 const handleDelete = (id: string) => {
-  console.log(2)
   emits('emitsDelete', id)
 }
 </script>
