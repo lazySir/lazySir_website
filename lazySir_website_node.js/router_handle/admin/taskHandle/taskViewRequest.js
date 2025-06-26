@@ -151,7 +151,10 @@ exports.approveTaskViewRequest = async (req, res) => {
     }
 
     // ✅ 如果状态是“拒绝”，则从 viewer 表移除授权（可选，是否保留授权由你决定）
-    if (statusId === process.env.approvalStatus_REJECT) {
+    if (
+      statusId === process.env.approvalStatus_REJECT ||
+      statusId === process.env.approvalStatus_TODO
+    ) {
       operations.push(
         prisma.taskViewer.deleteMany({
           where: {
@@ -229,7 +232,7 @@ exports.getTaskViewRequests = async (req, res) => {
       }
     }
 
-    // ✅ 如果不是超级管理员，只能查看自己创建的任务的申请记录
+    // ✅ 非超级管理员限制只看自己任务的申请记录
     if (!superAdmin) {
       where.task = {
         ...where.task,
@@ -240,7 +243,7 @@ exports.getTaskViewRequests = async (req, res) => {
     // ✅ 查询总数
     const total = await prisma.taskViewRequest.count({ where })
 
-    // ✅ 查询数据
+    // ✅ 查询申请记录
     const requests = await prisma.taskViewRequest.findMany({
       where,
       include: {
@@ -251,6 +254,7 @@ exports.getTaskViewRequests = async (req, res) => {
             title: true,
             deadline: true,
             creatorId: true,
+            statusId: true, // ✅ 添加任务状态 ID
           },
         },
         applicant: {
@@ -275,8 +279,15 @@ exports.getTaskViewRequests = async (req, res) => {
       take: Number(limit),
     })
 
-    // ✅ 收集所有 statusId 并查询字典表中的中文值
-    const statusIds = [...new Set(requests.map((r) => r.statusId))]
+    // ✅ 收集所有 statusId（授权状态 + 任务状态）
+    const statusIds = [
+      ...new Set([
+        ...requests.map((r) => r.statusId),
+        ...requests.map((r) => r.task?.statusId),
+      ]),
+    ]
+
+    // ✅ 查询字典表中的状态值
     const statusDicts = await prisma.sysDictionary.findMany({
       where: {
         dictionaryId: {
@@ -301,6 +312,8 @@ exports.getTaskViewRequests = async (req, res) => {
         taskName: item.task.taskName,
         title: item.task.title,
         deadline: formatDate(item.task.deadline),
+        statusId: item.task.statusId,
+        statusValue: statusMap[item.task.statusId] || '', // ✅ 任务状态值
       },
       applicant: {
         accountId: item.applicant.accountId,
@@ -316,7 +329,7 @@ exports.getTaskViewRequests = async (req, res) => {
         : null,
       reason: item.reason || '',
       statusId: item.statusId,
-      statusValue: statusMap[item.statusId] || '', // ✅ 新增字段：状态中文名
+      statusValue: statusMap[item.statusId] || '', // ✅ 授权申请状态值
       approveNote: item.approveNote || '',
       createDate: formatDate(item.createDate),
       updateDate: formatDate(item.updateDate),

@@ -351,13 +351,16 @@ exports.getTasks = async (req, res) => {
       const viewerIds = task.viewers.map((v) => v.viewer.accountId)
       const isDecryptionStatus =
         task.statusId === process.env.taskStatus_DECRYPTION
-      const isCreator = task.creatorId === currentAccountId
+      const isCreator = task.creator.accountId === currentAccountId
+      const isExecutor = executorIds.includes(currentAccountId)
+      const isViewer = viewerIds.includes(currentAccountId)
 
       const canViewContent =
-        isDecryptionStatus || isCreator || isSuperAdmin(req)
-      task.creator.accountId === currentAccountId ||
-        executorIds.includes(currentAccountId) ||
-        viewerIds.includes(currentAccountId)
+        isDecryptionStatus ||
+        isCreator ||
+        isExecutor ||
+        isViewer ||
+        isSuperAdmin(req)
 
       return {
         taskId: task.taskId,
