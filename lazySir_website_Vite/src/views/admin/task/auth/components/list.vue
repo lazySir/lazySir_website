@@ -23,9 +23,17 @@ const getLevelType = (level?: string) => {
 }
 const selectedTask = ref<string[]>([])
 type openType = 'read' | 'update' | 'add'
-const emits = defineEmits(['emitsDialog', 'selectedChange', 'emitsDelete'])
+const emits = defineEmits([
+  'emitsDialog',
+  'selectedChange',
+  'emitsDelete',
+  'emitsOpenApprovalDialog',
+])
 const openDialog = (type: openType, val?: taskTypes.taskList) => {
   emits('emitsDialog', type, val)
+}
+const handleOpenApprovalDialog = (id: string) => {
+  emits('emitsOpenApprovalDialog', id)
 }
 const handleSelectionChange = (val: taskTypes.taskList[]) => {
   selectedTask.value = val.map((item) => item.taskId)
@@ -122,8 +130,9 @@ const handleDelete = (id: string) => {
           type="primary"
           v-if="!scope.row.canViewContent"
           content="解密"
-          name="adminTaskAuth"
-          perm="READ"
+          @click="handleOpenApprovalDialog(scope.row.taskId)"
+          name="adminTaskApproval"
+          perm="CREATE"
         >
         </AuthBtn>
         <AuthBtn

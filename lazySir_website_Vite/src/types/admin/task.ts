@@ -42,4 +42,42 @@ declare namespace taskTypes {
         page?: number
         limit?: number
     }
+
+    interface getApprovalList {
+        taskName?: string
+        applicantNickname?: string
+        approverNickname?: string
+        statusId?: string
+        page?: number
+        limit?: number
+    }
+
+    interface approval {
+        requestId: string
+        task: {
+            taskId: string
+            taskName: string
+            title: string
+            deadline: string
+            statusId: string
+            statusValue: string
+        },
+        applicant: user
+        approver: user
+        reason: string
+        statusId: string
+        statusValue: string
+        approveNote: string
+        createDate: string
+        updateDate: string
+    }
+    interface addApproval {
+        taskId: string,
+        reason: string,
+    }
+    interface updateApproval {
+        requestId: string,
+        statusId: string,
+        approveNote?: string,
+    }
 }

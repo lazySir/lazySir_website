@@ -2,6 +2,7 @@
 import { onMounted, ref, useTemplateRef } from 'vue'
 import TaskList from '@/views/admin/task/auth/components/list.vue'
 import Dialog from '@/views/admin/task/auth/components/dialog.vue'
+import ApprovalDialog from '@/views/admin/task/auth/components/approvalDialog.vue'
 import { useAdminTaskStore } from '@/stores/admin/task'
 const adminTaskStore = useAdminTaskStore()
 //筛选的数据条件
@@ -14,6 +15,13 @@ const getData = async () => {
 const isShowFilter = ref(true)
 //ref
 const dialogRef = useTemplateRef('DialogRef')
+const dialogApprovalRef = useTemplateRef('ApprovalDialogRef')
+const handleAddApproval = (val: taskTypes.addApproval) => {
+  adminTaskStore.addApproval(val)
+}
+const handleOpenApprovalDialog = (val: string) => {
+  dialogApprovalRef.value?.openDialog(val)
+}
 type openType = 'read' | 'update' | 'add'
 const handleOpenDialog = (type: openType, val?: taskTypes.taskList) => {
   dialogRef.value?.openDialog(type, val)
@@ -131,7 +139,7 @@ onMounted(() => {
             :text="false"
             @click="handleOpenDialog('add', {} as taskTypes.taskList)"
             type="primary"
-            content="新增通知"
+            content="新增任务"
             name="adminTaskAuth"
             perm="CREATE"
           >
@@ -173,6 +181,7 @@ onMounted(() => {
       </el-row>
     </template>
     <TaskList
+      @emitsOpenApprovalDialog="handleOpenApprovalDialog"
       @emitsDialog="handleOpenDialog"
       @selectedChange="handleSelectedChange"
       @emitsDelete="handleDelete"
@@ -190,7 +199,10 @@ onMounted(() => {
       </el-col>
     </el-row>
   </el-card>
-
+  <ApprovalDialog
+    @emitsAddApproval="handleAddApproval"
+    ref="ApprovalDialogRef"
+  />
   <Dialog @submitForm="AddOrUpdateTaskHndle" ref="DialogRef" />
 </template>
 

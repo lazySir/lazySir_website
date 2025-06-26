@@ -55,5 +55,6 @@ export default [
     'ic:baseline-remove-red-eye',
     'ri:calendar-2-line',
     'material-symbols:circle-notifications',
-    'material-symbols:task-outline-sharp'
+    'material-symbols:task-outline-sharp',
+    'material-symbols:approval-delegation-outline-rounded'
 ]
