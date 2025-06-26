@@ -80,4 +80,38 @@ declare namespace taskTypes {
         statusId: string,
         approveNote?: string,
     }
+    interface getApplication {
+        taskName?: string,
+        statusId?: string,
+        page?: number,
+        limit?: number
+    }
+    interface application {
+        requestId: string
+        task: {
+            taskId: string
+            taskName: string
+            title: string
+            deadline: string
+            statusId: string
+            statusValue: string
+        },
+        approver: user
+        reason: string
+        statusId: string
+        statusValue: string
+        approveNote: string
+        createDate: string
+        updateDate: string
+    }
+    interface canApplicationTask {
+
+        taskId: string
+        title: string
+        taskName: string
+        creatorNickname: string
+        statusId: string
+        statusValue: string
+
+    }
 }

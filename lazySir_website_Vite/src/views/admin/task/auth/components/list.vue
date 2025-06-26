@@ -3,7 +3,7 @@ import { ref } from 'vue'
 const props = defineProps<{
   list: taskTypes.taskList[]
 }>()
-const getLevelType = (level?: string) => {
+const getTaskStatusType = (level?: string) => {
   switch (level) {
     case '取消':
       return 'danger'
@@ -78,7 +78,7 @@ const handleDelete = (id: string) => {
       width="width"
     >
       <template #default="scope">
-        <el-tag :type="getLevelType(scope.row.statusValue)">
+        <el-tag :type="getTaskStatusType(scope.row.statusValue)">
           {{ scope.row.statusValue }}
         </el-tag>
       </template>

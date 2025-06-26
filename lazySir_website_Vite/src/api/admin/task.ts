@@ -67,3 +67,19 @@ export const reqAddApproval = (data: taskTypes.addApproval) => {
         data
     })
 }
+//获取个人申请列表
+export const reqGetApplicationList = (data?: taskTypes.getApplication) => {
+    return requests({
+        url: API.taskAuthorizedApi.getPersonalTaskAuthorized.url,
+        method: API.taskAuthorizedApi.getPersonalTaskAuthorized.method,
+        params: data
+    })
+}
+//获取可申请任务列表
+export const reqGetCanApplicationTask = () => {
+    return requests({
+        url: API.taskAuthorizedApi.getTaskAuthorizedList.url,
+        method: API.taskAuthorizedApi.getTaskAuthorizedList.method
+
+    })
+}

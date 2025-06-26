@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reqGetTaskList, reqAddOrUpdateTask, reqDeleteTask, reqGetApprovalList, reqAddApproval, reqUpdateApproval } from '@/api/admin/task'
+import { reqGetTaskList, reqAddOrUpdateTask, reqDeleteTask, reqGetApprovalList, reqAddApproval, reqUpdateApproval, reqGetApplicationList, reqGetCanApplicationTask } from '@/api/admin/task'
 import { ElMessage } from 'element-plus'
 interface taskRequest extends RequestTypes.request {
     data: {
@@ -13,6 +13,12 @@ interface taskApprovalRequest extends RequestTypes.request {
         total: number,
     }
 }
+interface taskApplicationRequest extends RequestTypes.request {
+    data: {
+        list: taskTypes.application[]
+        total: number,
+    }
+}
 export const useAdminTaskStore = defineStore('adminTaskStore', {
     state: () => {
         return {
@@ -20,6 +26,9 @@ export const useAdminTaskStore = defineStore('adminTaskStore', {
             taskTotal: 0,
             approvalList: [] as taskTypes.approval[],
             approvalTotal: 0,
+            applicationList: [] as taskTypes.application[],
+            applicationTotal: 0,
+            canApplicationTask: [] as taskTypes.canApplicationTask[],
         }
     },
     getters: {
@@ -90,7 +99,25 @@ export const useAdminTaskStore = defineStore('adminTaskStore', {
             } else {
                 return false
             }
+        },
+        //获取个人申请列表
+        async getApplicationList(data: taskTypes.getApplication) {
+            const res: taskApplicationRequest = await reqGetApplicationList(data) as any
+            if (res.code == 200) {
+                this.applicationList = res.data.list
+                this.applicationTotal = res.data.total
+                return true
+            }
+        },
+        //获取可申请的任务列表
+        async getCanApplicationTask() {
+            const res: RequestTypes.request = await reqGetCanApplicationTask() as any
+            if (res.code == 200) {
+                this.canApplicationTask = res.data as taskTypes.canApplicationTask[]
+                return true
+            }
         }
-    }
+    },
+
 })
 

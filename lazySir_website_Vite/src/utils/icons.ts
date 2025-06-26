@@ -56,5 +56,11 @@ export default [
     'ri:calendar-2-line',
     'material-symbols:circle-notifications',
     'material-symbols:task-outline-sharp',
-    'material-symbols:approval-delegation-outline-rounded'
+    'material-symbols:approval-delegation-outline-rounded',
+    'carbon:task-add',
+    'tdesign:task-checked',
+    'hugeicons:task-edit-02',
+    'hugeicons:task-add-01',
+    'hugeicons:task-02',
+    'hugeicons:task-done-02'
 ]
