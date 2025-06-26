@@ -131,7 +131,7 @@ const handleDelete = (id: string) => {
           v-if="!scope.row.canViewContent"
           content="解密"
           @click="handleOpenApprovalDialog(scope.row.taskId)"
-          name="adminTaskApproval"
+          name="adminTaskApplication"
           perm="CREATE"
         >
         </AuthBtn>

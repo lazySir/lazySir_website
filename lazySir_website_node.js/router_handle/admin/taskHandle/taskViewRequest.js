@@ -104,7 +104,7 @@ exports.approveTaskViewRequest = async (req, res) => {
     }
 
     // ✅ 判断审批人身份
-    if (request.task.creatorId !== approverId || !isSuperAdmin(req)) {
+    if (request.task.creatorId !== approverId) {
       return res.myError('你不是该任务的创建人，无法审批', 403)
     }
 
@@ -196,7 +196,6 @@ exports.getTaskViewRequests = async (req, res) => {
     } = req.query
 
     const accountId = req.user.accountId
-    const superAdmin = await isSuperAdmin(req) // ✅ 判断是否为超级管理员
 
     const where = {}
 
@@ -233,11 +232,10 @@ exports.getTaskViewRequests = async (req, res) => {
     }
 
     // ✅ 非超级管理员限制只看自己任务的申请记录
-    if (!superAdmin) {
-      where.task = {
-        ...where.task,
-        creatorId: accountId,
-      }
+
+    where.task = {
+      ...where.task,
+      creatorId: accountId,
     }
 
     // ✅ 查询总数

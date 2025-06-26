@@ -76,8 +76,8 @@ onMounted(() => {
             icon="Search"
             type="primary"
             content="任务申请"
-            name="adminTaskApproval"
-            perm="READ"
+            name="adminTaskApplication"
+            perm="CREATE"
           >
           </AuthBtn>
           <AuthBtn
@@ -86,7 +86,7 @@ onMounted(() => {
             icon="Search"
             type="primary"
             content="查询"
-            name="adminTaskApproval"
+            name="adminTaskApplication"
             perm="READ"
           >
           </AuthBtn>

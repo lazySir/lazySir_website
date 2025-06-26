@@ -356,11 +356,7 @@ exports.getTasks = async (req, res) => {
       const isViewer = viewerIds.includes(currentAccountId)
 
       const canViewContent =
-        isDecryptionStatus ||
-        isCreator ||
-        isExecutor ||
-        isViewer ||
-        isSuperAdmin(req)
+        isDecryptionStatus || isCreator || isExecutor || isViewer
 
       return {
         taskId: task.taskId,
