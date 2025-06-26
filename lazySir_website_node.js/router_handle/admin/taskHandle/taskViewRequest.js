@@ -357,16 +357,17 @@ exports.getMyTaskViewRequests = async (req, res) => {
 
     const accountId = req.user.accountId // 当前登录用户ID
 
+    // 构造查询条件：当前用户是申请人
     const where = {
       applicantId: accountId,
     }
 
-    // ✅ 筛选审批状态
+    // ✅ 审批状态筛选
     if (statusId) {
       where.statusId = statusId
     }
 
-    // ✅ 筛选任务代号
+    // ✅ 任务代号筛选
     if (taskName) {
       where.task = {
         taskName: {
@@ -375,10 +376,10 @@ exports.getMyTaskViewRequests = async (req, res) => {
       }
     }
 
-    // ✅ 获取总条数
+    // ✅ 查询总条数
     const total = await prisma.taskViewRequest.count({ where })
 
-    // ✅ 获取分页数据
+    // ✅ 查询申请记录，包含任务、审批人
     const requests = await prisma.taskViewRequest.findMany({
       where,
       include: {
@@ -388,6 +389,7 @@ exports.getMyTaskViewRequests = async (req, res) => {
             taskName: true,
             title: true,
             deadline: true,
+            statusId: true, // ✅ 查询任务状态
           },
         },
         approver: {
@@ -405,8 +407,14 @@ exports.getMyTaskViewRequests = async (req, res) => {
       take: Number(limit),
     })
 
-    // ✅ 提取所有 statusId，批量查询字典表
-    const statusIds = [...new Set(requests.map((item) => item.statusId))]
+    // ✅ 提取所有相关状态ID（申请状态 + 任务状态）
+    const statusIds = [
+      ...new Set(
+        requests.flatMap((item) => [item.statusId, item.task?.statusId]),
+      ),
+    ]
+
+    // ✅ 查询状态字典中文名
     const statusDicts = await prisma.sysDictionary.findMany({
       where: {
         dictionaryId: {
@@ -419,12 +427,12 @@ exports.getMyTaskViewRequests = async (req, res) => {
       },
     })
 
-    // ✅ 构建字典映射
+    // ✅ 构建字典 Map 映射
     const statusMap = Object.fromEntries(
       statusDicts.map((dict) => [dict.dictionaryId, dict.value]),
     )
 
-    // ✅ 格式化结果
+    // ✅ 格式化返回数据
     const formatted = requests.map((item) => ({
       requestId: item.requestId,
       task: {
@@ -432,6 +440,8 @@ exports.getMyTaskViewRequests = async (req, res) => {
         taskName: item.task.taskName,
         title: item.task.title,
         deadline: formatDate(item.task.deadline),
+        statusId: item.task.statusId,
+        statusValue: statusMap[item.task.statusId] || '', // ✅ 任务状态中文名
       },
       approver: item.approver
         ? {
@@ -442,13 +452,13 @@ exports.getMyTaskViewRequests = async (req, res) => {
         : null,
       reason: item.reason || '',
       statusId: item.statusId,
-      statusValue: statusMap[item.statusId] || '', // ✅ 新增字段：状态中文名
+      statusValue: statusMap[item.statusId] || '', // ✅ 审批状态中文名
       approveNote: item.approveNote || '',
       createDate: formatDate(item.createDate),
       updateDate: formatDate(item.updateDate),
     }))
 
-    // ✅ 返回结果
+    // ✅ 返回分页结果
     res.mySuccess(
       {
         list: formatted,
@@ -464,7 +474,7 @@ exports.getMyTaskViewRequests = async (req, res) => {
   }
 }
 /**
- * 查询当前用户未被授权且未申请的任务列表
+ * 查询当前用户未被授权且未申请的任务列表（排除自己创建的任务）
  * @param {*} req
  * @param {*} res
  */
@@ -472,7 +482,7 @@ exports.getTasksUserCanApplyView = async (req, res) => {
   try {
     const accountId = req.user.accountId
 
-    // ✅ 查询当前用户已经被授权的任务ID列表
+    // ✅ 查询当前用户已授权查看、已执行、已申请的任务ID
     const [viewerTaskIds, executorTaskIds, appliedTaskIds] = await Promise.all([
       prisma.taskViewer.findMany({
         where: { viewerId: accountId },
@@ -488,18 +498,21 @@ exports.getTasksUserCanApplyView = async (req, res) => {
       }),
     ])
 
-    // 提取 taskId 数组
+    // ✅ 整合需排除的任务ID列表
     const excludeIds = [
       ...viewerTaskIds,
       ...executorTaskIds,
       ...appliedTaskIds,
     ].map((item) => item.taskId)
 
-    // ✅ 查询未被授权、未执行、未申请的任务
+    // ✅ 查询可申请查看的任务（未被授权 + 未申请 + 不是自己创建的）
     const tasks = await prisma.task.findMany({
       where: {
         taskId: {
           notIn: excludeIds,
+        },
+        creatorId: {
+          not: accountId, // ✅ 移除自己创建的任务
         },
       },
       select: {
@@ -518,7 +531,7 @@ exports.getTasksUserCanApplyView = async (req, res) => {
       },
     })
 
-    // ✅ 获取所有状态ID对应的字典值
+    // ✅ 查询任务状态字典
     const statusIds = [...new Set(tasks.map((t) => t.statusId))]
     const statusDicts = await prisma.sysDictionary.findMany({
       where: {
@@ -533,7 +546,7 @@ exports.getTasksUserCanApplyView = async (req, res) => {
       statusDicts.map((d) => [d.dictionaryId, d.value]),
     )
 
-    // ✅ 格式化返回
+    // ✅ 格式化结果
     const formatted = tasks.map((task) => ({
       taskId: task.taskId,
       title: task.title,
