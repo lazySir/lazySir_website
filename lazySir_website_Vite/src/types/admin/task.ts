@@ -114,4 +114,51 @@ declare namespace taskTypes {
         statusValue: string
 
     }
+    interface addOrUpdateReport {
+        reportId?: string
+        taskId?: string
+        title: string
+        statusId: string
+        content: string
+        note?: string
+        attachment?: string
+    }
+    type file = {
+        name: string,
+        url: string
+    }
+    interface report {
+        taskId: string
+        reportId: string
+        title: string
+        statusId: string
+        statusValue: string
+        note: string
+        content: string
+        attachment: file[]
+        createDate: string
+        updateDate: string
+        task: {
+            taskId: string
+            taskName: string
+            title: string
+            statusId: string
+            statusValue: string
+        },
+        reporter: user
+    }
+    interface getReportList {
+        title?: string
+        reporterNickname?: string
+        statusId?: string
+        note?: string
+        taskName?: string
+        content?: string
+        createDateTo?: string
+        createDateFrom?: string
+        updateDateTo?: string
+        updateDateFrom?: string
+        page?: number
+        limit?: number
+    }
 }

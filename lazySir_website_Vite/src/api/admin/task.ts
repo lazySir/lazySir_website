@@ -83,3 +83,49 @@ export const reqGetCanApplicationTask = () => {
 
     })
 }
+
+//----------------------------------------------汇报------------------------------------------------
+
+
+//新增汇报记录
+export const reqAddOrUpdateTaskReport = (data: taskTypes.addOrUpdateReport) => {
+    if (data.reportId) {
+        return requests({
+            url: API.taskReportApi.updateTaskReport.url,
+            method: API.taskReportApi.updateTaskReport.method,
+            data
+        })
+    } else {
+        return requests({
+            url: API.taskReportApi.addTaskReport.url,
+            method: API.taskReportApi.addTaskReport.method,
+            data
+        })
+    }
+}
+// 导出一个函数，用于获取任务报告
+export const reqGetTaskReport = (data?: taskTypes.getReportList) => {
+    // 调用requests函数，传入url、method和params参数
+    return requests({
+        url: API.taskReportApi.getTaskReport.url,
+        method: API.taskReportApi.getTaskReport.method,
+        params: data
+    })
+}
+//删除汇报记录
+export const reqDeleteTaskReport = (data: string[]) => {
+    return requests({
+        url: API.taskReportApi.deleteTaskReport.url,
+        method: API.taskReportApi.deleteTaskReport.method,
+        data: {
+            reportIds: data
+        }
+    })
+}
+//查询可汇报任务列表
+export const reqGetCanReportTask = () => {
+    return requests({
+        url: API.taskReportApi.getTaskReportList.url,
+        method: API.taskReportApi.getTaskReportList.method
+    })
+}

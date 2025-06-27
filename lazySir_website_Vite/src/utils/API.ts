@@ -285,7 +285,7 @@ const taskApi: TaskAPI = {
 //任务报告
 const taskReportApi: taskReportAPI = {
     addTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "post"),
-    getTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "get"),
+    getTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '', "get"),
     updateTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "put"),
     deleteTaskReport: createEndpoint(BASE_URLS.TASKREPORT, '/', "delete"),
     uploadTaskFile: createEndpoint(BASE_URLS.TASKREPORT, '/uploadFile', "post"),

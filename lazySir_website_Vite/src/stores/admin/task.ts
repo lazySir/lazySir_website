@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia'
-import { reqGetTaskList, reqAddOrUpdateTask, reqDeleteTask, reqGetApprovalList, reqAddApproval, reqUpdateApproval, reqGetApplicationList, reqGetCanApplicationTask } from '@/api/admin/task'
+import {
+    reqGetTaskList, reqAddOrUpdateTask, reqDeleteTask,
+    reqGetApprovalList, reqAddApproval, reqUpdateApproval, reqGetApplicationList, reqGetCanApplicationTask,
+    reqAddOrUpdateTaskReport, reqGetTaskReport, reqDeleteTaskReport
+} from '@/api/admin/task'
 import { ElMessage } from 'element-plus'
 interface taskRequest extends RequestTypes.request {
     data: {
@@ -19,6 +23,12 @@ interface taskApplicationRequest extends RequestTypes.request {
         total: number,
     }
 }
+interface taskReportRequest extends RequestTypes.request {
+    data: {
+        list: taskTypes.report[]
+        total: number,
+    }
+}
 export const useAdminTaskStore = defineStore('adminTaskStore', {
     state: () => {
         return {
@@ -29,6 +39,8 @@ export const useAdminTaskStore = defineStore('adminTaskStore', {
             applicationList: [] as taskTypes.application[],
             applicationTotal: 0,
             canApplicationTask: [] as taskTypes.canApplicationTask[],
+            taskReportList: [] as taskTypes.report[],
+            taskReportTotal: 0,
         }
     },
     getters: {
@@ -116,7 +128,39 @@ export const useAdminTaskStore = defineStore('adminTaskStore', {
                 this.canApplicationTask = res.data as taskTypes.canApplicationTask[]
                 return true
             }
+        },
+        //获取任务汇报列表
+        async getTaskReportList(data?: taskTypes.getReportList) {
+            const res: taskReportRequest = await reqGetTaskReport(data) as any
+            if (res.code == 200) {
+                this.taskReportList = res.data.list
+                this.taskReportTotal = res.data.total
+                return true
+            } else {
+                return false
+            }
+        },
+        //新增或更新任务汇报列表
+        async addOrUpdateReport(data: taskTypes.addOrUpdateReport) {
+            const res: RequestTypes.request = await reqAddOrUpdateTaskReport(data) as any
+            if (res.code == 200) {
+                ElMessage.success(res.message)
+                return true
+            } else {
+                return false
+            }
+        },
+        //删除任务汇报
+        async deleteReport(data: string[]) {
+            const res: RequestTypes.request = await reqDeleteTaskReport(data) as any
+            if (res.code == 200) {
+                ElMessage.success(res.message)
+                return true
+            } else {
+                return false
+            }
         }
+
     },
 
 })
