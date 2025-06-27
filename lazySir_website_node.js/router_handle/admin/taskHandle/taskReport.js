@@ -475,10 +475,7 @@ exports.getReportableTasks = async (req, res) => {
     const accountId = req.user.accountId
 
     // ✅ 可汇报状态（env 中维护）
-    const reportableStatusIds = [
-      process.env.taskStatus_TODO,
-      process.env.taskStatus_IN_PROGRESS,
-    ]
+    const reportableStatusIds = [process.env.taskStatus_IN_PROGRESS]
 
     // ✅ 查找当前用户为执行人的任务
     const executorTasks = await prisma.taskExecutor.findMany({

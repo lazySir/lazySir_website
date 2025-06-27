@@ -20,9 +20,9 @@ const uploadUrls = {
   //任务
   taskImage: {
     imgUploadUrl: 'public/admin/task/images/',
-    imgSaveUrl: '/public/task/images/',
+    imgSaveUrl: '/admin/task/images/',
     fileUploadUrl: 'public/admin/task/files/',
-    fileSaveUrl: '/public/task/files/',
+    fileSaveUrl: '/admin/task/files/',
   },
 }
 // 管理员头像配置存储路径和文件名

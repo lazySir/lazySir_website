@@ -258,7 +258,7 @@ CREATE TABLE `taskReport` (
     `statusId` VARCHAR(191) NOT NULL,
     `note` VARCHAR(191) NULL,
     `content` LONGTEXT NOT NULL,
-    `attachment` VARCHAR(191) NULL,
+    `attachment` LONGTEXT NULL,
     `createDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 

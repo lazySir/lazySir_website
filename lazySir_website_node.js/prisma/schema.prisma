@@ -309,7 +309,7 @@ model taskReport {
   statusId   String // 字典：任务进展  ：已提交、完成、不处理、待处理
   note       String? //备注
   content    String    @db.LongText // 汇报内容
-  attachment String? // 附件链接，可选
+  attachment String?   @db.LongText // 附件链接，可选
   createDate DateTime  @default(now()) // 汇报时间
   updateDate DateTime  @default(now()) @updatedAt // 更新时间
   task       task      @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
